@@ -1,0 +1,14 @@
+set MeshStyle     1
+set MeshColor     "Temperature"
+rotate 180 0 0
+background 90 90 70
+set GlobalOptions(VolumeSides) 1
+set DisplayStyle(ColorMesh) 1
+readfile case.ep
+UpdateObject
+#DoReadFile case.ep
+display
+#ReadFileHeader case.ep
+#ReadFile
+#DoReadFile case.ep 
+#mesh_update

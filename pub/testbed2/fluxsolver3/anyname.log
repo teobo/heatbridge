@@ -1,0 +1,108 @@
+ELMER SOLVER (v 6.1) STARTED AT: 2015/08/15 06:13:06
+MAIN: 
+MAIN: =============================================================
+MAIN: ElmerSolver finite element software, Welcome!
+MAIN: This program is free software; you can redistribute it and/or
+MAIN: modify it under the terms of the GNU General Public License
+MAIN: Copyright 1st April 1995 - , CSC - IT Center for Science Ltd.
+MAIN: Webpage http://www.csc.fi/elmer, Email elmeradm@csc.fi
+MAIN: Library version: 6.1 (Rev: 5272)
+MAIN:  HYPRE library linked in.
+MAIN:  MUMPS library linked in.
+MAIN: =============================================================
+MAIN: 
+MAIN: 
+MAIN: -----------------------
+MAIN: Reading Model ...
+TEST CASE 1
+Model Input:  Unlisted keyword: [calculate weights] in section: [solver 3]
+TEST CASE 1
+Loading user function library: [FluxSolver]...[FluxSolver_Init0]
+Loading user function library: [ResultOutputSolve]...[ResultOutputSolver_Init0]
+MAIN: Done
+MAIN: -----------------------
+OptimizeBandwidth: ---------------------------------------------------------
+OptimizeBandwidth: Computing matrix structure for: heat equation...done.
+OptimizeBandwidth:  Half bandwidth without optimization:           57
+OptimizeBandwidth: 
+OptimizeBandwidth: Bandwidth Optimization ...done.
+OptimizeBandwidth:  Half bandwidth after optimization:           83
+OptimizeBandwidth: Bandwidth optimization rejected, using original ordering.
+OptimizeBandwidth: ---------------------------------------------------------
+Loading user function library: [FluxSolver]...[FluxSolver_Init]
+FluxSolver_init: Saving flux to: temperature Flux
+FluxSolver_init: Saving gradient to: temperature Grad
+Loading user function library: [FluxSolver]...[FluxSolver]
+OptimizeBandwidth: ---------------------------------------------------------
+OptimizeBandwidth: Computing matrix structure for: computeflux...done.
+OptimizeBandwidth:  Half bandwidth without optimization:          428
+OptimizeBandwidth: 
+OptimizeBandwidth: Bandwidth Optimization ...done.
+OptimizeBandwidth:  Half bandwidth after optimization:          120
+OptimizeBandwidth: ---------------------------------------------------------
+Loading user function library: [ResultOutputSolve]...[ResultOutputSolver_Init]
+Loading user function library: [ResultOutputSolve]...[ResultOutputSolver]
+MAIN: 
+MAIN: -------------------------------------
+MAIN:  Steady state iteration:            1
+MAIN: -------------------------------------
+MAIN: 
+Mainutils: No Passive element boundary found
+HeatSolve: 
+HeatSolve: 
+HeatSolve: -------------------------------------
+HeatSolve:  TEMPERATURE ITERATION           1
+HeatSolve: -------------------------------------
+HeatSolve: 
+HeatSolve: Starting Assembly...
+HeatSolve: Assembly:
+HeatSolve: Assembly done
+DefUtils::DefaultDirichletBCs: Setting Dirichlet boundary conditions
+DefUtils::DefaultDirichletBCs: Dirichlet boundary conditions set
+CRS_IncompleteLU: ILU(0) (Real), Starting Factorization:
+CRS_IncompleteLU: ILU(0) (Real), NOF nonzeros:     27629
+CRS_IncompleteLU: ILU(0) (Real), filling (%) :       100
+CRS_IncompleteLU: ILU(0) (Real), Factorization ready at (s):     0.01
+      10 0.8694E-02
+      20 0.2531E-02
+      30 0.6660E-04
+      40 0.1698E-07
+      41 0.7517E-08
+ComputeChange: NS (ITER=1) (NRM,RELC): ( 0.78304639      2.0000000     ) :: heat equation
+HeatSolve: iter:    1 Assembly: (s)    0.32    0.32
+HeatSolve: iter:    1 Solve:    (s)    0.12    0.12
+HeatSolve:  Result Norm   :   0.78304639430728651
+HeatSolve:  Relative Change :    2.0000000000000000
+ComputeChange: SS (ITER=1) (NRM,RELC): ( 0.78304639      2.0000000     ) :: heat equation
+Mainutils: No Passive element boundary found
+FluxSolver: -------------------------------------
+FluxSolver: Computing the flux and/or gradient
+FluxSolver: -------------------------------------
+FluxSolver:  Assembly Time:   0.21856093406677246
+       2 0.6111E-14
+       2 0.1554E-13
+       2 0.1686E-13
+       2 0.1109E-13
+FluxSolver:  Solution Time:   0.16550111770629883
+FluxSolver:  Result Norm:    0.0000000000000000
+ComputeChange: SS (ITER=1) (NRM,RELC): ( 0.15711091      2.0000000     ) :: computeflux
+Mainutils: No Passive element boundary found
+WARNING:: CalculateNodalWeights: Permutation vector not present?
+ResultOutputSolver: -------------------------------------
+ResultOutputSolve: Saving with prefix: case
+ResultOutputSolver: Working on mesh: angle
+ResultOutputSolver: Dimension of mesh: 2
+ResultOutputSolver: Creating list for saving - if not present
+ResultOutputSolver: Saving in unstructured VTK XML (.vtu) format
+VtuOutputSolver: Saving results in VTK XML format
+VtuOutputSolver: Saving to file: angle/case0001.vtu
+WriteVtuFile: Writing variable: temperature flux
+WriteVtuFile: Writing variable: temperature grad
+ResultOutputSolver: Saving in ElmerPost format
+ResultOutputSolver: -------------------------------------
+WriteToPost: Saving results in ElmerPost format to file angle/TempDist.ep
+END TEST CASE 1: Target NRM=0.15711091
+ElmerSolver: *** Elmer Solver: ALL DONE ***
+ElmerSolver: The end
+SOLVER TOTAL TIME(CPU,REAL):         3.36        4.38
+ELMER SOLVER FINISHED AT: 2015/08/15 06:13:10

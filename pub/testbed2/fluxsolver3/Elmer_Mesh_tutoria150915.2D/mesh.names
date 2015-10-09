@@ -1,0 +1,8 @@
+! ----- names for bodies -----
+$ Group3_2 = 1
+$ Group3_12 = 2
+$ Group3_19 = 3
+! ----- names for boundaries -----
+$ Group3_12 = 2
+$ Group_bd1 = 4
+$ Group_bd2 = 5
