@@ -1,0 +1,30 @@
+#This is free Software: GPL latest#
+-What does this Program:
+It drops pics of 2D-CAD pieces after a simple FEM heat conduction analysis. 
+(dev. state)
+-dir layout: both testbed dir a full of mess. do not mind!. first derived from ElmerGUI, second from Elmer test cast fluxsolver3.
+
+-installation
+-------------
+Packages:
+Elmer (Ubuntu package such as from Ubuntu 14.04
+Salome (Donwload from Homepage)
+Paraview (integrated in Salome, packaged in Ubuntu)
+
+-open a user conslole and execute the following:
+
+export FEMProjScripts="/home/urlocalinstalpath/pub/"
+# this line can be included in .bashrc
+cd $FEMProjScripts
+
+cp sources/proj_env_template.py ../local/projenv.py
+#this may be enough for local env vars..
+#goto salome startpath such as 
+cd "pathtoyour"/salome/appli_V7_4_0
+
+Start
+----
+killall SALOMEDS_Server SALOME_LauncherServer SALOME_ConnectionManagerServer SALOME_Container FactoryServer  SALOMEDS_Server SALOME_Registry_Server SALOME_ModuleCatalog_Server SALOME_Session_Server omniNames SALOME_Logger_Server; ps auxf|grep "SAL\|omni\$"; ./salome start python $FEMProjScripts"sources/ipar_clean_geom_mesh_para_split.py" &
+#this takes time, and blinks
+
+#This is free Software: GPL latest#
