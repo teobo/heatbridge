@@ -2,7 +2,7 @@
 -What does this Program:
 It drops pics of 2D-CAD pieces after a simple FEM heat conduction analysis. 
 (dev. state)
--dir layout: both testbed dir a full of mess. do not mind!. first derived from ElmerGUI, second from Elmer test cast fluxsolver3.
+-dir layout: both testbed dir are full of mess. do not mind!. first is derived from ElmerGUI, second from Elmer test cast fluxsolver3.
 
 -installation
 -------------

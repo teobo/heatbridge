@@ -657,7 +657,10 @@ def elmerunv2ep(Pi,debug=1000811,debugpath1="" ,debugpath2=""):
     #unv file needs to be in pwd, so:
     stdin, stdout = os.popen2('cp %s .' % Pi.unvfile);
     #
-    stdin, stdout = os.popen2('ElmerGrid %s 2 %s' % (str(debug)[len(str(debug))-3],os.path.basename(Pi.unvfile),));a=stdout.read();
+    stdin, stdout = os.popen2('ElmerGrid %s 2 %s' % (str(debug)[len(str(debug))-3],os.path.basename(Pi.unvfile),));
+    import time
+    time.sleep(1)
+    a=stdout.read();
     if int(str(debug)[len(str(debug))-4])>3: print a;
     #sync, sleep
     stdin, stdout = os.popen2('sync;sleep 0.1; ls -rtl %s|grep mesh.' % Pi.grid_templ_path);
