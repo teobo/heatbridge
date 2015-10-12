@@ -110,10 +110,10 @@ Solver 3
   Procedure = "ResultOutputSolve" "ResultOutputSolver"
   Output File Name = "case" 
 
-  Scalar Field 1 = String "Temperature"
+  !Scalar Field 1 = String "Temperature"
 
-  Vector Field 1 = String "Temperature flux"
-  Vector Field 2 = String "Temperature grad"
+  !Vector Field 1 = String "Temperature flux"
+  !Vector Field 2 = String "Temperature grad"
   Calculate Loads =Logical True
   Calculate Weights =Logical True
   Binary Output = True
