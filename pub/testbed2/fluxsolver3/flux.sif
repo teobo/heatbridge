@@ -74,6 +74,7 @@ Solver 1
   Nonlinear System Newton After Iterations = 3
   Nonlinear System Newton After Tolerance = 1.0e-02
   Nonlinear System Relaxation Factor = 1.0
+  Calculate Loads =Logical True
 End
 
 
@@ -140,6 +141,7 @@ Material 3
 End
 
 Boundary Condition 1
+  Heat Transfer Coefficient =10
   Name = "Cold"
   Target Boundaries(1) = 5 
   Temperature = 259
