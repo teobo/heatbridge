@@ -1,6 +1,33 @@
+(in construction on 27.11.15)
 Installation:
+---------------
 apt-get install gmsh elmer freecad
 
 
-How you test/ can help testing
+How do you test?
+------------------------------
+#running the macros:
+ln -s fem2dheatconductiongui.FCMacro ~/.FreeCAD/fem2dheatconductiongui.py
+cp pointtopost.py fem2dheatconductiongui.FCMacro ~/.FreeCAD/
 
+#you can run (in the FC-Python console portions of) code from 
+a) testmain151024.py
+b) fem2dheatconductiongui.FCMacro
+
+#for environment variables
+export FEMProjScripts="/home/urlocalinstalpath/pub/"
+# this line can be included in .bashrc
+cd $FEMProjScripts
+#else adapt pathes manually
+
+-demo elmer export at https://github.com/teobo/heatbridge/blob/master/pub/testbed2/fluxsolver3/bkfromtmp/paraviewscreenshot_oftemperatur_load.png 
+
+
+Features:
+----------
+-meshing 2d with gmsh
+-export 2d mesh to elmer
+-solving with elmer
+-freecad pre and post processing
+-demo script (60%: ready mesh adaption, result checking are missing)
+-gui (under construction 5% ready)
