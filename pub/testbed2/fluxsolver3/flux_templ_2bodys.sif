@@ -67,6 +67,7 @@ Solver 1
   Nonlinear System Newton After Iterations = 3
   Nonlinear System Newton After Tolerance = 1.0e-02
   Nonlinear System Relaxation Factor = 1.0
+  Calculate Loads = Logical True
 End
 
 
@@ -102,10 +103,10 @@ Solver 3
   Procedure = "ResultOutputSolve" "ResultOutputSolver"
   Output File Name = "case" 
 
-  Scalar Field 1 = String "Temperature"
+!  Scalar Field 1 = String "Temperature"
 
-  Vector Field 1 = String "Temperature flux"
-  Vector Field 2 = String "Temperature grad"
+!  Vector Field 1 = String "Temperature flux"
+!  Vector Field 2 = String "Temperature grad"
   Calculate Loads =Logical True
   Calculate Weights =Logical True
   Binary Output = True

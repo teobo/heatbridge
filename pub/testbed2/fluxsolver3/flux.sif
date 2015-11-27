@@ -29,6 +29,7 @@ Constants
   Stefan Boltzmann = 5.67e-08
 End
 
+
 Body 1
   Target Bodies(1) = 1
   Name = "Body1"
@@ -48,6 +49,20 @@ Body 3
   Name = "Body3"
   Equation = 1
   Material = 3
+End
+
+Body 4
+  Target Bodies(1) = 4
+  Name = "Body4"
+  Equation = 1
+  Material = 4
+End
+
+Body 5
+  Target Bodies(1) = 5
+  Name = "Body5"
+  Equation = 1
+  Material = 5
 End
 
 Equation 1
@@ -74,7 +89,6 @@ Solver 1
   Nonlinear System Newton After Iterations = 3
   Nonlinear System Newton After Tolerance = 1.0e-02
   Nonlinear System Relaxation Factor = 1.0
-  Calculate Loads =Logical True
 End
 
 
@@ -110,10 +124,10 @@ Solver 3
   Procedure = "ResultOutputSolve" "ResultOutputSolver"
   Output File Name = "case" 
 
-  !Scalar Field 1 = String "Temperature"
+  Scalar Field 1 = String "Temperature"
 
-  !Vector Field 1 = String "Temperature flux"
-  !Vector Field 2 = String "Temperature grad"
+  Vector Field 1 = String "Temperature flux"
+  Vector Field 2 = String "Temperature grad"
   Calculate Loads =Logical True
   Calculate Weights =Logical True
   Binary Output = True
@@ -122,10 +136,11 @@ Solver 3
   Vtu format = Logical True
 End
 
+
 Material 1
   Name = "Material1"
   Density = 1
-  Heat Conductivity = 1
+  Heat Conductivity = 0.03
 End
 
 Material 2
@@ -137,20 +152,34 @@ End
 Material 3
   Name = "Material3"
   Density = 1
+  Heat Conductivity = 0.03
+End
+
+Material 4
+  Name = "Material4"
+  Density = 1
   Heat Conductivity = 0.1
 End
 
+Material 5
+  Name = "Material5"
+  Density = 1
+  Heat Conductivity = 0.33
+End
+
+
 Boundary Condition 1
-  Heat Transfer Coefficient =10
-  Name = "Cold"
-  Target Boundaries(1) = 5 
-  Temperature = 259
+  Name = 292
+  Target Boundaries(1) = 6 
+  External Temperature = 292
+  Heat Transfer Coefficient = 7.69230769231
 End
 
 Boundary Condition 2
-  Name = "Hot"
-  Target Boundaries(1) = 4 
-  Temperature = 292
+  Name = 259
+  Target Boundaries(1) = 7 
+  External Temperature = 259
+  Heat Transfer Coefficient = 10.0
 End
 
 
