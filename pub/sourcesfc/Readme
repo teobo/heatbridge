@@ -20,7 +20,7 @@ export FEMProjScripts="/home/urlocalinstalpath/pub/"
 cd $FEMProjScripts
 #else adapt pathes manually
 
--demo elmer export at https://github.com/teobo/heatbridge/blob/master/pub/testbed2/fluxsolver3/bkfromtmp/paraviewscreenshot_oftemperatur_load.png 
+-demo elmer export and screenshots https://github.com/teobo/heatbridge/blob/master/pub/testbed2/fluxsolver3/bkfromtmp/
 
 
 Features:

@@ -716,16 +716,16 @@ def visu_bnd_tedge(compoundO,bnd):
     '''
     
     '''
-    #print str(bnd) + ":bnd:"
-    k=0.0
-    #print str(bnd) + ":bnd:"
-    for i in bnd:
-	k=k+1
-	l=(1.0/len(bnd))*k
-	#print str(l)+ " "+str((1/len(bnd)))
-	for j in i:
-	    compoundO.Links[j].ViewObject.LineColor= (l,0.33,0.50)
-	    #print str(i) + ":j,l:" +str(l)+ "k:" +str(k)
+print str(bnd) + ":bnd:"
+k=0.0
+print str(bnd) + ":bnd:"
+for i in bnd:
+    k=k+1
+    l=(1.0/len(bnd))*k
+    print str(l)+ " "+str((1/len(bnd)))
+    for j in i:
+	compoundO.Links[j].ViewObject.LineColor= (l,0.33,0.50)
+	print str(i) + ":j,l:" +str(l)+ "k:" +str(k)
 
 def get_elementbodysflag(femmesh2,compountO,faceN):
     '''

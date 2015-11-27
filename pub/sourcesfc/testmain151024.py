@@ -145,6 +145,7 @@ Pi.bnd_tegdeL, Pi.Bnds, Pi.Bodies= pointtopost.register_bodies_and_boundaries(Pi
 #get nodes of boundary condition
 Pi.boundaries=pointtopost.get_bnd_nodesbytedge(Pi.femmesh2,Pi.comp_topo_edges,Pi.bnd_tegdeL)
 
+#compound links colored according to bondary group
 pointtopost.visu_bnd_tedge(Pi.comp_topo_edges,Pi.bnd_tegdeL)
 
 Pi.bodyflag=get_elementbodysflag(Pi.femmesh2,Pi.compound0,Pi.faceN) 
