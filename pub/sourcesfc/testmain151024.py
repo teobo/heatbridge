@@ -126,13 +126,17 @@ Pi.femmesh2.Label=Pi.femmesh2name+"Pi"+str(Pieces.index(Pi))
 
 dn2L=pointtopost.checkfordoublenodes(Pi.femmesh2.FemMesh)
 #0 doubles 
-
-Pi.egdeN=pointtopost.getnodesbycompoundedge(Pi.femmesh2,Pi.comp_topo_edges)
-
-
-Pi.faceN=pointtopost.getnodesbycompoundface(Pi.femmesh2,Pi.compound0)
 #
 #doubles elimination end
+
+##
+#registering boundaries and body and preparing for export
+
+#get nodes of edges
+Pi.egdeN=pointtopost.getnodesbycompoundedge(Pi.femmesh2,Pi.comp_topo_edges)
+
+#get nodes of face=body
+Pi.faceN=pointtopost.getnodesbycompoundface(Pi.femmesh2,Pi.compound0)
 
 #register bodies and boundaries
 Pi.bnd_tegdeL=[[1,3],[18]]
@@ -196,7 +200,7 @@ Pi.solutionheader, Pi.solutiondata, Pi.headerline=pointtopost.read_ep_result(Pi.
 #coloring by Temperaturescale
 pointtopost.gradient_color_mesh(Pi.solutiondata[0][0],Pi.femmesh2)
 
-#annotate double nodes
+#annotate T-Results
 anno7=pointtopost.visu_annotate_note(Pi.femmesh2,[],["T:"+str(round(float(j),2)) for j in Pi.solutiondata[0][0]])
 anno7.Label="Ann_resultT_N_"+"Pi"+str(Pieces.index(Pi))
 anno7.ViewObject.hide()
