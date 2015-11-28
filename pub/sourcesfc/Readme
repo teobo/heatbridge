@@ -25,9 +25,9 @@ cd $FEMProjScripts
 
 Features:
 ----------
--meshing 2d with gmsh
+-multiregion 2d meshing with gmsh
 -export 2d mesh to elmer
--solving with elmer
+-fem solving with elmer
 -freecad pre and post processing
--demo script (60%: ready mesh adaption, result checking are missing)
+-demo script (60%: ready mesh adaption, result checking, piece batch processing are missing)
 -gui (under construction 5% ready)

@@ -45,199 +45,253 @@ class MeshGmsh(QtGui.QWidget):
         self.stage2trigger = QtGui.QPushButton(self)
         self.stage2trigger.setText("addVert(2)")
 
-        # Trigger button stage gmsh 1
-        self.stage2trigger = QtGui.QPushButton(self)
-        self.stage2trigger.setText("addVert(2)")
+        # Trigger button stage gmsh_mesh(3)
+        self.gmsh_meshing = QtGui.QPushButton(self)
+        self.gmsh_meshing.setText("gmsh_mesh(3)")
 
-        # Trigger button stage gmsh 2
-        self.stage2trigger = QtGui.QPushButton(self)
-        self.stage2trigger.setText("addVert(2)")
+        # Trigger annotate_all 4
+        self.annotate_all = QtGui.QPushButton(self)
+        self.annotate_all.setText("anno_all(4)")
 
-        # Trigger button stage gmsh 3
-        self.stage2trigger = QtGui.QPushButton(self)
-        self.stage2trigger.setText("addVert(2)")
+        # Trigger annotate_doubles 5
+        self.annotate_doubles = QtGui.QPushButton(self)
+        self.annotate_doubles.setText("anno_dbl(5)")
 
-        # Mesh dimension
-        self.rb_1D = QtGui.QRadioButton("  f 45D", self)
-        self.rb_2D = QtGui.QRadioButton("   2D", self)
-        self.rb_3D = QtGui.QRadioButton("   3D", self)
-        self.rb_3D.setChecked(QtCore.Qt.Checked)
-        # Optimized:
-        self.cb_optimized = QtGui.QCheckBox("    Optimized", self)
-        self.cb_optimized.setChecked(QtCore.Qt.Checked)
-        # Create Mechanical Analysis from mesh
-        self.cb_mec_anal = QtGui.QCheckBox("    Create Mechanical Analysis from mesh",self)
-        #self.cb_mec_anal.setChecked(QtCore.Qt.Checked)
-        # Algorithm:
-        self.l_algorithm = QtGui.QLabel("Algorithm ", self)
-        # Format:
-        self.l_format = QtGui.QLabel("Format ", self)
-        self.cmb_format = QtGui.QComboBox(self)
-        self.format_list = [self.tr('unv'), self.tr('stl'), self.tr('med')]
-        self.cmb_format.addItems(self.format_list)
-        self.cmb_format.setCurrentIndex(0)
-        self.stored_cmb_format_index = 0
-        # Element max size:
-        self.cb_max_elme_size = QtGui.QCheckBox("  Set maximum mesh element size",self)
-        self.cb_max_elme_size.setChecked(QtCore.Qt.Checked)
-        self.sb_max_element_size = QtGui.QDoubleSpinBox(self)
-        self.sb_max_element_size.setValue(5.0)
-        self.sb_max_element_size.setMaximum(10000000.0)
-        self.sb_max_element_size.setMinimum(0.00000001)
-        # Element min size:
-        self.cb_min_elme_size = QtGui.QCheckBox("  Set minimum mesh element size",self)
-        self.sb_min_element_size = QtGui.QDoubleSpinBox(self)
-        self.sb_min_element_size.setValue(1.0)
-        self.sb_min_element_size.setMaximum(10000000.0)
-        self.sb_min_element_size.setMinimum(0.00000001)
-        self.sb_min_element_size.setEnabled(False)
-        # Set Mesh Order:
-        self.cb_mesh_order = QtGui.QCheckBox("  mesh order",self)
-        self.cb_mesh_order.setChecked(QtCore.Qt.Checked)
-        self.sb_mesh_order = QtGui.QSpinBox(self)
-        self.sb_mesh_order.setValue(2)
-        self.sb_mesh_order.setMaximum(5)
-        self.sb_mesh_order.setMinimum(1)
-        # Other gmsh commands:
-        self.l_cmd_line_opt = QtGui.QLabel("Custom gmsh options ", self)
-        self.le_cmd_line_opt = QtGui.QLineEdit(self)
-        self.le_cmd_line_opt.setToolTip("Those option will be appended to gmsh command line call")
-        # Ok buttons:
-        self.okbox = QtGui.QDialogButtonBox(self)
-        self.okbox.setOrientation(QtCore.Qt.Horizontal)
-        self.okbox.setStandardButtons(QtGui.QDialogButtonBox.Cancel | QtGui.QDialogButtonBox.Ok)
+        # Trigger doubles_elimination 6
+        self.doubles_elimination = QtGui.QPushButton(self)
+        self.doubles_elimination.setText("del_dbls(6)")
+
+        # Trigger button register_bodies_boundaries 7
+        self.register_bodies_boundaries = QtGui.QPushButton(self)
+        self.register_bodies_boundaries.setText("reg_groups(7)")
+
+        # Trigger annotate_boundary_neighbor_and_edgegroup 8
+        self.annotate_boundary_neighbor_and_edgegroup = QtGui.QPushButton(self)
+        self.annotate_boundary_neighbor_and_edgegroup.setText("anno_neig(8)")
+
+        # Trigger export_to_elmer 9
+        self.export_to_elmer = QtGui.QPushButton(self)
+        self.export_to_elmer.setText("export(9)")
+
+        # Trigger writing_sif_file 10
+        self.writing_sif_file = QtGui.QPushButton(self)
+        self.writing_sif_file.setText("write_sif(10)")
+
+        # Trigger button fem_process 11
+        self.fem_process = QtGui.QPushButton(self)
+        self.fem_process.setText("fem_process(11)")
+
+        # Trigger button annotate_t_results 12
+        self.annotate_t_results = QtGui.QPushButton(self)
+        self.annotate_t_results.setText("anno_T(12)")
+
+        ## Trigger button stage gmsh 3
+        #self.stage2trigger = QtGui.QPushButton(self)
+        #self.stage2trigger.setText("addVert(2)")
+
+       ## Mesh dimension
+        #self.rb_1D = QtGui.QRadioButton("  f 45D", self)
+        #self.rb_2D = QtGui.QRadioButton("   2D", self)
+        #self.rb_3D = QtGui.QRadioButton("   3D", self)
+        #self.rb_3D.setChecked(QtCore.Qt.Checked)
+        ## Optimized:
+        #self.cb_optimized = QtGui.QCheckBox("    Optimized", self)
+        #self.cb_optimized.setChecked(QtCore.Qt.Checked)
+        ## Create Mechanical Analysis from mesh
+        #self.cb_mec_anal = QtGui.QCheckBox("    Create Mechanical Analysis from mesh",self)
+        ##self.cb_mec_anal.setChecked(QtCore.Qt.Checked)
+        ## Algorithm:
+        #self.l_algorithm = QtGui.QLabel("Algorithm ", self)
+        ## Format:
+        #self.l_format = QtGui.QLabel("Format ", self)
+        #self.cmb_format = QtGui.QComboBox(self)
+        #self.format_list = [self.tr('unv'), self.tr('stl'), self.tr('med')]
+        #self.cmb_format.addItems(self.format_list)
+        #self.cmb_format.setCurrentIndex(0)
+        #self.stored_cmb_format_index = 0
+        ## Element max size:
+        #self.cb_max_elme_size = QtGui.QCheckBox("  Set maximum mesh element size",self)
+        #self.cb_max_elme_size.setChecked(QtCore.Qt.Checked)
+        #self.sb_max_element_size = QtGui.QDoubleSpinBox(self)
+        #self.sb_max_element_size.setValue(5.0)
+        #self.sb_max_element_size.setMaximum(10000000.0)
+        #self.sb_max_element_size.setMinimum(0.00000001)
+        ## Element min size:
+        #self.cb_min_elme_size = QtGui.QCheckBox("  Set minimum mesh element size",self)
+        #self.sb_min_element_size = QtGui.QDoubleSpinBox(self)
+        #self.sb_min_element_size.setValue(1.0)
+        #self.sb_min_element_size.setMaximum(10000000.0)
+        #self.sb_min_element_size.setMinimum(0.00000001)
+        #self.sb_min_element_size.setEnabled(False)
+        ## Set Mesh Order:
+        #self.cb_mesh_order = QtGui.QCheckBox("  mesh order",self)
+        #self.cb_mesh_order.setChecked(QtCore.Qt.Checked)
+        #self.sb_mesh_order = QtGui.QSpinBox(self)
+        #self.sb_mesh_order.setValue(2)
+        #self.sb_mesh_order.setMaximum(5)
+        #self.sb_mesh_order.setMinimum(1)
+        ## Other gmsh commands:
+        #self.l_cmd_line_opt = QtGui.QLabel("Custom gmsh options ", self)
+        #self.le_cmd_line_opt = QtGui.QLineEdit(self)
+        #self.le_cmd_line_opt.setToolTip("Those option will be appended to gmsh command line call")
+        ## Ok buttons:
+        #self.okbox = QtGui.QDialogButtonBox(self)
+        #self.okbox.setOrientation(QtCore.Qt.Horizontal)
+        #self.okbox.setStandardButtons(QtGui.QDialogButtonBox.Cancel | QtGui.QDialogButtonBox.Ok)
         # Layout:
-        loffs=2 #layout offset
+        loffs=12 #layout offset
         layout = QtGui.QGridLayout()
         layout.addWidget(self.stage1trigger, 0, 1)
         layout.addWidget(self.stage2trigger, 0, 2)
+        layout.addWidget(self.gmsh_meshing, 1, 1)
+        layout.addWidget(self.annotate_all, 1, 2)
+        layout.addWidget(self.annotate_doubles, 2, 1)
+        layout.addWidget(self.doubles_elimination, 2, 2)
+        layout.addWidget(self.register_bodies_boundaries, 3, 1)
+        layout.addWidget(self.annotate_boundary_neighbor_and_edgegroup, 3, 2)
+        layout.addWidget(self.export_to_elmer, 4, 1)
+        layout.addWidget(self.writing_sif_file, 4, 2)
+        layout.addWidget(self.fem_process, 5, 1)
+        layout.addWidget(self.annotate_t_results, 5, 2)
         layout.addWidget(self.cmb_source1, 0, 0)
-        layout.addWidget(self.rb_1D, loffs+1, 0)
-        layout.addWidget(self.rb_2D, loffs+1, 1)
-        layout.addWidget(self.rb_3D, loffs+2, 0)
-        layout.addWidget(self.cb_optimized, loffs+2, 1)
-        layout.addWidget(self.l_algorithm, loffs+3, 0)
-        layout.addWidget(self.l_format, loffs+4, 0)
-        layout.addWidget(self.cmb_format, loffs+4, 1)
-        layout.addWidget(self.cb_max_elme_size, loffs+5, 0)
-        layout.addWidget(self.sb_max_element_size, loffs+5, 1)
-        layout.addWidget(self.cb_min_elme_size, loffs+6, 0)
-        layout.addWidget(self.sb_min_element_size, loffs+6, 1)
-        layout.addWidget(self.cb_mesh_order, loffs+7, 0)
-        layout.addWidget(self.sb_mesh_order, loffs+7, 1)
-        layout.addWidget(self.cb_mec_anal, loffs+8, 0)
-        layout.addWidget(self.l_cmd_line_opt, loffs+9, 0)
-        layout.addWidget(self.le_cmd_line_opt, loffs+9, 1)
-        layout.addWidget(self.okbox, loffs+10, 1)
+        #layout.addWidget(self.rb_1D, loffs+1, 0)
+        #layout.addWidget(self.rb_2D, loffs+1, 1)
+        #layout.addWidget(self.rb_3D, loffs+2, 0)
+        #layout.addWidget(self.cb_optimized, loffs+2, 1)
+        #layout.addWidget(self.l_algorithm, loffs+3, 0)
+        #layout.addWidget(self.l_format, loffs+4, 0)
+        #layout.addWidget(self.cmb_format, loffs+4, 1)
+        #layout.addWidget(self.cb_max_elme_size, loffs+5, 0)
+        #layout.addWidget(self.sb_max_element_size, loffs+5, 1)
+        #layout.addWidget(self.cb_min_elme_size, loffs+6, 0)
+        #layout.addWidget(self.sb_min_element_size, loffs+6, 1)
+        #layout.addWidget(self.cb_mesh_order, loffs+7, 0)
+        #layout.addWidget(self.sb_mesh_order, loffs+7, 1)
+        #layout.addWidget(self.cb_mec_anal, loffs+8, 0)
+        #layout.addWidget(self.l_cmd_line_opt, loffs+9, 0)
+        #layout.addWidget(self.le_cmd_line_opt, loffs+9, 1)
+        #layout.addWidget(self.okbox, loffs+10, 1)
         self.setLayout(layout)
         # Connectors:
-        QtCore.QObject.connect(self.okbox, QtCore.SIGNAL("accepted()"), self.proceed)
-        QtCore.QObject.connect(self.okbox, QtCore.SIGNAL("rejected()"), self.cancel)
+        #QtCore.QObject.connect(self.okbox, QtCore.SIGNAL("accepted()"), self.proceed)
+        #QtCore.QObject.connect(self.okbox, QtCore.SIGNAL("rejected()"), self.cancel)
         self.stage1trigger.clicked.connect(self.gui_dinDINENISO10211_1topoints)
         self.stage2trigger.clicked.connect(self.add_points_in_compound)
-        self.cb_max_elme_size.stateChanged.connect(self.max_size_state)
-        self.cb_min_elme_size.stateChanged.connect(self.min_size_state)
-        self.cb_mesh_order.stateChanged.connect(self.mesh_order_state)
+        self.gmsh_meshing.clicked.connect(self.gui_gmsh_meshing)
+        self.annotate_all.clicked.connect(self.gui_annotate_all)
+        self.annotate_doubles.clicked.connect(self.gui_annotate_doubles)
+        self.doubles_elimination.clicked.connect(self.gui_doubles_elimination)
+        self.register_bodies_boundaries.clicked.connect(self.gui_register_bodies_boundaries)
+        self.annotate_boundary_neighbor_and_edgegroup.clicked.connect(self.gui_annotate_boundary_neighbor_and_edgegroup)
+        self.export_to_elmer.clicked.connect(self.gui_export_to_elmer)
+        self.writing_sif_file.clicked.connect(self.gui_writing_sif_file)
+        self.fem_process.clicked.connect(self.gui_fem_process)
+        self.annotate_t_results.clicked.connect(self.gui_annotate_t_results)
+        #self.stage2trigger.clicked.connect(self.add_points_in_compound)
+        #self.stage2trigger.clicked.connect(self.add_points_in_compound)
+        #self.cb_max_elme_size.stateChanged.connect(self.max_size_state)
+        #self.cb_min_elme_size.stateChanged.connect(self.min_size_state)
+        #self.cb_mesh_order.stateChanged.connect(self.mesh_order_state)
         
-    def max_size_state(self, state):   
-        if state == QtCore.Qt.Checked:
-            self.sb_max_element_size.setEnabled(True)
-        else:
-            self.sb_max_element_size.setEnabled(False)
+    #def max_size_state(self, state):   
+        #if state == QtCore.Qt.Checked:
+            #self.sb_max_element_size.setEnabled(True)
+        #else:
+            #self.sb_max_element_size.setEnabled(False)
 
-    def min_size_state(self, state):   
-        if state == QtCore.Qt.Checked:
-            self.sb_min_element_size.setEnabled(True)
-        else:
-            self.sb_min_element_size.setEnabled(False)
+    #def min_size_state(self, state):   
+        #if state == QtCore.Qt.Checked:
+            #self.sb_min_element_size.setEnabled(True)
+        #else:
+            #self.sb_min_element_size.setEnabled(False)
             
-    def mesh_order_state(self, state):   
-        if state == QtCore.Qt.Checked:
-            self.sb_mesh_order.setEnabled(True)
-        else:
-            self.sb_mesh_order.setEnabled(False)
+    #def mesh_order_state(self, state):   
+        #if state == QtCore.Qt.Checked:
+            #self.sb_mesh_order.setEnabled(True)
+        #else:
+            #self.sb_mesh_order.setEnabled(False)
 
-    def open_gmsh_options(self):
-        import webbrowser
-        webbrowser.open('http://www.geuz.org/gmsh/doc/texinfo/gmsh.html#Command_002dline-options')
+    #def open_gmsh_options(self):
+        #import webbrowser
+        #webbrowser.open('http://www.geuz.org/gmsh/doc/texinfo/gmsh.html#Command_002dline-options')
 
-    def cancel(self):
-        self.close()
-        d.close()
+    #def cancel(self):
+        #self.close()
+        #d.close()
 
-    def proceed(self):
-        temp_file = tempfile.mkstemp(suffix='.step')[1]
-        selection = FreeCADGui.Selection.getSelection()
-        if not selection:
-            QtGui.QMessageBox.critical(None, "GMSHMesh macro", "An object has to be selected to run gmsh!")
-            return
-        # Export a part in step format
-        ImportGui.export(selection, temp_file)
-        selection_name = selection[0].Name
-        # Mesh temporaly file
-        file_format = self.cmb_format.currentText()
-        temp_mesh_file = tempfile.tempdir + '/' + selection_name + '_Mesh.' + file_format
-        # OPTIONS GMSH:
-        clmax = self.sb_max_element_size.text()
-        clmin = self.sb_min_element_size.text()
-        cmd_line_opt = self.le_cmd_line_opt.text()
-        algo = self.cmb_source1.currentText()
-        mesh_order = self.sb_mesh_order.text()
+    #def proceed(self):
+        #temp_file = tempfile.mkstemp(suffix='.step')[1]
+        #selection = FreeCADGui.Selection.getSelection()
+        #if not selection:
+            #QtGui.QMessageBox.critical(None, "GMSHMesh macro", "An object has to be selected to run gmsh!")
+            #return
+        ## Export a part in step format
+        #ImportGui.export(selection, temp_file)
+        #selection_name = selection[0].Name
+        ## Mesh temporaly file
+        #file_format = self.cmb_format.currentText()
+        #temp_mesh_file = tempfile.tempdir + '/' + selection_name + '_Mesh.' + file_format
+        ## OPTIONS GMSH:
+        #clmax = self.sb_max_element_size.text()
+        #clmin = self.sb_min_element_size.text()
+        #cmd_line_opt = self.le_cmd_line_opt.text()
+        #algo = self.cmb_source1.currentText()
+        #mesh_order = self.sb_mesh_order.text()
 
-        if self.cb_optimized.isChecked():
-            cmd_optimize = ' -optimize'
-        else:
-            cmd_optimize = ''
+        #if self.cb_optimized.isChecked():
+            #cmd_optimize = ' -optimize'
+        #else:
+            #cmd_optimize = ''
 
-        if self.rb_3D.isChecked():
-            dim = ' -3 '
-        if self.rb_2D.isChecked():
-            dim = ' -2 '
-        if self.rb_1D.isChecked():
-            dim = ' -1 '
-        if self.cb_max_elme_size.isChecked():
-            max_size = ' -clmax ' + clmax
-        else:
-            max_size = ''
-        if self.cb_min_elme_size.isChecked():
-            min_size = ' -clmin ' + clmin
-        else:
-            min_size = ''
-        if self.cb_mesh_order.isChecked():
-            order = ' -order ' + mesh_order
-        else:
-            order = ''
+        #if self.rb_3D.isChecked():
+            #dim = ' -3 '
+        #if self.rb_2D.isChecked():
+            #dim = ' -2 '
+        #if self.rb_1D.isChecked():
+            #dim = ' -1 '
+        #if self.cb_max_elme_size.isChecked():
+            #max_size = ' -clmax ' + clmax
+        #else:
+            #max_size = ''
+        #if self.cb_min_elme_size.isChecked():
+            #min_size = ' -clmin ' + clmin
+        #else:
+            #min_size = ''
+        #if self.cb_mesh_order.isChecked():
+            #order = ' -order ' + mesh_order
+        #else:
+            #order = ''
 
-        options = ' -algo ' + algo + max_size + min_size + cmd_optimize + order + cmd_line_opt
-        # RUN GMSH
-        command = gmsh_bin + ' ' + temp_file + dim + '-format ' + file_format + ' -o ' + temp_mesh_file  + '' + options
-        FreeCAD.Console.PrintMessage("Running: {}".format(command))
-        try:
-            output = subprocess.check_output([command, '-1'], shell=True, stderr=subprocess.STDOUT,)
-            FreeCAD.Console.PrintMessage(output)
-            if file_format in ('unv', 'med'):
-                Fem.insert(temp_mesh_file, FreeCAD.ActiveDocument.Name)
-            if file_format == 'stl':
-                Mesh.insert(temp_mesh_file, FreeCAD.ActiveDocument.Name)
-            if self.cb_mec_anal.isChecked():
-              FMesh = App.activeDocument().ActiveObject
-              MechanicalAnalysis.makeMechanicalAnalysis('MechanicalAnalysis')
-              FemGui.setActiveAnalysis(App.activeDocument().ActiveObject)
-              App.activeDocument().ActiveObject.Member = App.activeDocument().ActiveObject.Member + [FMesh]
-            if self.rb_1D.isChecked():
-              FMeshG = Gui.ActiveDocument.ActiveObject
-              FMeshG.DisplayMode = "Elements & Nodes"
-        except:
-            FreeCAD.Console.PrintError("Unexpected error in GMSHMesh macro: {}".format(sys.exc_info()[0]))
-        finally:
-            try:
-                del temp_file
-            except:
-                pass
-            try:
-                del temp_mesh_file
-            except:
-                pass
+        #options = ' -algo ' + algo + max_size + min_size + cmd_optimize + order + cmd_line_opt
+        ## RUN GMSH
+        #command = gmsh_bin + ' ' + temp_file + dim + '-format ' + file_format + ' -o ' + temp_mesh_file  + '' + options
+        #FreeCAD.Console.PrintMessage("Running: {}".format(command))
+        #try:
+            #output = subprocess.check_output([command, '-1'], shell=True, stderr=subprocess.STDOUT,)
+            #FreeCAD.Console.PrintMessage(output)
+            #if file_format in ('unv', 'med'):
+                #Fem.insert(temp_mesh_file, FreeCAD.ActiveDocument.Name)
+            #if file_format == 'stl':
+                #Mesh.insert(temp_mesh_file, FreeCAD.ActiveDocument.Name)
+            #if self.cb_mec_anal.isChecked():
+              #FMesh = App.activeDocument().ActiveObject
+              #MechanicalAnalysis.makeMechanicalAnalysis('MechanicalAnalysis')
+              #FemGui.setActiveAnalysis(App.activeDocument().ActiveObject)
+              #App.activeDocument().ActiveObject.Member = App.activeDocument().ActiveObject.Member + [FMesh]
+            #if self.rb_1D.isChecked():
+              #FMeshG = Gui.ActiveDocument.ActiveObject
+              #FMeshG.DisplayMode = "Elements & Nodes"
+        #except:
+            #FreeCAD.Console.PrintError("Unexpected error in GMSHMesh macro: {}".format(sys.exc_info()[0]))
+        #finally:
+            #try:
+                #del temp_file
+            #except:
+                #pass
+            #try:
+                #del temp_mesh_file
+            #except:
+                #pass
 
     def gui_dinDINENISO10211_1topoints(self):
 	print "hi"
@@ -252,33 +306,150 @@ class MeshGmsh(QtGui.QWidget):
 
     def gui_gmsh_meshing(self):
 	pass
+	print "gmsh meshing .."
+	Pi.ng2D.NGParamSetMaxSize="2.2"
+	Pi.ng2D.NGParamSetMinSize="0.1" 
+	Pi.ng2D.gmshalgoname="auto"
+	Pi.femmesh1=pointtopost.gmshmesh(Pi.compound1, Pi.ng2D)
+	Pi.femmesh1.Label=Pi.femmesh1name+"Pi"+str(Pieces.index(Pi))
+
+	print "make mb egdes"
+	Pi.comp_mb_edges=pointtopost.make_mb_edge(Pi.femmesh1)
+	Pi.comp_mb_edges.Label=Pi.comp_mb_edgesstr+"Pi"+str(Pieces.index(Pi))
+	
+	Pi.comp_topo_edges=pointtopost.make_topo_edge(Pi.compound1)
+	Pi.comp_topo_edges.Label=Pi.comp_topo_edgesstr+"Pi"+str(Pieces.index(Pi))
+
 
     def gui_annotate_all(self):
-	pass
+	#annotate all elements
+	anno1=pointtopost.visu_annotate_element(Pi.femmesh1.FemMesh)
+	anno1.Label="Ann_all_Face_"+"Pi"+str(Pieces.index(Pi))
+	anno1.ViewObject.hide()
+	anno1.ViewObject.show()
+	anno1.ViewObject.hide()
+
+	#annotate all nodes
+	anno2=pointtopost.visu_annotate_note(Pi.femmesh1)
+	anno2.Label="Ann_all_N_"+"Pi"+str(Pieces.index(Pi))
+	anno2.ViewObject.hide()
+	anno2.ViewObject.show()
+	anno2.ViewObject.hide()
+
+	#annotate all mesh boundary edges
+	anno3=pointtopost.visu_annotate_edge_element(Pi.femmesh1.FemMesh)
+	anno3.Label="Ann_mb_E_"+"Pi"+str(Pieces.index(Pi))
+	anno3.ViewObject.hide()
+	anno3.ViewObject.show()
+	anno3.ViewObject.hide()
+
 
     def gui_annotate_doubles(self):
-	pass
+	#doubles elimination start
+	#
+	Pi.dnL=pointtopost.checkfordoublenodes(Pi.femmesh1.FemMesh)
+	#annotate double nodes
+	anno4=pointtopost.visu_annotate_note(Pi.femmesh1,Pi.dnL[0])
+	anno4.Label="Ann_double_N_"+"Pi"+str(Pieces.index(Pi))
+	anno4.ViewObject.hide()
+	anno4.ViewObject.show()
+	anno4.ViewObject.hide()
+	Pi.dnE=pointtopost.finddoubleedges(Pi.femmesh1)
+
+	#annotate double edges
+	anno5=pointtopost.visu_annotate_edge_element(Pi.femmesh1.FemMesh, [i[3] for i in Pi.dnE])
+	anno5.Label="Ann_double_E_"+"Pi"+str(Pieces.index(Pi))
+	anno5.ViewObject.hide()
+	anno5.ViewObject.show()
+	anno5.ViewObject.hide()
+
 
     def gui_doubles_elimination(self):
+	Pi.dnL=pointtopost.checkfordoublenodes(Pi.femmesh1.FemMesh)
+	Pi.dnE=pointtopost.finddoubleedges(Pi.femmesh1)
+	Pi.edgeL=mark_deleted_edges(Pi.femmesh1,[i[3] for i in Pi.dnE])
+
+	Pi.nodeL=mark_deleted_nodes(Pi.femmesh1,Pi.dnL[2])
+
+	Pi.facesE=pointtopost.rereference_elments(Pi.femmesh1,Pi.dnL[2],Pi.edgeL)
+
+	Pi.femmesh2=pointtopost.rebuild_mesh(Pi.femmesh1,Pi.nodeL,Pi.facesE)
+	Pi.femmesh2.Label=Pi.femmesh2name+"Pi"+str(Pieces.index(Pi))
+
+
+	dn2L=pointtopost.checkfordoublenodes(Pi.femmesh2.FemMesh)
+	print dn2L
+	#0 doubles 
+	#
+	#doubles elimination end
 	pass
 
     def gui_register_bodies_boundaries(self):
+	#get nodes of edges
+	Pi.egdeN=pointtopost.getnodesbycompoundedge(Pi.femmesh2,Pi.comp_topo_edges)
+
+	#get nodes of face=body
+	Pi.faceN=pointtopost.getnodesbycompoundface(Pi.femmesh2,Pi.compound0)
+
+	#register bodies and boundaries
+	Pi.bnd_tegdeL=[[1,3],[18]]
+	Pi.bnd_tegdeL, Pi.Bnds, Pi.Bodies= pointtopost.register_bodies_and_boundaries(Pi.bnd_tegdeL,Pi.Bodies,Pi.Bnds,Pi.compound0)
+
+	#get nodes of boundary condition
+	Pi.boundaries=pointtopost.get_bnd_nodesbytedge(Pi.femmesh2,Pi.comp_topo_edges,Pi.bnd_tegdeL)
+
+	#compound links colored according to bondary group
+	pointtopost.visu_bnd_tedge(Pi.comp_topo_edges,Pi.bnd_tegdeL)
+
+	Pi.bodyflag=get_elementbodysflag(Pi.femmesh2,Pi.compound0,Pi.faceN) 
+
+	Pi.egdegroup=pointtopost.get_edgegroup_and_neighbor(Pi.femmesh2,Pi.compound0,Pi.faceN,Pi.boundaries)
 	pass
 
     def gui_annotate_boundary_neighbor_and_edgegroup(self):
 	pass
+	#annotate boundary neighbor cells
+	anno5=pointtopost.visu_annotate_element(Pi.femmesh2.FemMesh,Pi.egdegroup[1],Pi.bodyflag)
+	anno5.Label="Ann_bnd_neigh_cells_"+"Pi"+str(Pieces.index(Pi))
+	anno5.ViewObject.hide()
+	anno5.ViewObject.show()
+	anno5.ViewObject.hide()
+
+	#annotate boundary edges with edgegroup
+	anno6=pointtopost.visu_annotate_edge_element(Pi.femmesh2.FemMesh,[],Pi.egdegroup[0])
+	anno6.Label="Ann_bndgroup_E_"+"Pi"+str(Pieces.index(Pi))
+	anno6.ViewObject.hide()
+	anno6.ViewObject.show()
+	anno6.ViewObject.hide()
+
+	#mesh preperation done
 
     def gui_export_to_elmer(self):
+	#writing sif file
+	s=pointtopost.write_elmer_sif_file(Pi.siftemplfile,Pi.siffile,Pi.Bodies,Pi.Bnds)
 	pass
 
     def gui_writing_sif_file(self):
+	pointtopost.process_elmer_sif_file(Pi.siffile,Pi.epsourcefile,Pi.fempath,1)
+
 	pass
 	
     def gui_fem_process(self):
+	Pi.solutionheader, Pi.solutiondata, Pi.headerline=pointtopost.read_ep_result(Pi.epfile)
+
 	pass
 
     def gui_annotate_t_results(self):
 	pass
+	#coloring by Temperaturescale
+	pointtopost.gradient_color_mesh(Pi.solutiondata[0][0],Pi.femmesh2)
+
+	#annotate T-Results
+	anno7=pointtopost.visu_annotate_note(Pi.femmesh2,[],["T:"+str(round(float(j),2)) for j in Pi.solutiondata[0][0]])
+	anno7.Label="Ann_resultT_N_"+"Pi"+str(Pieces.index(Pi))
+	anno7.ViewObject.hide()
+	anno7.ViewObject.show()
+	anno7.ViewObject.hide()
 
 
 #init pointtopost
