@@ -13,7 +13,7 @@ gmsh_bin = "/usr/bin/gmsh"
 from PySide import QtGui, QtCore
 import Fem
 import FemGui
-import MechanicalAnalysis
+import FemAnalysis
 import FreeCAD
 import FreeCADGui
 import ImportGui
@@ -34,36 +34,70 @@ class MeshGmsh(QtGui.QWidget):
     def initUI(self):
 	#Stage 1
 	self.cmb_source1 = QtGui.QComboBox(self)
-        self.algorithm_list = [self.tr('DINENISO10211_1'), self.tr('selection'), ]
+        self.algorithm_list = [self.tr('DINENISO10211_1'), self.tr('...10211_2 2bimplemented'), ]
         self.cmb_source1.addItems(self.algorithm_list)
         self.cmb_source1.setCurrentIndex(0)
         # Trigger button stage 1
         self.stage1trigger = QtGui.QPushButton(self)
         self.stage1trigger.setText("mkface(1)")
+        self.stage1trigger.setToolTip("construct, prepare workflow piece\ncompound from demo pointlist \n in listDocuments?newDocument(fc_docname) \n makefacefrompointsL")
 
         # Trigger button stage 2
         self.stage2trigger = QtGui.QPushButton(self)
         self.stage2trigger.setText("addVert(2)")
+        self.stage2trigger.setToolTip("prepare selected or workflow compound \nwith additional points for conforming meshing in next stage ")
 
         # Trigger button stage gmsh_mesh(3)
         self.gmsh_meshing = QtGui.QPushButton(self)
         self.gmsh_meshing.setText("gmsh_mesh(3)")
-
-        # Trigger annotate_all 4
+        self.gmsh_meshing.setToolTip("mesh selected or workflow piece to femmesh object\n using external solver gmsh: \nhttp://geuz.org/gmsh/doc/texinfo/gmsh.html#Mesh\nline = self.le_cmd_line_opt_mesh.text() \nMaxSize=,MinSize,algoname\n -gmshmesh\n apt-get install gmsh\n -make_topo_edge :visualize mesh edges") 
+	
+	# Trigger annotate_all 4
         self.annotate_all = QtGui.QPushButton(self)
         self.annotate_all.setText("anno_all(4)")
-
+	self.annotate_all.setToolTip("A:no workflow, just visus\n B:annotate nodes elements edges, activate by hitting space in combo view\n \
+	in general is it easier (then spending time in\n programming a gui for debug and demo purposes and\n for the user learning doubtful limiting syntax)\n doing the accessing (whatever!) visualization\n (annotation) from the command line\n \
+	look for templates in the demo scripts:\n anno7=pointtopost.visu_annotate_note(Pi.femmesh2,[],['T:'+str(round(float(j),2))\n \ for j in Pi.solutiondata[0][0]]) \n anno7.Label='Ann_resultT_N_'+\n \'Pi'+str(Pieces.index(Pi))\n \
+	Systematic: There the pattern: a) selected mesh\n \ things (1nodes, 2elements, 3mesh boundary edges\n \, 4topo faces=bodies, 5topo edges) b) selection of the former: all, gui selected, lists, neighbors\n \ elements of edges, double nodes, double edges,\n \ etc c) you got according to case of a \n (modifiable) annotation strings which is\n \ 1:list_id,id,Temperature, any_result_value 2:\n \
+	list,id,k_value, Materialname,body_id,neighbor\n \
+	nodes,Energyflux,whatever_resultvalue\n \
+	3:listid,id,external Temperature,Rsi\n \
+	-value,Boundary-group, etc\n \
+	d) Then you got to consider occasions or stages\n \
+	when you need and that require certain annotation\n  style: registering boundary conditions (7),\n \
+	checking for mesh inconsistancy such as doubles\n \
+	(6), postprocessing (12), debugging the\n \
+	exporter/importer for a solver(9)\n \
+	For example the template above is a) nodes b) \n all c)annotate Temperature results\n \
+	d)postprocessing \n \
+	Hint: activate anno-stack with space key\n \
+	Hint: set digit 2 in general flag vector to enable taking sources form arbitrary femmesh objects")
         # Trigger annotate_doubles 5
+        
         self.annotate_doubles = QtGui.QPushButton(self)
         self.annotate_doubles.setText("anno_dbl(5)")
+        self.annotate_doubles.setToolTip("A)Workflow: calculate result for next stage:\n -checkfordoublenodes\n -finddoubleedges \n  B) Visu: -compare tooltip anno_all(4)/n -visu_annotate_note\n  no double found? all will be annotated..\n-visu_annotate_edge_element")
+
 
         # Trigger doubles_elimination 6
         self.doubles_elimination = QtGui.QPushButton(self)
         self.doubles_elimination.setText("del_dbls(6)")
+        self.doubles_elimination.setToolTip("and remshing to a new object: Pi.femmesh2")
 
         # Trigger button register_bodies_boundaries 7
         self.register_bodies_boundaries = QtGui.QPushButton(self)
         self.register_bodies_boundaries.setText("reg_groups(7)")
+        self.register_bodies_boundaries.setToolTip("prototype passthroug: \n1)assign default boundaries to internal structure\n Pi.bnd_tegdeL, Pi.Bnds, Pi.Bodies= pointtopost.register_bodies_and_boundaries\n2)calculate results of boundary assignment for next stage (export to solver)\n get_edgegroup_and_neighbor \n get_elementbodysflag\n get_bnd_nodesbytedge\n getnodesbycompoundface\ngetnodesbycompoundedge\n3) visualize topo edge\n visu_bnd_tedge")
+
+        # Trigger button register_bodies_boundaries 7
+        self.init_reg_bnd = QtGui.QPushButton(self)
+        self.init_reg_bnd.setText("init_reg(7.1)")
+        self.init_reg_bnd.setToolTip("initial registering hardcoded defaults\n of boundary conditions): \n1)Dataflow model\n csv--spreadsheet--pi--gui\n here:write defaults to: csv,spreadsheet,pi,gui\n -visu_bnd_bodies \n -visu_bnd_tedge \n -open_spreadsh_csv(write \n .write_bnd_pi_to_spreadsheet")
+
+        # Trigger button register_bodies_boundaries 7
+        self.reg_save = QtGui.QPushButton(self)
+        self.reg_save.setText("reg_save(7.2)")
+        self.reg_save.setToolTip("A:save boundaries from spreadsheet\n A1:flag 3 set:read from cvs \n1)Dataflow model\n csv--spreadsheet--pi--gui\n here:write spreadsheet to: csv,pi,gui\n - \n -visu_bnd_tedge \n  \n B: prepare calculation for next stage")
 
         # Trigger annotate_boundary_neighbor_and_edgegroup 8
         self.annotate_boundary_neighbor_and_edgegroup = QtGui.QPushButton(self)
@@ -84,6 +118,20 @@ class MeshGmsh(QtGui.QWidget):
         # Trigger button annotate_t_results 12
         self.annotate_t_results = QtGui.QPushButton(self)
         self.annotate_t_results.setText("anno_T(12)")
+        
+        # Trigger button annotate_t_results 13
+        self.deletesel = QtGui.QPushButton(self)
+        self.deletesel.setText("del sel")
+        self.deletesel.setToolTip("delete selected (default) objects with child")
+
+        self.le_cmd_line_opt_flag = QtGui.QLineEdit(self)
+        self.le_cmd_line_opt_flag.setToolTip("this general flag controlls the workflow.\n last digit 1: gui-selection regarded for workflow(1 on, 0 off) \n penultimate digit 2: gui-selection of femmeshes regarded for visualisation(1 on, 0 off) \n3: read boundary conditions(stage7) (0 from spreadsheet, 1 from cvs-file\neg. 100101 means selection based workflow on, selection based gui visualization off,boundary condition read from file\n examples: Workflow from demo pointlist (1) (2) (3) .. \n from selected object (2) (3)..")
+        self.le_cmd_line_opt_flag.setText("100001")
+
+        self.le_cmd_line_opt_mesh = QtGui.QLineEdit(self)
+        self.le_cmd_line_opt_mesh.setToolTip("mesh option (3)\n 1: gmsh =2.2 =0.1 =auto\n(maxsize, minsize, algo or:\ngmsh =1.2 =0.05 =auto \n2:netgen radius to be implemented ")
+        self.le_cmd_line_opt_mesh.setText("gmsh =2.2 =0.1 =auto")
+
 
         ## Trigger button stage gmsh 3
         #self.stage2trigger = QtGui.QPushButton(self)
@@ -149,11 +197,16 @@ class MeshGmsh(QtGui.QWidget):
         layout.addWidget(self.doubles_elimination, 2, 2)
         layout.addWidget(self.register_bodies_boundaries, 3, 1)
         layout.addWidget(self.annotate_boundary_neighbor_and_edgegroup, 3, 2)
-        layout.addWidget(self.export_to_elmer, 4, 1)
-        layout.addWidget(self.writing_sif_file, 4, 2)
-        layout.addWidget(self.fem_process, 5, 1)
-        layout.addWidget(self.annotate_t_results, 5, 2)
+        layout.addWidget(self.init_reg_bnd, 4, 1)
+        layout.addWidget(self.reg_save, 4, 2)
+        layout.addWidget(self.export_to_elmer, 5, 1)
+        layout.addWidget(self.writing_sif_file, 5, 2)
+        layout.addWidget(self.fem_process, 6, 1)
+        layout.addWidget(self.annotate_t_results, 6, 2)
         layout.addWidget(self.cmb_source1, 0, 0)
+        layout.addWidget(self.le_cmd_line_opt_flag, 1, 0)
+        layout.addWidget(self.le_cmd_line_opt_mesh, 2, 0)
+        layout.addWidget(self.deletesel, 7, 2)
         #layout.addWidget(self.rb_1D, loffs+1, 0)
         #layout.addWidget(self.rb_2D, loffs+1, 1)
         #layout.addWidget(self.rb_3D, loffs+2, 0)
@@ -182,11 +235,14 @@ class MeshGmsh(QtGui.QWidget):
         self.annotate_doubles.clicked.connect(self.gui_annotate_doubles)
         self.doubles_elimination.clicked.connect(self.gui_doubles_elimination)
         self.register_bodies_boundaries.clicked.connect(self.gui_register_bodies_boundaries)
+        self.init_reg_bnd.clicked.connect(self.gui_init_reg_bnd) 
+        self.reg_save.clicked.connect(self.gui_reg_save) 
         self.annotate_boundary_neighbor_and_edgegroup.clicked.connect(self.gui_annotate_boundary_neighbor_and_edgegroup)
         self.export_to_elmer.clicked.connect(self.gui_export_to_elmer)
         self.writing_sif_file.clicked.connect(self.gui_writing_sif_file)
         self.fem_process.clicked.connect(self.gui_fem_process)
         self.annotate_t_results.clicked.connect(self.gui_annotate_t_results)
+        self.deletesel.clicked.connect(self.gui_removeobjectswithchildren)
         #self.stage2trigger.clicked.connect(self.add_points_in_compound)
         #self.stage2trigger.clicked.connect(self.add_points_in_compound)
         #self.cb_max_elme_size.stateChanged.connect(self.max_size_state)
@@ -294,28 +350,47 @@ class MeshGmsh(QtGui.QWidget):
                 #pass
 
     def gui_dinDINENISO10211_1topoints(self):
-	print "hi"
+	#print "hi"
+	if len(set(FreeCAD.listDocuments())&set([Pi.fc_docname]))==0:
+	    FreeCAD.newDocument(Pi.fc_docname)
 	Pi.occpointsL=pointtopost.dinDINENISO10211_1topoints()
 	print "draw faces"
 	Pi.compound0=makefacefrompointsL(Pi.occpointsL)
 	Pi.compound0.Label=Pi.compound0name+"Pi"+str(Pieces.index(Pi))
 
     def add_points_in_compound(self):
+	cmd_line_opt = self.le_cmd_line_opt_flag.text()
+	#print cmd_line_opt
+	selection = FreeCADGui.Selection.getSelection()
+	if selection and (cmd_line_opt[len(cmd_line_opt)-1]=="1") :
+	    Pi.compound0=selection[0]
+	    print "read from selection"
+	#last index 1? use selection
 	Pi.compound1=pointtopost.addpointstoface(Pi.compound0)
 	Pi.compound1.Label=Pi.compound1name+"Pi"+str(Pieces.index(Pi))
 
     def gui_gmsh_meshing(self):
-	pass
+	import re
+	line = self.le_cmd_line_opt_mesh.text()
+	args=[i for i in re.split('\n|\ |:|=',line) if i]
 	print "gmsh meshing .."
-	Pi.ng2D.NGParamSetMaxSize="2.2"
-	Pi.ng2D.NGParamSetMinSize="0.1" 
-	Pi.ng2D.gmshalgoname="auto"
+	print args
+	if line=="":
+	    Pi.ng2D.NGParamSetMaxSize="2.2"
+	    Pi.ng2D.NGParamSetMinSize="0.1" 
+	    Pi.ng2D.gmshalgoname="auto"
+	if args[0]=="gmsh":
+	    Pi.ng2D.NGParamSetMaxSize=args[1]
+	    Pi.ng2D.NGParamSetMinSize=args[2] 
+	    Pi.ng2D.gmshalgoname=args[3]
+	    print args[2]
 	Pi.femmesh1=pointtopost.gmshmesh(Pi.compound1, Pi.ng2D)
 	Pi.femmesh1.Label=Pi.femmesh1name+"Pi"+str(Pieces.index(Pi))
 
 	print "make mb egdes"
-	Pi.comp_mb_edges=pointtopost.make_mb_edge(Pi.femmesh1)
-	Pi.comp_mb_edges.Label=Pi.comp_mb_edgesstr+"Pi"+str(Pieces.index(Pi))
+	#Pi.comp_mb_edges=pointtopost.make_mb_edge(Pi.femmesh1)
+	#buggy ... 
+	#Pi.comp_mb_edges.Label=Pi.comp_mb_edgesstr+"Pi"+str(Pieces.index(Pi))
 	
 	Pi.comp_topo_edges=pointtopost.make_topo_edge(Pi.compound1)
 	Pi.comp_topo_edges.Label=Pi.comp_topo_edgesstr+"Pi"+str(Pieces.index(Pi))
@@ -323,6 +398,12 @@ class MeshGmsh(QtGui.QWidget):
 
     def gui_annotate_all(self):
 	#annotate all elements
+	cmd_line_opt = self.le_cmd_line_opt_flag.text()
+	print cmd_line_opt
+	selection = FreeCADGui.Selection.getSelection()
+	if selection and (cmd_line_opt[len(cmd_line_opt)-2]=="1") :
+	    Pi.femmesh1=selection[0]
+	    print "read femmesh1 from selection"
 	anno1=pointtopost.visu_annotate_element(Pi.femmesh1.FemMesh)
 	anno1.Label="Ann_all_Face_"+"Pi"+str(Pieces.index(Pi))
 	anno1.ViewObject.hide()
@@ -347,6 +428,12 @@ class MeshGmsh(QtGui.QWidget):
     def gui_annotate_doubles(self):
 	#doubles elimination start
 	#
+	cmd_line_opt = self.le_cmd_line_opt_flag.text()
+	print cmd_line_opt
+	selection = FreeCADGui.Selection.getSelection()
+	if selection and (cmd_line_opt[len(cmd_line_opt)-2]=="1") :
+	    print "read femmesh1 from selection"
+	    Pi.femmesh1=selection[0]
 	Pi.dnL=pointtopost.checkfordoublenodes(Pi.femmesh1.FemMesh)
 	#annotate double nodes
 	anno4=pointtopost.visu_annotate_note(Pi.femmesh1,Pi.dnL[0])
@@ -391,7 +478,7 @@ class MeshGmsh(QtGui.QWidget):
 	#get nodes of face=body
 	Pi.faceN=pointtopost.getnodesbycompoundface(Pi.femmesh2,Pi.compound0)
 
-	#register bodies and boundaries
+	#register bodies and boundaries with default
 	Pi.bnd_tegdeL=[[1,3],[18]]
 	Pi.bnd_tegdeL, Pi.Bnds, Pi.Bodies= pointtopost.register_bodies_and_boundaries(Pi.bnd_tegdeL,Pi.Bodies,Pi.Bnds,Pi.compound0)
 
@@ -399,13 +486,65 @@ class MeshGmsh(QtGui.QWidget):
 	Pi.boundaries=pointtopost.get_bnd_nodesbytedge(Pi.femmesh2,Pi.comp_topo_edges,Pi.bnd_tegdeL)
 
 	#compound links colored according to bondary group
-	pointtopost.visu_bnd_tedge(Pi.comp_topo_edges,Pi.bnd_tegdeL)
+	pointtopost.visu_bnd_tedge(Pi.comp_topo_edges,Pi.bnd_tegdeL,Pi.Bnds)
 
 	Pi.bodyflag=get_elementbodysflag(Pi.femmesh2,Pi.compound0,Pi.faceN) 
 
 	Pi.egdegroup=pointtopost.get_edgegroup_and_neighbor(Pi.femmesh2,Pi.compound0,Pi.faceN,Pi.boundaries)
 	pass
+    
+    def gui_init_reg_bnd(self):
+	
+	#register workflow piece from bodies and boundaries with hardcoded default
+	Pi.bnd_tegdeL=[[1,3],[18]]
+	Pi.bnd_tegdeL, Pi.Bnds, Pi.Bodies= pointtopost.register_bodies_and_boundaries(Pi.bnd_tegdeL,Pi.Bodies,Pi.Bnds,Pi.compound0)
+	#write bodies and boundaries from pi to spread
+	Pi.spreedsheet=pointtopost.write_bnd_pi_to_spreadsheet(Pi.Bnds,Pi.Bodies,Pi.spreedsheet)
+	Pi.spreedsheet.Label=Pi.spreedsheetstr+"Pi"+str(Pieces.index(Pi))
+	#write spreadsh to csv
+	pointtopost.open_spreadsh_csv(Pi.spreedsheet,Pi.csvfile,"write")
+	
+	#visualize boundaries
+	# colors and annotate boundary edges
+	pointtopost.visu_bnd_tedge(Pi.comp_topo_edges,Pi.bnd_tegdeL,Pi.Bnds)
 
+	#viuaalize bodies
+	visu_bnd_bodies(Pi.compound0,Pi.Bodies)
+
+	print "hellospreedsheet "
+	
+    def gui_reg_save(self):
+	print "reg_savE"#
+	cmd_line_opt = self.le_cmd_line_opt_flag.text()
+	#3. last index 1? read cvs else read spread, updata the rest
+	if (cmd_line_opt[len(cmd_line_opt)-3]=="1"):
+	    pointtopost.open_spreadsh_csv(Pi.spreedsheet,Pi.csvfile,"read")
+	    #write spreadsh to pi
+	    Pi.spreedsheet=pointtopost.write_bnd_pi_to_spreadsheet(Pi.Bnds,Pi.Bodies,Pi.spreedsheet, "read")	    
+	else:
+	    #write spreadsh to pi: case user edits internal spreadsheet
+	    Pi.spreedsheet=pointtopost.write_bnd_pi_to_spreadsheet(Pi.Bnds,Pi.Bodies,Pi.spreedsheet, 	    "read")	    
+	    #write  spreadsh to csv
+	    pointtopost.open_spreadsh_csv(Pi.spreedsheet,Pi.csvfile,"write")
+	
+	
+	#visualize boundaries
+	# colors and annotate boundary edges
+	pointtopost.visu_bnd_tedge(Pi.comp_topo_edges,Pi.bnd_tegdeL,Pi.Bnds)
+
+	#viusalize bodies
+	visu_bnd_bodies(Pi.compound0,Pi.Bodies)	
+	### append calculation part
+	#get nodes of edges
+	Pi.egdeN=pointtopost.getnodesbycompoundedge(Pi.femmesh2,Pi.comp_topo_edges)
+	#get nodes of face=body
+	Pi.faceN=pointtopost.getnodesbycompoundface(Pi.femmesh2,Pi.compound0)
+	#get nodes of boundary condition
+	Pi.boundaries=pointtopost.get_bnd_nodesbytedge(Pi.femmesh2,Pi.comp_topo_edges,Pi.bnd_tegdeL)
+	Pi.bodyflag=get_elementbodysflag(Pi.femmesh2,Pi.compound0,Pi.faceN)
+	Pi.egdegroup=pointtopost.get_edgegroup_and_neighbor(Pi.femmesh2,Pi.compound0,Pi.faceN,Pi.boundaries)
+	return
+    
     def gui_annotate_boundary_neighbor_and_edgegroup(self):
 	pass
 	#annotate boundary neighbor cells
@@ -451,6 +590,18 @@ class MeshGmsh(QtGui.QWidget):
 	anno7.ViewObject.show()
 	anno7.ViewObject.hide()
 
+    def gui_removeobjectswithchildren(self):
+	selection = FreeCADGui.Selection.getSelection()
+	if selection:
+	    print "delete selected"
+	    docobj2L=selection
+	    pointtopost.removeobjectswithchildren(docobj2L)
+	
+	
+
+	
+	
+
 
 #init pointtopost
 import pointtopost
@@ -463,7 +614,7 @@ pointtopost.testinit151024(Pi) #default
 
 mw = FreeCADGui.getMainWindow()
 d = QtGui.QDockWidget()
-d.setWidget(MeshGmsh())
+d1=d.setWidget(MeshGmsh())
 d.toggleViewAction().setText("Gmsh")
 d.setAttribute(QtCore.Qt.WA_DeleteOnClose)
 d.setWindowTitle(" 2D FEM multi boody heat conduction ") 

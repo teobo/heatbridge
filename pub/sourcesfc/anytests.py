@@ -643,9 +643,370 @@ meshheadf.close() #'a' opens the file for appendingf.close()
 #ok
 ##
 #gui
+import os
+import sys
+try:
+    execfile(os.environ["FEMProjScripts"]+"../local/projenv.py")
+except OSError:
+    pass
+
 fem2dheatconductiongui.MeshGmsh.close(fem2dheatconductiongui.d)
 del sys.modules["pointtopost"]
 del sys.modules["fem2dheatconductiongui"]
 import pointtopost
 import fem2dheatconductiongui
 
+#### test start up gui end
+
+###
+import Mesh
+import MeshPart
+
+mesh=FreeCAD.ActiveDocument.addObject("Mesh::Feature","Mesh")
+mesh.Mesh=MeshPart.meshFromShape(Shape=Pi.compound1.Shape,GrowthRate=0.1,SegPerEdge=1,SegPerRadius= 1,SecondOrder=0,Optimize=1,AllowQuad=0)
+FreeCADGui.ActiveDocument.getObject(Pi.compound1.Name).DisplayMode = "Wireframe"
+#>>> del __doc__, __mesh__
+#a=mesh.Mesh.Points[1]
+#a.x a.y; a.z
+#a=mesh.Mesh.Facets[1]
+#a=mesh.Mesh.Facets[1]
+#>>> a.PointIndices
+##(30L, 37L, 61L)
+
+import FreeCAD, Fem
+m = Fem.FemMesh()
+#mesh=App.ActiveDocument.Mesh004
+nodeP=mesh.Mesh.Points
+for n in range(len(nodeP)):
+    #print str(n1) + " :" + str(n)
+    n1=nodeP[n]
+    #print str(n1) + " :" + str(n)
+    m.addNode(n1.x, n1.y, n1.z, n+1)
+
+facesE=mesh.Mesh.Facets
+for i in range(len(facesE)):
+    #print str(facesE[i]) + " " + str(elemN[i])+"  i:" + str(i)
+    #loose id's here
+    if len(facesE[i].PointIndices)==3:
+	#debug
+	print "  l"+str(i)+ "i"
+	#if len(set(facesE[i])&set(nodeP))!=3:
+	    #print str(facesE[i]) +"smash"; continue
+	#debug end
+	m.addFace(facesE[i].PointIndices[0]+1,facesE[i].PointIndices[1]+1,facesE[i].PointIndices[2]+1)
+    #if len(facesE[i])==2:
+	#a=m.addEdge(facesE[i][0],facesE[i][1])
+
+
+
+Fem.show(m)  
+femmesh2=FreeCAD.ActiveDocument.Objects[len(FreeCAD.ActiveDocument.Objects)-1]
+
+###boundary register interfaces
+#compountO=App.ActiveDocument.Compound001
+edgeN=pointtopost.getnodesbycompoundedge(femmesh2,Pi.compound1)
+
+import Draft
+for i in range(500): Draft.makePoint(float(-2 +i),-1.0,0.0)
+# uncomment for testing with several objects
+
+import time
+t1=time.time()
+
+#### init_write_spreadsheet
+spreadsh=None
+#spreadsh=Pi.spreedsheet
+if spreadsh==None:
+    App.activeDocument().addObject('Spreadsheet::Sheet','Spreadsheet')
+    spreadsh=FreeCAD.ActiveDocument.Objects[len(FreeCAD.ActiveDocument.Objects)-1]
+#    spreadsh.Label = "pp"
+
+#Gui.ActiveDocument.setEdit(spreadsh.Name)
+c=["","A", "B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]  
+
+i1=3
+spreadsh.set(c[i1]+str(2), "bnd_index")
+for i in range(19):     
+    spreadsh.set(c[i1]+str(i+2), "_bnd_index"+str(i))
+    App.ActiveDocument.recompute()
+
+print t1-time.time()
+spreadsh.exportFile("/tmp/2.csv")
+App.ActiveDocument.removeObject("Spreadsheet")
+spreadsh.importFile("/tmp/2.csv")
+#work around
+#open question: 
+#connect to the api
+#position load directly..
+#reload/
+
+libreoffice /tmp/1.csv 
+
+
+# Execution time for above script
+#-0.185786008835 without points 
+#-16.4981470108 with existing 500 Points, 
+#--accepting rule at line 275 ("bnd_index")
+#--(end of buffer or a NUL)
+#--EOF (start condition 0)
+#--accepting rule at line 275 ("bnd_index")
+#--(end of buffer or a NUL)
+#--EOF (start condition 0)
+#... repeating
+
+
+#as well: reaction time slow, too slow to work on it:
+#Error message on each gui cell entry:
+#--accepting rule at line 149 (",")
+#--accepting rule at line 149 (",")
+#--accepting rule at line 149 (",")
+#--(end of buffer or a NUL)
+#--accepting rule at line 144 (" ")
+#--(end of buffer or a NUL)
+#--EOF (start condition 0)
+#--accepting rule at line 149 (",")
+#--accepting rule at line 149 (",")
+#--(end of buffer or a NUL)
+#--accepting rule at line 144 (" ")
+#--(end of buffer or a NUL)
+#--EOF (start condition 0)
+
+
+#
+#### write_bnd_pi_spreadsheet
+spreadsh=None
+#spreadsh=Pi.spreedsheet
+if spreadsh==None:
+    spreadsh=App.activeDocument().addObject('Spreadsheet::Sheet','Spreadsheet')
+
+#    spreadsh=FreeCAD.ActiveDocument.Objects[len(FreeCAD.ActiveDocument.Objects)-1]
+#    spreadsh.Label = "pp"
+
+#Gui.ActiveDocument.setEdit(spreadsh.Name)
+c=["","A", "B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]  
+
+i1=1
+spreadsh.set(c[i1]+str(1), "bnd_index")
+for i in range(len(Pi.Bnds)):     
+    spreadsh.set(c[i1]+str(i+2), str(i))
+    App.ActiveDocument.recompute()
+
+i1=2
+spreadsh.set(c[i1]+str(1), "bnd_name")
+for i in range(len(Pi.Bnds)):     
+    spreadsh.set(c[i1]+str(i+2), str(Pi.Bnds[i].name))
+    App.ActiveDocument.recompute()
+
+
+i1=3
+spreadsh.set(c[i1]+str(1), "Rs")
+for i in range(len(Pi.Bnds)):     
+    spreadsh.set(c[i1]+str(i+2), str(Pi.Bnds[i].Rs))
+    App.ActiveDocument.recompute()
+
+i1=4
+spreadsh.set(c[i1]+str(1), "T_ext")
+for i in range(len(Pi.Bnds)):     
+    spreadsh.set(c[i1]+str(i+2), str(Pi.Bnds[i].T))
+    App.ActiveDocument.recompute()
+
+i1=5
+spreadsh.set(c[i1]+str(1), "tedge(i)")
+for i in range(len(Pi.Bnds)):     
+    spreadsh.set(c[i1]+str(i+2), str(Pi.Bnds[i].T))
+    App.ActiveDocument.recompute()
+
+
+i1=6
+spreadsh.set(c[i1]+str(1), "body_index")
+for i in range(len(Pi.Bodies)):     
+    spreadsh.set(c[i1]+str(i+2), str(i))
+    App.ActiveDocument.recompute()
+
+i1=7
+spreadsh.set(c[i1]+str(1), "K")
+for i in range(len(Pi.Bodies)):     
+    spreadsh.set(c[i1]+str(i+2), str(Pi.Bodies[i].k))
+    App.ActiveDocument.recompute()
+
+i1=8
+spreadsh.set(c[i1]+str(1), "body_nane")
+for i in range(len(Pi.Bodies)):     
+    spreadsh.set(c[i1]+str(i+2), str(Pi.Bodies[i].name))
+    App.ActiveDocument.recompute()
+
+#i1=9
+#spreadsh.set(c[i1]+str(1), "body_name")
+#for i in range(len(Pi.Bnds)):     
+    #spreadsh.set(c[i1]+str(i+2), str(Pi.Bnds[i].T))
+    #App.ActiveDocument.recompute()
+
+#i1=5
+#Pi.spreedsheet.set(c[i1]+str(1), "k")
+#for i in range(len(Pi.Bnds)):     
+    #Pi.spreedsheet.set(c[i1]+str(i+2), str(Pi.Bnds[i].T))
+    #App.ActiveDocument.recompute()
+##Pi.spreedsheet.set('C'+str(1), "k")
+##for i in range(len(Pi.Bnds)):     
+    ##Pi.spreedsheet.set('c'+str(i+2), str(Pi.Bnds[i].T))
+    ##App.ActiveDocument.recompute()
+
+
+#int(str(Pi.bnd_tegdeL[0]))
+
+
+
+Pi.bnd_tegdeL=[[1,3],[18]]
+
+Pi.bnd_tegdeL, Pi.Bnds, Pi.Bodies= pointtopost.register_bodies_and_boundaries(Pi.bnd_tegdeL,Pi.Bodies,Pi.Bnds,Pi.compound0)
+
+##
+a=len(Pi.compound0.Links)-len(kL)
+#pseudocode writeboundarybndtospread end
+#
+
+#play with spreadsheet start
+#open access the the rows numerically
+#tile 
+
+import WebGui
+from StartPage import StartPage
+WebGui.openBrowserHTML(StartPage.handle(),'file://' + App.getResourceDir() + 'Mod/Start/StartPage/','Start page')
+App.newDocument("Unnamed")
+App.setActiveDocument("Unnamed")
+App.ActiveDocument=App.getDocument("Unnamed")
+Gui.ActiveDocument=Gui.getDocument("Unnamed")
+Gui.activateWorkbench("SpreadsheetWorkbench")
+App.activeDocument().addObject('Spreadsheet::Sheet','Spreadsheet')
+
+FreeCADGui.ActiveDocument.Spreadsheet.show() #does nothing
+
+App.ActiveDocument.Spreadsheet.setColumnWidth('B', 159) # does nothing..
+App.ActiveDocument.recompute()
+Gui.ActiveDocument.setEdit(App.ActiveDocument.ActiveObject.Name) 
+# shows the spreadsheat window.. 
+
+
+from PySide import QtGui
+from PySide import QtCore
+
+mainWindow	= FreeCADGui.getMainWindow()
+pcDW		= mainWindow.findChild(QtGui.QDockWidget, "Python console")
+pcPTE		= pcDW.findChild(QtGui.QPlainTextEdit, "Python console")
+dockWidgets = mainWindow.findChildren(QtGui.QDockWidget)
+
+toplevel = QtGui.qApp.topLevelWidgets()
+
+
+from PySide import QtGui
+from PySide import QtCore
+ 
+def getMainWindow():
+   toplevel = QtGui.qApp.topLevelWidgets()
+   for i in toplevel:
+      if i.metaObject().className() == "Gui::MainWindow":
+         return i
+   raise Exception("No main window found")
+
+
+mw=getMainWindow()
+
+[i.metaObject().className() for i in mw.findChildren(QtGui.QMainWindow)]
+#['WebGui::BrowserView', 'Gui::View3DInventor', 'SpreadsheetGui::SheetView']
+sg=mw.findChildren(QtGui.QMainWindow)[2]
+sg.setWindowTitle("uff")
+sg.size()
+#PySide.QtCore.QSize(1074, 374)
+sg.size()
+#PySide.QtCore.QSize(400, 300)
+sg.size()
+#PySide.QtCore.QSize(498, 300)
+sg.resize(200,200)
+sg.pos() #inner frame..
+sg.setVisible(0)
+sg.setVisible(1)
+ig=mw.findChildren(QtGui.QMainWindow)[2]
+QtGui.qApp.objectName()
+u'freecad'
+QtGui.QWorkspace.cascade()
+#Traceback (most recent call last):
+#  File "<input>", line 1, in <module>
+#TypeError: descriptor 'cascade' of 'PySide.QtGui.QWorkspace' object needs an argument
+mw.resize(900,500) #ok
+mw.setGeometry(0,0,500,500)
+a=sg.parentWidget()
+a.pos()
+#PySide.QtCore.QPoint(107, 39)
+#ok
+a.hide()
+a.show()
+#ok
+sg.resize(451, 362)
+a.resize(451, 362)
+#ok
+a.setGeometry(130,140,350, 450)
+# positions spreadsheet window in view window: missing link
+sg.minimumSizeHint()
+#PySide.QtCore.QSize(400, 300)
+sg.setMinimumSize(200,200)
+a.setMinimumSize(200,200)
+sg.resize(200, 200)
+a.resize(200, 200)
+#ok
+a.showMinimized() 
+a.showNormal()
+a.setGeometry(10,140,350, 450) #ok
+App.ActiveDocument.Spreadsheet001.setColumnWidth('A', 70)
+App.ActiveDocument.recompute()
+#ok
+
+#ok
+len(mw.children())
+#155 ?
+
+mw.setGeometry(       250, 250, 400, 150)
+#window moves
+
+
+    
+#annotate and color mesh faces: bodies
+Pi.compound1.ViewObject.Visibility=0
+a=[]
+lenlinks=len(Pi.compound0.Links)
+for m_elem in range(lenlinks):
+    anno = FreeCAD.ActiveDocument.addObject("App::AnnotationLabel","surveyLabel")
+    #a.append(anno)
+    a.append(FreeCAD.ActiveDocument.Objects[len(FreeCAD.ActiveDocument.Objects)-1])
+    anno.BasePosition = Pi.compound0.Links[m_elem].Shape.BoundBox.Center
+    LabelTexti = "" + str(Pi.Bodies[m_elem].name)
+    LabelTextb = " k:" +str(Pi.Bodies[m_elem].k)
+    #print "index"+str(index)
+    LabelTexte =" i:" + str(m_elem)
+    anno.LabelText=LabelTexti+LabelTextb+LabelTexte
+    Pi.compound1.Links[m_elem].ViewObject.ShapeColor=(0.1+m_elem*(0.9/lenlinks),0.00,1-+m_elem*(0.9/lenlinks))
+    Pi.compound1.Links[m_elem].ViewObject.Visibility=1
+    
+group_m_elem_Anno=FreeCAD.ActiveDocument.addObject("App::DocumentObjectGroup","Group")
+#g=App.ActiveDocument.Objects[len(App.ActiveDocument.Objects)-1]
+group_m_elem_Anno.Group = a
+group_m_elem_Anno.Label="Bodies_Anno."
+FreeCAD.ActiveDocument.recompute()
+#check double nodes end
+
+
+# colors and annotate boundary edges
+pointtopost.visu_bnd_tedge(Pi.comp_topo_edges,Pi.bnd_tegdeL,Pi.Bnds)
+
+#ok
+
+
+write_bnd_spreadsheet_to_pi(Pi.Bnds,Pi.Bodies,Pi.spreedsheet):
+    
+#fem2dheatconductiongui.pointtopost.Piece.Bnds[0].Rs
+#0.4   
+
+    
+    
+    
+    
+    

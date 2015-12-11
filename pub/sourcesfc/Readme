@@ -30,4 +30,4 @@ Features:
 -fem solving with elmer
 -freecad pre and post processing
 -demo script (60%: ready mesh adaption, result checking, piece batch processing are missing)
--gui (under construction 5% ready)
+-gui (under construction 25% ready)

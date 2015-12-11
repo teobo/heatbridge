@@ -3,7 +3,7 @@ import sys
 import Draft
 import Fem
 import FemGui
-import MechanicalAnalysis
+import FemAnalysis
 import FreeCAD
 import FreeCADGui
 import ImportGui
@@ -34,10 +34,12 @@ class Bnd:
     nr = '2'
     T=259
     Rs=0.0
+    name="cold"
 
 class Body:
     nr = '2'
     k=1.0
+    name=""
 
 class Piece:
     name = 'Piecyo'
@@ -45,15 +47,15 @@ class Piece:
     Bodies = None # 
     Bnds = None #
     values = None # list cannot be initialized here!
-    fempath = os.environ["FEM_PROTO_PATH1"]
-    unvfile = os.environ["FEM_UNVFILE1"]
-    siftemplfile = os.environ["FEM_SIF_TEMPL_FILE1"]
-    siffile = os.environ["FEM_SIF_FILE1"]
-    gridpath = os.environ["FEM_ElMER_GRID_PATH1"]
-    grid_templ_path= os.environ["FEM_ElMER_GRID_TEMPL_PATH1"]
-    epfile = os.environ["FEM_ElMER_EP_FILE1"]
-    eptemplfile = os.environ["FEM_ElMER_EP_TEMPL_FILE1"]
-    epsourcefile = os.environ["FEM_ElMERPOST_SOURCE1"]
+    fempath = "" # os.environ["FEM_PROTO_PATH1"]
+    unvfile = "" # os.environ["FEM_UNVFILE1"]
+    siftemplfile = "" # os.environ["FEM_SIF_TEMPL_FILE1"]
+    siffile = "" # os.environ["FEM_SIF_FILE1"]
+    gridpath = "" # os.environ["FEM_ElMER_GRID_PATH1"]
+    grid_templ_path= "" # os.environ["FEM_ElMER_GRID_TEMPL_PATH1"]
+    epfile = "" # os.environ["FEM_ElMER_EP_FILE1"]
+    eptemplfile = "" # os.environ["FEM_ElMER_EP_TEMPL_FILE1"]
+    epsourcefile = "" # os.environ["FEM_ElMERPOST_SOURCE1"]
     vtufile=""
     vtuobj=None
     vtuobjview=None
@@ -92,13 +94,16 @@ class Piece:
     edgeL=[] # list of edges, whereas doubles are marked
     nodeL=[] # list of nodes, whereas doubles are marked
     facesE=[] #rereferenced cleaned table of Elements (not 
-    boundaries=[] #[[bnd0from_topo_edge1,bnd2from_top_edge2],[bnd1from_topo_edge5]
-    bnd_tegdeL=[] #[[index of topo_edge1,topo_edge2],[topo_edge5]
-    bodyflag=[]
-    egdegroup=[]
+    boundaries=[] #segregated boundary nodes list lists[[bnd0from_topo_edge1,bnd2from_top_edge2],[bnd1from_topo_edge5]
+    bnd_tegdeL=[] #segregated boundary topoedge lists[[index of topo_edge1,topo_edge2],[topo_edge5]
+    bodyflag=[]  #of an face element
+    egdegroup=[] #of an edge/mesh boundry element
     solutionheader=[]
     solutiondata=[]
     headerline=[]
+    spreedsheet=None
+    spreedsheetstr="spreadsheet"
+    csvfile=""
     fc_docname="femcalibr2testdoc"
     
 
@@ -158,6 +163,7 @@ def testinit151024(Pieces,i=0):
     Pieces.epsourcefile = os.environ["FEM_PROTO_FLUX3_PATH"]+"cmd1.txt"
     Pieces.vtufile = "/tmp/elmermesh/"+"angle/case0001.vtu"
     Pieces.pngfile ="/tmp/elmermesh/"+"elmermesh.png"
+    Pieces.csvfile ="/tmp/elmermesh/"+"spreadsheetfile.csv"
     Pieces.brepfile = os.environ["FEM_PROTO_PATH1"] +"Partition_1_erste2D.brep"
     Pieces.ng2D=NG_2D
     return Pieces
@@ -249,14 +255,21 @@ def removeobjectswithchildren(docobjL):
 	try:
 	    tid=i.TypeId
 	except BaseException:
-	    continue
+	    tid="unknown"#continue
 
 	if str(tid)=='Fem::FemMeshObject':
 	    i.Document.removeObject(i.Name)
-	else:
+	if str(tid)=='App::DocumentObjectGroup':
+	    i.removeObjectsFromDocument() #mean: delete childs
+	    i.Document.removeObject(i.Name) # delete object
+	    continue
+	if str(tid)=='Part::Compound':	    
 	    for j in i.Links:
 		i.Document.removeObject(j.Name)
 	    i.Document.removeObject(i.Name)
+	    continue
+	
+	i.Document.removeObject(i.Name)
     return 
 #ok
 
@@ -675,6 +688,9 @@ def rebuild_mesh(femmesh,nodeL,facesE):
 def getnodesbycompoundface(femmesh,compound0):
     '''
     get nodes per topoface(body)
+    femmesh,compound0
+    return faceN
+    wrapper FemMesh.getNodesByFace
     '''
     faceN=[]
     for i in [a.Shape.Faces[0] for a in compound0.Links]:
@@ -683,7 +699,10 @@ def getnodesbycompoundface(femmesh,compound0):
     
 def getnodesbycompoundedge(femmesh,compountO):
     '''
-    get nodes per topoface(body)
+    get nodes per topoedge of compound (list)
+    (femmesh,compountO)
+    return egdeN
+    wrapper FemMesh.getNodesByEdge
     '''
     egdeN=[]
     for i in compountO.Shape.Edges:
@@ -712,20 +731,71 @@ def get_tedge_bnd_nodesbyselection(femmesh,compountO):
     '''
     return egdeN
 
-def visu_bnd_tedge(compoundO,bnd):
+def visu_bnd_tedge(compoundO,bnd,PiBnds=None):
     '''
     color topo edges that are boundaries
     '''
     #print str(bnd) + ":bnd:"
-    k=0.0
+    a=[]
+    k=0
     #print str(bnd) + ":bnd:"
     for i in bnd:
 	k=k+1
-	l=(1.0/len(bnd))*k
+	l=float((1.0/len(bnd))*float(k))
 	##print str(l)+ " "+str((1/len(bnd)))
 	for j in i:
 	    compoundO.Links[j].ViewObject.LineColor= (l,0.33,0.50)
 	    #print str(i) + ":j,l:" +str(l)+ "k:" +str(k)
+	    compoundO.Links[j].ViewObject.LineWidth = 9.00
+	    compoundO.Links[j].ViewObject.Visibility=1
+	    
+	    anno = FreeCAD.ActiveDocument.addObject("App::AnnotationLabel","surveyLabel")
+	    a.append(FreeCAD.ActiveDocument.Objects[len(FreeCAD.ActiveDocument.Objects)-1])
+	    anno.BasePosition = compoundO.Links[j].Shape.BoundBox.Center
+	    LabelTexti = "i" + str(k)
+	    LabelTextg = " T_ext:" +str(PiBnds[k-1].T)
+	    #print "index"+str(index)
+	    LabelTexte =" Rs:" + str(PiBnds[k-1].Rs)
+	    LabelTextn =" Name:" +str(PiBnds[k-1].name)
+	    anno.LabelText =LabelTexti+LabelTextg+LabelTexte+LabelTextn
+	    anno.ViewObject.BackgroundColor=(l, 0.5, 1.0, 0.0)
+    group_m_elem_Anno=FreeCAD.ActiveDocument.addObject("App::DocumentObjectGroup","Group")
+    #g=App.ActiveDocument.Objects[len(App.ActiveDocument.Objects)-1]
+    group_m_elem_Anno.Group = a
+    group_m_elem_Anno.Label="group_bnd_edge_Anno."
+    FreeCAD.ActiveDocument.recompute()
+    #check double nodes end
+    return group_m_elem_Anno
+
+def visu_bnd_bodies(compountO,Bodies):
+    '''
+    (compountO,Bodies)
+    return group_m_elem_Anno
+    #annotate and color mesh faces: bodies
+    '''
+    
+    compountO.ViewObject.Visibility=0
+    a=[]
+    lenlinks=len(compountO.Links)
+    for m_elem in range(lenlinks):
+	anno = FreeCAD.ActiveDocument.addObject("App::AnnotationLabel","surveyLabel")
+	a.append(FreeCAD.ActiveDocument.Objects[len(FreeCAD.ActiveDocument.Objects)-1])
+	anno.BasePosition = compountO.Links[m_elem].Shape.BoundBox.Center
+	LabelTexti = "" + str(Bodies[m_elem].name)
+	LabelTextb = " k:" +str(Bodies[m_elem].k)
+	#print "index"+str(index)
+	LabelTexte =" i:" + str(m_elem)
+	anno.LabelText=LabelTexti+LabelTextb+LabelTexte
+	compountO.Links[m_elem].ViewObject.ShapeColor=(0.1+m_elem*(0.9/lenlinks),0.00,1-+m_elem*(0.9/lenlinks))
+	compountO.Links[m_elem].ViewObject.Visibility=1
+	
+    group_m_elem_Anno=FreeCAD.ActiveDocument.addObject("App::DocumentObjectGroup","Group")
+    #g=App.ActiveDocument.Objects[len(App.ActiveDocument.Objects)-1]
+    group_m_elem_Anno.Group = a
+    group_m_elem_Anno.Label="Bodies_bnd_Anno."
+    FreeCAD.ActiveDocument.recompute()
+    return group_m_elem_Anno
+
 
 def get_elementbodysflag(femmesh2,compountO,faceN):
     '''
@@ -752,7 +822,7 @@ def get_edgegroup_and_neighbor(femmesh2,compountO,faceN,bnd):
     '''
     #!##get by edge id: neighbors and bnd Groupflag
     return [groupflag, neighbourelem1, neighbourelem1]
-    (Pi.femmesh2,Pi.compound0,Pi.faceN,Pi.boundaries)
+    (femmesh2,Pi.compound0,Pi.faceN,Pi.boundaries)
     '''
  #!
     #bnd=[]
@@ -1129,26 +1199,157 @@ def write_elmer_sif_file(siftemplfile,siffile,Bodies,Bnds):
     fh.write(s);fh.close()	
     return s , siffile
 
+
 def register_bodies_and_boundaries(bnd_tegdeL,Bodies,Bnds,compound0):
     '''
-    #register:
+    #initial register (hardcoded):
     fill body and boundary structures for further processing: Rs, T, k, 
     to be implemented: read from file
     '''
+    #default
+    nb_bnd_groups=2
     bnd_tegdeL=[[1,3],[18]]
     bnd_rs=[0.13,0.10]
+    TL=[259,292]
+    #default bodies: as much as faces
     kL=[0.03,0.03,0.03,0.1,0.33]
+    bname=["wdv1","wdv2","wdv3","KS","wdv5"]
+    a=len(compound0.Links)-len(kL)
+    for i in range(1,a+1):
+	kL= kL+[i*0.1]
+	bname=bname+["wdv"+str(i+5)]
+
     Bodies=[]
     for i in range(len(compound0.Links)):
 	Bodies.append(Body())
 	Bodies[i].k=kL[i]
-    Bnds=[]
-    TL=[292,259]
+	Bodies[i].name=bname[i]
+	
+    Bnds=[]    
     for i in range(len(bnd_tegdeL)):
 	Bnds.append(Bnd())
 	Bnds[i].T=TL[i]
 	Bnds[i].Rs=bnd_rs[i]
     return bnd_tegdeL, Bnds, Bodies
+
+def write_bnd_pi_to_spreadsheet(Bnds,Bodies,spreadsh, flag=""):
+    '''
+    (Bnds,Bodies,spreadsh, flag="")
+     return spreadsh
+    '''
+    try:
+	spreadsh==None
+    except BaseException:
+	spreadsh=None
+    # if it is deleted, assign it object with none
+    if spreadsh==None:
+	spreadsh=FreeCAD.activeDocument().addObject('Spreadsheet::Sheet','Spreadsheet')    
+	spreadsh.Label = "spreadsheet"
+    c=["","A", "B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]  
+    i1=1
+    if flag=="read":
+	pass
+    else:
+	spreadsh.set(c[i1]+str(1), "bnd_index")
+    for i in range(len(Bnds)):     
+	if flag=="read":
+	    pass
+	else:
+	    spreadsh.set(c[i1]+str(i+2), str(i))
+	#FreeCAD.ActiveDocument.recompute()
+
+    i1=2
+    spreadsh.set(c[i1]+str(1), "bnd_name")
+    for i in range(len(Bnds)):
+	if flag=="read":
+	    Bnds[i].name=spreadsh.get(c[i1]+str(i+2))
+	else:
+	    spreadsh.set(c[i1]+str(i+2), str(Bnds[i].name))
+	#FreeCAD.ActiveDocument.recompute()
+
+
+    i1=3
+    spreadsh.set(c[i1]+str(1), "Rs")
+    for i in range(len(Bnds)):     
+	if flag=="read":
+	    Bnds[i].Rs=spreadsh.get(c[i1]+str(i+2))
+	else:
+	    spreadsh.set(c[i1]+str(i+2), str(Bnds[i].Rs))
+	#FreeCAD.ActiveDocument.recompute()
+
+    i1=4
+    spreadsh.set(c[i1]+str(1), "T_ext")
+    for i in range(len(Bnds)):     
+	if flag=="read":
+	    Bnds[i].T=spreadsh.get(c[i1]+str(i+2))
+	else:
+	    spreadsh.set(c[i1]+str(i+2), str(Bnds[i].T))
+	#FreeCAD.ActiveDocument.recompute()
+
+    i1=5
+    spreadsh.set(c[i1]+str(1), "tedge(i)")
+    for i in range(len(Bnds)):     
+	if flag=="read":
+	    Bnds[i].T=spreadsh.get(c[i1]+str(i+2))
+	else:
+	    spreadsh.set(c[i1]+str(i+2), str(Bnds[i].T))
+	#FreeCAD.ActiveDocument.recompute()
+
+
+    i1=6
+    spreadsh.set(c[i1]+str(1), "body_index")
+    for i in range(len(Bodies)):     
+	if flag=="read":
+	    pass
+	else:
+	    spreadsh.set(c[i1]+str(i+2), str(i))
+	#FreeCAD.ActiveDocument.recompute()
+
+    i1=7
+    spreadsh.set(c[i1]+str(1), "K")
+    for i in range(len(Bodies)):     
+	if flag=="read":
+	    Bodies[i].k=spreadsh.get(c[i1]+str(i+2))
+	else:
+	    spreadsh.set(c[i1]+str(i+2), str(Bodies[i].k))
+	#FreeCAD.ActiveDocument.recompute()
+
+    i1=8
+    spreadsh.set(c[i1]+str(1), "body_nane")
+    for i in range(len(Bodies)):     
+	if flag=="read":
+	    pass
+	    Bodies[i].name=spreadsh.get(c[i1]+str(i+2))
+	else:
+	    pass
+	    spreadsh.set(c[i1]+str(i+2), str(Bodies[i].name))
+    FreeCAD.ActiveDocument.recompute()
+
+    return spreadsh
+
+def open_spreadsh_csv(spreadsh,filename,flag):
+    '''
+    (spreadsh,filename,flag)
+    return spreadsh
+    -read/write to a temp file
+    -remove spreadsheet object for performance
+    '''
+
+    if filename=="":filename="/tmp/spreadsh_.csv"
+    if flag=="read" or flag=="create":
+	spreadsh.importFile(filename)
+	FreeCAD.ActiveDocument.recompute()
+    if flag=="write" or flag=="remove":
+	spreadsh.exportFile(filename)
+	print "write"
+    if flag=="create":
+	pass
+	print "to be implementet"
+    if flag=="remove":
+	pass
+	print "remove for performance issues"
+	App.ActiveDocument.removeObject(pointtopost.Piece.spreedsheet.Name)
+    return spreadsh
 
 def process_elmer_sif_file(siffile,epsourcefile,fempath,debug=1001):
     '''

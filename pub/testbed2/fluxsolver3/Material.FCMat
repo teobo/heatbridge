@@ -1,0 +1,60 @@
+; 
+; 
+; file produced by FreeCAD 0.16 5991 (Git)
+; information about the content of this card can be found here:
+; http://www.freecadweb.org/wiki/index.php?title=Material
+
+[General]
+Vendor=
+Name=
+Density=
+SpecificPrice=
+Father=
+ProductURL=
+Description=
+
+[Mechanical]
+UltimateTensileStrength=
+CompressiveStrength=
+YoungsModulus=
+Elasticity=
+FractureToughness=
+
+[FEM]
+PoissonRatio=
+
+[Architectural]
+StandardCode=
+EnvironmentalEfficiencyClass=
+FireResistanceClass=
+Finish=
+Color=
+ExecutionInstructions=
+SoundTransmissionClass=
+UnitsPerQuantity=
+ThermalConductivity=
+Model=
+
+[Rendering]
+TextureScaling=
+FragmentShader=
+AmbientColor=
+EmissiveColor=
+DiffuseColor=
+Shininess=
+SpecularColor=
+Transparency=
+VertexShader=
+TexturePath=
+
+[Vector rendering]
+ViewLinewidth=
+ViewFillPattern=
+SectionLinewidth=
+SectionFillPattern=
+ViewColor=
+
+[User defined]
+SectionColor=
+heatconduction=
+

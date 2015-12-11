@@ -233,10 +233,16 @@ def removeobjectswithchildren(docobjL):
 
 	if str(tid)=='Fem::FemMeshObject':
 	    i.Document.removeObject(i.Name)
-	else:
+	if str(tid)=='App::DocumentObjectGroup':
+	    i.removeObjectsFromDocument() #mean: delete childs
+	    i.Document.removeObject(i.Name) # delete object
+	    continue
+	if str(tid)=='Part::Compound':	    
 	    for j in i.Links:
 		i.Document.removeObject(j.Name)
 	    i.Document.removeObject(i.Name)
+	    continue
+	i.Document.removeObject(i.Name)
     return 
 #ok
 
@@ -247,6 +253,7 @@ def cleandocobjs(fc_docname):
     docobjL=FreeCAD.getDocument(fc_docname).Objects
     for i in docobjL:i.Document.removeObject(i.Name)
 #ok
+
 def make_topo_edge(compoundpoi2):
     '''
     make all bodies confining boundary mesh edges
