@@ -1005,8 +1005,47 @@ write_bnd_spreadsheet_to_pi(Pi.Bnds,Pi.Bodies,Pi.spreedsheet):
 #fem2dheatconductiongui.pointtopost.Piece.Bnds[0].Rs
 #0.4   
 
+#change into while from for for -check first in row blank?
+#
+spreadvar=[""]*3
+spreadvar[1]=str(Pi.bnd_tegdeL[1])
+spreadvar[0]=str(Pi.bnd_tegdeL[0])
+spreadvar[2]=""
+
+#""=spreadsh.get(c[i1]+str(i+2))
+bnd_tegdeL=Pi.bnd_tegdeL
+Bnds=Pi.Bnds
+#flag="read"
+flag=""
+i1=5
+
+#spreadsh.set(c[i1]+str(1), "tedge(i)")
+if flag=="read":
+    bnd_tegdeL=[]
+    a_tempL=[]
+    i=0
+    #a_temp=spreadsh.get(c[i1]+str(i+2))
+    a_temp=spreadvar[i]
+    while a_temp!="":
+	a_tempL=[]
+	for i4 in [i3 for i3 in re.split('\n|\ |\]|\[|\,',a_temp) if i3]:
+	    #print str(i4) + "  READ"
+	    a_tempL.append(int(i4))
+	bnd_tegdeL.append(a_tempL )
+	i=i+1
+	a_temp=spreadvar[i]
+	#a_temp=spreadsh.get(c[i1]+str(i+2))
+else:
+    for i in range(len(Bnds)): 
+	spreadvar[i]=str(bnd_tegdeL[i])
+	#spreadsh.set(c[i1]+str(i+2), str(bnd_tegdeL[i]))
+   
+
+
+bnd_tegdeL
+spreadvar
     
     
     
     
-    
+ 

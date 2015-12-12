@@ -499,7 +499,7 @@ class MeshGmsh(QtGui.QWidget):
 	Pi.bnd_tegdeL=[[1,3],[18]]
 	Pi.bnd_tegdeL, Pi.Bnds, Pi.Bodies= pointtopost.register_bodies_and_boundaries(Pi.bnd_tegdeL,Pi.Bodies,Pi.Bnds,Pi.compound0)
 	#write bodies and boundaries from pi to spread
-	Pi.spreedsheet=pointtopost.write_bnd_pi_to_spreadsheet(Pi.Bnds,Pi.Bodies,Pi.spreedsheet)
+	Pi.spreedsheet,Pi.Bodies,Pi.Bnds,Pi.bnd_tegdeL=pointtopost.write_bnd_pi_to_spreadsheet(Pi.bnd_tegdeL,Pi.Bnds,Pi.Bodies,Pi.spreedsheet)
 	Pi.spreedsheet.Label=Pi.spreedsheetstr+"Pi"+str(Pieces.index(Pi))
 	#write spreadsh to csv
 	pointtopost.open_spreadsh_csv(Pi.spreedsheet,Pi.csvfile,"write")
@@ -520,10 +520,10 @@ class MeshGmsh(QtGui.QWidget):
 	if (cmd_line_opt[len(cmd_line_opt)-3]=="1"):
 	    pointtopost.open_spreadsh_csv(Pi.spreedsheet,Pi.csvfile,"read")
 	    #write spreadsh to pi
-	    Pi.spreedsheet=pointtopost.write_bnd_pi_to_spreadsheet(Pi.Bnds,Pi.Bodies,Pi.spreedsheet, "read")	    
+	    Pi.spreedsheet,Pi.Bodies,Pi.Bnds,Pi.bnd_tegdeL=pointtopost.write_bnd_pi_to_spreadsheet(Pi.bnd_tegdeL,Pi.Bnds,Pi.Bodies,Pi.spreedsheet, "read")	    
 	else:
 	    #write spreadsh to pi: case user edits internal spreadsheet
-	    Pi.spreedsheet=pointtopost.write_bnd_pi_to_spreadsheet(Pi.Bnds,Pi.Bodies,Pi.spreedsheet, 	    "read")	    
+	    Pi.spreedsheet,Pi.Bodies,Pi.Bnds,Pi.bnd_tegdeL=pointtopost.write_bnd_pi_to_spreadsheet(Pi.bnd_tegdeL,Pi.Bnds,Pi.Bodies,Pi.spreedsheet, 	    "read")	    
 	    #write  spreadsh to csv
 	    pointtopost.open_spreadsh_csv(Pi.spreedsheet,Pi.csvfile,"write")
 	

@@ -12,6 +12,7 @@ import subprocess
 import tempfile
 from FreeCAD import Vector
 import Part
+import re
 #from ctypes import *
 
 #Fem vector "piece" definition; 
@@ -104,6 +105,7 @@ class Piece:
     spreedsheet=None
     spreedsheetstr="spreadsheet"
     csvfile=""
+    stagepointer=""
     fc_docname="femcalibr2testdoc"
     
 
@@ -1232,7 +1234,7 @@ def register_bodies_and_boundaries(bnd_tegdeL,Bodies,Bnds,compound0):
 	Bnds[i].Rs=bnd_rs[i]
     return bnd_tegdeL, Bnds, Bodies
 
-def write_bnd_pi_to_spreadsheet(Bnds,Bodies,spreadsh, flag=""):
+def write_bnd_pi_to_spreadsheet(bnd_tegdeL,Bnds,Bodies,spreadsh, flag=""):
     '''
     (Bnds,Bodies,spreadsh, flag="")
      return spreadsh
@@ -1246,12 +1248,48 @@ def write_bnd_pi_to_spreadsheet(Bnds,Bodies,spreadsh, flag=""):
 	spreadsh=FreeCAD.activeDocument().addObject('Spreadsheet::Sheet','Spreadsheet')    
 	spreadsh.Label = "spreadsheet"
     c=["","A", "B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]  
+    
+    #i1=5
+    #spreadsh.set(c[i1]+str(1), "tedge(i)")
+    #for i in range(len(Bnds)):     
+	#if flag=="read":
+	    #Bnds[i].T=spreadsh.get(c[i1]+str(i+2))
+	#else:
+	    #spreadsh.set(c[i1]+str(i+2), str(Bnds[i].T))
+	##FreeCAD.ActiveDocument.recompute()
+    #spreadsh.set(c[i1]+str(1), "tedge(i)")
+    i1=5
+    if flag=="read":
+	#set bnd_tegdeL: Number of different kind of boundaries edges
+	bnd_tegdeL=[]
+	a_tempL=[]
+	i=0
+	a_temp=spreadsh.get(c[i1]+str(i+2))
+	while a_temp!="":
+	    a_tempL=[]
+	    for i4 in [i3 for i3 in re.split('\n|\ |\]|\[|\,',a_temp) if i3]:
+		a_tempL.append(int(i4))
+	    bnd_tegdeL.append(a_tempL )
+	    i=i+1
+	    print str(c[i1]) +" ci1  i" + str(i) + "  "+str(a_temp)	    
+	    try:
+		a_temp=spreadsh.get(c[i1]+str(i+2))
+	    except BaseException:
+		a_temp=""
+
+	    
+    else:
+	spreadsh.set(c[i1]+str(1), "tedge(i)")
+	for i in range(len(bnd_tegdeL)): 
+	    spreadsh.set(c[i1]+str(i+2), str(bnd_tegdeL[i]))
+
+    
     i1=1
     if flag=="read":
 	pass
     else:
 	spreadsh.set(c[i1]+str(1), "bnd_index")
-    for i in range(len(Bnds)):     
+    for i in range(len(bnd_tegdeL)):     
 	if flag=="read":
 	    pass
 	else:
@@ -1260,7 +1298,12 @@ def write_bnd_pi_to_spreadsheet(Bnds,Bodies,spreadsh, flag=""):
 
     i1=2
     spreadsh.set(c[i1]+str(1), "bnd_name")
-    for i in range(len(Bnds)):
+    if len(bnd_tegdeL)-(len(Bnds))>0:
+	for i in range(len(bnd_tegdeL)-len(Bnds)):
+		     Bnds.append(Bnd())
+    print (len(Bnds))
+
+    for i in range(len(bnd_tegdeL)):
 	if flag=="read":
 	    Bnds[i].name=spreadsh.get(c[i1]+str(i+2))
 	else:
@@ -1270,7 +1313,7 @@ def write_bnd_pi_to_spreadsheet(Bnds,Bodies,spreadsh, flag=""):
 
     i1=3
     spreadsh.set(c[i1]+str(1), "Rs")
-    for i in range(len(Bnds)):     
+    for i in range(len(bnd_tegdeL)):     
 	if flag=="read":
 	    Bnds[i].Rs=spreadsh.get(c[i1]+str(i+2))
 	else:
@@ -1279,21 +1322,13 @@ def write_bnd_pi_to_spreadsheet(Bnds,Bodies,spreadsh, flag=""):
 
     i1=4
     spreadsh.set(c[i1]+str(1), "T_ext")
-    for i in range(len(Bnds)):     
+    for i in range(len(bnd_tegdeL)):     
 	if flag=="read":
 	    Bnds[i].T=spreadsh.get(c[i1]+str(i+2))
 	else:
 	    spreadsh.set(c[i1]+str(i+2), str(Bnds[i].T))
 	#FreeCAD.ActiveDocument.recompute()
 
-    i1=5
-    spreadsh.set(c[i1]+str(1), "tedge(i)")
-    for i in range(len(Bnds)):     
-	if flag=="read":
-	    Bnds[i].T=spreadsh.get(c[i1]+str(i+2))
-	else:
-	    spreadsh.set(c[i1]+str(i+2), str(Bnds[i].T))
-	#FreeCAD.ActiveDocument.recompute()
 
 
     i1=6
@@ -1325,7 +1360,7 @@ def write_bnd_pi_to_spreadsheet(Bnds,Bodies,spreadsh, flag=""):
 	    spreadsh.set(c[i1]+str(i+2), str(Bodies[i].name))
     FreeCAD.ActiveDocument.recompute()
 
-    return spreadsh
+    return spreadsh,Bodies,Bnds,bnd_tegdeL
 
 def open_spreadsh_csv(spreadsh,filename,flag):
     '''
