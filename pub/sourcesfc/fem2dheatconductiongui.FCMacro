@@ -2,7 +2,7 @@
 # GUI for 2D FEM heat conduction inside of FreeCAD
 # Author: teobo
 # 
-# License: LGPL v 2.1
+# License: LGPL v 2.1gui_mode
 # Version: 04/12/2015
 
 # CONFIGURATION - EDIT THE FOLLOWING LINE TO MATCH YOUR GMSH BINARY
@@ -109,20 +109,39 @@ class MeshGmsh(QtGui.QWidget):
 
         # Trigger writing_sif_file 10
         self.writing_sif_file = QtGui.QPushButton(self)
-        self.writing_sif_file.setText("write_sif(10)")
+        self.writing_sif_file.setText("rnElmer(10)")
 
         # Trigger button fem_process 11
         self.fem_process = QtGui.QPushButton(self)
-        self.fem_process.setText("fem_process(11)")
+        self.fem_process.setText("rd_result(11)")
 
         # Trigger button annotate_t_results 12
         self.annotate_t_results = QtGui.QPushButton(self)
         self.annotate_t_results.setText("anno_T(12)")
+        self.annotate_t_results.setToolTip("A:visualize per node results:T")
         
-        # Trigger button annotate_t_results 13
+        # Trigger button delete selected with children 13
         self.deletesel = QtGui.QPushButton(self)
         self.deletesel.setText("del sel")
         self.deletesel.setToolTip("delete selected (default) objects with child")
+
+        # Trigger button annotate_t_results 0
+        self.point2post = QtGui.QPushButton(self)
+        self.point2post.setText("point2post")
+        self.point2post.setToolTip("all functions without gui\n from stage to stage\ see: editfield for options")
+
+        self.le_point2post = QtGui.QLineEdit(self)
+        self.le_point2post.setToolTip("this  flag controlls the workflow in post2point mode.\n last digit 2: starting stage(1 -12) \n penultimate digit 3,4: endstage (99 stage 12,end 98:current stage pointer) \n5: replace existing objects\n6 which boundary source(1cvs,2spread,0default)\n example:10009900: from beginning to end, do not replace, take default registered boundaries")
+        self.le_point2post.setText("10200301")
+
+        # Trigger button annotate_t_results 0
+        self.visu = QtGui.QPushButton(self)
+        self.visu.setText("visu_generic")
+        self.visu.setToolTip("visu function according to option")
+
+        self.le_visu = QtGui.QLineEdit(self)
+        self.le_visu.setToolTip("integer controlls visufunction number\n   -2visu_annotate_element(Pi.femmesh1.FemMesh) \n -3 visu_annotate_note \n -4 visu_annotate_edge_element\n -5 visu_annotate_note  #annotate double nodes\n -6 visu_annotate_edge #annotate double edges\n -7 visu_bnd_tedge(Pi.comp_topo_edges,Pi.bnd_tegdeL,Pi.Bnds)\n -8 visu_bnd_bodies(Pi.compound0,Pi.Bodies) \n -9 visu_annotate_element(Pi.femmesh2.FemMesh,Pi.egdegroup[1],Pi.bodyflag)\n -10 visu_annotate_edge_element(Pi.femmesh2.FemMesh,[],Pi.egdegroup[0])\n -11 gradient_color_mesh(Pi.solutiondata[0][0],Pi.femmesh2)\n -12 visu_annotate_note\#annotate T-Resultsn -13 \n -14 \n -15 \n -16")
+        self.le_visu.setText("2,3,4,5,6,7,8,9,10")
 
         self.le_cmd_line_opt_flag = QtGui.QLineEdit(self)
         self.le_cmd_line_opt_flag.setToolTip("this general flag controlls the workflow.\n last digit 1: gui-selection regarded for workflow(1 on, 0 off) \n penultimate digit 2: gui-selection of femmeshes regarded for visualisation(1 on, 0 off) \n3: read boundary conditions(stage7) (0 from spreadsheet, 1 from cvs-file\neg. 100101 means selection based workflow on, selection based gui visualization off,boundary condition read from file\n examples: Workflow from demo pointlist (1) (2) (3) .. \n from selected object (2) (3)..")
@@ -207,6 +226,11 @@ class MeshGmsh(QtGui.QWidget):
         layout.addWidget(self.le_cmd_line_opt_flag, 1, 0)
         layout.addWidget(self.le_cmd_line_opt_mesh, 2, 0)
         layout.addWidget(self.deletesel, 7, 2)
+        layout.addWidget(self.point2post, 8, 2)
+        layout.addWidget(self.le_point2post, 8, 0)
+        layout.addWidget(self.visu, 9, 2)
+        layout.addWidget(self.le_visu, 9, 0)
+        
         #layout.addWidget(self.rb_1D, loffs+1, 0)
         #layout.addWidget(self.rb_2D, loffs+1, 1)
         #layout.addWidget(self.rb_3D, loffs+2, 0)
@@ -243,6 +267,8 @@ class MeshGmsh(QtGui.QWidget):
         self.fem_process.clicked.connect(self.gui_fem_process)
         self.annotate_t_results.clicked.connect(self.gui_annotate_t_results)
         self.deletesel.clicked.connect(self.gui_removeobjectswithchildren)
+        self.point2post.clicked.connect(self.gui_point2post)
+        self.visu.clicked.connect(self.gui_visu)
         #self.stage2trigger.clicked.connect(self.add_points_in_compound)
         #self.stage2trigger.clicked.connect(self.add_points_in_compound)
         #self.cb_max_elme_size.stateChanged.connect(self.max_size_state)
@@ -597,9 +623,279 @@ class MeshGmsh(QtGui.QWidget):
 	    docobj2L=selection
 	    pointtopost.removeobjectswithchildren(docobj2L)
 	
+    def gui_point2post(self):
+	#
+	cmd_line_opt = self.le_point2post.text()
+	len_c=len(cmd_line_opt)
+	startstage=int(cmd_line_opt[len_c-2:len_c])
+	endstage=int(cmd_line_opt[len_c-4:len_c-2])
+	bnd_read_mode=int(cmd_line_opt[len_c-6])
 	
+	print "gui_point2post"
+	stagenr=1
+	if(stagenr>=startstage and stagenr <= endstage) :
+	    print "stage1"
+	    if len(set(FreeCAD.listDocuments())&set([Pi.fc_docname]))==0:
+		FreeCAD.newDocument(Pi.fc_docname)
+	    Pi.occpointsL=pointtopost.dinDINENISO10211_1topoints()
+	    Pi.compound0=makefacefrompointsL(Pi.occpointsL)
+	    Pi.compound0.Label=Pi.compound0name+"Pi"+str(Pieces.index(Pi))
 
+	stagenr=2
+	if(stagenr>=startstage and stagenr <= endstage) :
+	    print "stage2"
+	    cmd_line_opt = self.le_cmd_line_opt_flag.text()
+	    #print cmd_line_opt
+	    selection = FreeCADGui.Selection.getSelection()
+	    if selection and (cmd_line_opt[len(cmd_line_opt)-1]=="1") :
+		Pi.compound0=selection[0]
+		print "read from selection"
+	    #last index 1? use selection
+	    Pi.compound1=pointtopost.addpointstoface(Pi.compound0)
+	    Pi.compound1.Label=Pi.compound1name+"Pi"+str(Pieces.index(Pi))
+
+	stagenr=3
+	if(stagenr>=startstage and stagenr <= endstage) :
+	    print "stage3"
+	    import re
+	    line = self.le_cmd_line_opt_mesh.text()
+	    args=[i for i in re.split('\n|\ |:|=',line) if i]
+	    print "gmsh meshing .."
+	    print args
+	    if line=="":
+		Pi.ng2D.NGParamSetMaxSize="2.2"
+		Pi.ng2D.NGParamSetMinSize="0.1" 
+		Pi.ng2D.gmshalgoname="auto"
+	    if args[0]=="gmsh":
+		Pi.ng2D.NGParamSetMaxSize=args[1]
+		Pi.ng2D.NGParamSetMinSize=args[2] 
+		Pi.ng2D.gmshalgoname=args[3]
+		print args[2]
+	    Pi.femmesh1=pointtopost.gmshmesh(Pi.compound1, Pi.ng2D)
+	    Pi.femmesh1.Label=Pi.femmesh1name+"Pi"+str(Pieces.index(Pi))
+
+	    print "make mb egdes"
+	    #Pi.comp_mb_edges=pointtopost.make_mb_edge(Pi.femmesh1)
+	    #buggy ... 
+	    #Pi.comp_mb_edges.Label=Pi.comp_mb_edgesstr+"Pi"+str(Pieces.index(Pi))
+	    
+	    Pi.comp_topo_edges=pointtopost.make_topo_edge(Pi.compound1)
+	    Pi.comp_topo_edges.Label=Pi.comp_topo_edgesstr+"Pi"+str(Pieces.index(Pi))
+	stagenr=4
+	if(stagenr>=startstage and stagenr <= endstage) :
+	    print "stage4"
 	
+	stagenr=5
+	if(stagenr>=startstage and stagenr <= endstage) :
+	    print "stage5"
+	    Pi.dnL=pointtopost.checkfordoublenodes(Pi.femmesh1.FemMesh)
+	    Pi.dnE=pointtopost.finddoubleedges(Pi.femmesh1)
+	
+	stagenr=6
+	if(stagenr>=startstage and stagenr <= endstage) :
+	    print "stage6"
+	    Pi.dnL=pointtopost.checkfordoublenodes(Pi.femmesh1.FemMesh)
+	    Pi.dnE=pointtopost.finddoubleedges(Pi.femmesh1)
+	    Pi.edgeL=mark_deleted_edges(Pi.femmesh1,[i[3] for i in Pi.dnE])
+
+	    Pi.nodeL=mark_deleted_nodes(Pi.femmesh1,Pi.dnL[2])
+
+	    Pi.facesE=pointtopost.rereference_elments(Pi.femmesh1,Pi.dnL[2],Pi.edgeL)
+
+	    Pi.femmesh2=pointtopost.rebuild_mesh(Pi.femmesh1,Pi.nodeL,Pi.facesE)
+	    Pi.femmesh2.Label=Pi.femmesh2name+"Pi"+str(Pieces.index(Pi))
+
+
+	    dn2L=pointtopost.checkfordoublenodes(Pi.femmesh2.FemMesh)
+	    print dn2L
+	    #0 doubles 
+	#print "stage7"
+	#Pi.egdeN=pointtopost.getnodesbycompoundedge(Pi.femmesh2,Pi.comp_topo_edges)
+
+	##get nodes of face=body
+	#Pi.faceN=pointtopost.getnodesbycompoundface(Pi.femmesh2,Pi.compound0)
+
+	##register bodies and boundaries with default
+	#Pi.bnd_tegdeL=[[1,3],[18]]
+	#Pi.bnd_tegdeL, Pi.Bnds, Pi.Bodies= pointtopost.register_bodies_and_boundaries(Pi.bnd_tegdeL,Pi.Bodies,Pi.Bnds,Pi.compound0)
+
+	##get nodes of boundary condition
+	#Pi.boundaries=pointtopost.get_bnd_nodesbytedge(Pi.femmesh2,Pi.comp_topo_edges,Pi.bnd_tegdeL)
+
+	##compound links colored according to bondary group
+	#pointtopost.visu_bnd_tedge(Pi.comp_topo_edges,Pi.bnd_tegdeL,Pi.Bnds)
+
+	#Pi.bodyflag=get_elementbodysflag(Pi.femmesh2,Pi.compound0,Pi.faceN) 
+
+	#Pi.egdegroup=pointtopost.get_edgegroup_and_neighbor(Pi.femmesh2,Pi.compound0,Pi.faceN,Pi.boundaries)
+	stagenr=7
+	if(stagenr>=startstage and stagenr <= endstage) :
+	    if(bnd_read_mode==0) :
+		print "stage7.1: default value (for further modification"
+		#register workflow piece from bodies and boundaries with hardcoded default
+		Pi.bnd_tegdeL=[[1,3],[18]]
+		Pi.bnd_tegdeL, Pi.Bnds, Pi.Bodies= pointtopost.register_bodies_and_boundaries(Pi.bnd_tegdeL,Pi.Bodies,Pi.Bnds,Pi.compound0)
+		#write bodies and boundaries from pi to spread
+		Pi.spreedsheet,Pi.Bodies,Pi.Bnds,Pi.bnd_tegdeL=pointtopost.write_bnd_pi_to_spreadsheet(Pi.bnd_tegdeL,Pi.Bnds,Pi.Bodies,Pi.spreedsheet)
+		Pi.spreedsheet.Label=Pi.spreedsheetstr+"Pi"+str(Pieces.index(Pi))
+		#write spreadsh to csv
+		pointtopost.open_spreadsh_csv(Pi.spreedsheet,Pi.csvfile,"write")
+
+	    
+	    if(bnd_read_mode==1):
+		#read from cvs
+		print "stage7.2 read from cvs bnd_read_mode==1"
+		Pi.spreedsheet=pointtopost.open_spreadsh_csv(Pi.spreedsheet,Pi.csvfile,"read")
+		#write spreadsh to pi
+		Pi.spreedsheet,Pi.Bodies,Pi.Bnds,Pi.bnd_tegdeL=pointtopost.write_bnd_pi_to_spreadsheet(Pi.bnd_tegdeL,Pi.Bnds,Pi.Bodies,Pi.spreedsheet, "read")	    
+	    if(bnd_read_mode==2):
+		print "stage7.2 read from spread bnd_read_mode==2"
+		#write spreadsh to pi: case user edits internal spreadsheet
+		Pi.spreedsheet,Pi.Bodies,Pi.Bnds,Pi.bnd_tegdeL=pointtopost.write_bnd_pi_to_spreadsheet(Pi.bnd_tegdeL,Pi.Bnds,Pi.Bodies,Pi.spreedsheet, "read")	    
+		#write  spreadsh to csv
+		pointtopost.open_spreadsh_csv(Pi.spreedsheet,Pi.csvfile,"write")
+
+
+	    print "stage7.3"
+		    ### append calculation part
+	    #get nodes of edges
+	    Pi.egdeN=pointtopost.getnodesbycompoundedge(Pi.femmesh2,Pi.comp_topo_edges)
+	    #get nodes of face=body
+	    Pi.faceN=pointtopost.getnodesbycompoundface(Pi.femmesh2,Pi.compound0)
+	    #get nodes of boundary condition
+	    Pi.boundaries=pointtopost.get_bnd_nodesbytedge(Pi.femmesh2,Pi.comp_topo_edges,Pi.bnd_tegdeL)
+	    Pi.bodyflag=get_elementbodysflag(Pi.femmesh2,Pi.compound0,Pi.faceN)
+	    Pi.egdegroup=pointtopost.get_edgegroup_and_neighbor(Pi.femmesh2,Pi.compound0,Pi.faceN,Pi.boundaries)
+
+	    stagenr=9
+	if(stagenr>=startstage and stagenr <= endstage) :
+	    print "stage9"
+	    s=pointtopost.write_elmer_sif_file(Pi.siftemplfile,Pi.siffile,Pi.Bodies,Pi.Bnds)
+	    
+	stagenr=10
+	if(stagenr>=startstage and stagenr <= endstage) :
+	    print "stage10"
+	    pointtopost.process_elmer_sif_file(Pi.siffile,Pi.epsourcefile,Pi.fempath,1)
+	
+	
+	stagenr=11
+	if(stagenr>=startstage and stagenr <= endstage) :
+	    print "stage11"
+	    Pi.solutionheader, Pi.solutiondata, Pi.headerline=pointtopost.read_ep_result(Pi.epfile)
+	    print "stage12"
+
+    def gui_visu(self):
+	print "gui_visu"
+	cmd_line_opt = self.le_visu.text()
+	len_c=len(cmd_line_opt)
+	gui_mode=int(cmd_line_opt[len_c-1])
+	import re
+	line = self.le_visu.text()
+	args=[int(i) for i in re.split('\n|\ |:|=|\,|\[|\]',line) if i]
+	print args
+
+	gui_mode=2
+	if(set(args).issuperset([gui_mode])) :
+	    #annotate all elements
+	    import FreeCADGui
+	    FreeCADGui.doCommand('Pi=fem2dheatconductiongui.pointtopost.Piece')
+	    #FreeCADGui.doCommand('anno7=pointtopost.visu_annotate_note(Pi.femmesh2,[],["T:"+str(round(float(j),2)) for j in Pi.solutiondata[0][0]])')
+	    #do command how? (T)
+	    print 'anno1=pointtopost.visu_annotate_element(Pi.femmesh1.FemMesh)'
+
+	    #print to console? how?
+	    anno1=pointtopost.visu_annotate_element(Pi.femmesh1.FemMesh)
+	    anno1.Label="Ann_all_Face_"+"Pi"+str(Pieces.index(Pi))
+	    anno1.ViewObject.hide()
+	    anno1.ViewObject.show()
+	    anno1.ViewObject.hide()
+
+	gui_mode=3
+	if(set(args).issuperset([gui_mode])) :
+	    #annotate all nodes
+	    anno2=pointtopost.visu_annotate_note(Pi.femmesh1)
+	    anno2.Label="Ann_all_N_"+"Pi"+str(Pieces.index(Pi))
+	    anno2.ViewObject.hide()
+	    anno2.ViewObject.show()
+	    anno2.ViewObject.hide()
+
+	gui_mode=4
+	if(set(args).issuperset([gui_mode])) :
+	    #annotate all mesh boundary edges
+	    anno3=pointtopost.visu_annotate_edge_element(Pi.femmesh1.FemMesh)
+	    anno3.Label="Ann_mb_E_"+"Pi"+str(Pieces.index(Pi))
+	    anno3.ViewObject.hide()
+	    anno3.ViewObject.show()
+	    anno3.ViewObject.hide()
+	    
+	gui_mode=5    
+	if(set(args).issuperset([gui_mode])) :
+	    #annotate double nodes
+	    anno4=pointtopost.visu_annotate_note(Pi.femmesh1,Pi.dnL[0])
+	    anno4.Label="Ann_double_N_"+"Pi"+str(Pieces.index(Pi))
+	    anno4.ViewObject.hide()
+	    anno4.ViewObject.show()
+	    anno4.ViewObject.hide()
+
+	gui_mode=6
+	if(set(args).issuperset([gui_mode])) :
+	    #annotate double edges
+	    anno5=pointtopost.visu_annotate_edge_element(Pi.femmesh1.FemMesh, [i[3] for i in Pi.dnE])
+	    anno5.Label="Ann_double_E_"+"Pi"+str(Pieces.index(Pi))
+	    anno5.ViewObject.hide()
+	    anno5.ViewObject.show()
+	    anno5.ViewObject.hide()
+	    
+	gui_mode=7
+	if(set(args).issuperset([gui_mode])) :
+	    #compound links colored according to bondary group
+	    pointtopost.visu_bnd_tedge(Pi.comp_topo_edges,Pi.bnd_tegdeL,Pi.Bnds)
+	    
+	gui_mode=8
+	if(set(args).issuperset([gui_mode])) :
+	    #viuaalize bodies
+	    visu_bnd_bodies(Pi.compound0,Pi.Bodies)
+	    
+	gui_mode=9
+	if(set(args).issuperset([gui_mode])) :
+	    #annotate boundary neighbor cells
+	    anno5_1=pointtopost.visu_annotate_element(Pi.femmesh2.FemMesh,Pi.egdegroup[1],Pi.bodyflag)
+	    anno5_1.Label="Ann_bnd_neigh_cells_"+"Pi"+str(Pieces.index(Pi))
+	    anno5_1.ViewObject.hide()
+	    anno5_1.ViewObject.show()
+	    anno5_1.ViewObject.hide()	
+
+	gui_mode=10    
+	if(set(args).issuperset([gui_mode])) :
+	    #annotate boundary edges with edgegroup
+	    anno6=pointtopost.visu_annotate_edge_element(Pi.femmesh2.FemMesh,[],Pi.egdegroup[0])
+	    anno6.Label="Ann_bndgroup_E_"+"Pi"+str(Pieces.index(Pi))
+	    anno6.ViewObject.hide()
+	    anno6.ViewObject.show()
+	    anno6.ViewObject.hide()
+	gui_mode=11    
+	if(set(args).issuperset([gui_mode])) :
+	    #coloring by Temperaturescale
+	    pointtopost.gradient_color_mesh(Pi.solutiondata[0][0],Pi.femmesh2)
+
+	gui_mode=12    
+	if(set(args).issuperset([gui_mode])) :
+	    #annotate T-Results
+	    anno7=pointtopost.visu_annotate_note(Pi.femmesh2,[],["T:"+str(round(float(j),2)) for j in Pi.solutiondata[0][0]])
+	    import FreeCADGui
+	    FreeCADGui.doCommand('Pi=fem2dheatconductiongui.pointtopost.Piece')
+	    #FreeCADGui.doCommand('anno7=pointtopost.visu_annotate_note(Pi.femmesh2,[],["T:"+str(round(float(j),2)) for j in Pi.solutiondata[0][0]])')
+	    #do command how? (T)
+	    print 'anno7=pointtopost.visu_annotate_note(Pi.femmesh2,[],["T:"+str(round(float(j),2)) for j in Pi.solutiondata[0][0]])'
+	    #print to console? how?
+	    anno7.Label="Ann_resultT_N_"+"Pi"+str(Pieces.index(Pi))
+	    anno7.ViewObject.hide()
+	    anno7.ViewObject.show()
+	    anno7.ViewObject.hide()
+
+
+	return
+    
 	
 
 

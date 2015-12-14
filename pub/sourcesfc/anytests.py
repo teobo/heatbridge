@@ -1044,7 +1044,10 @@ else:
 
 bnd_tegdeL
 spreadvar
-    
+
+
+#new guifunction:point2post
+#1) 4 procedures: naming all: point2post point2postedit 
     
     
     

@@ -1369,6 +1369,14 @@ def open_spreadsh_csv(spreadsh,filename,flag):
     -read/write to a temp file
     -remove spreadsheet object for performance
     '''
+    try:
+	spreadsh==None
+    except BaseException:
+	spreadsh=None
+    # if it is deleted, assign it object with none
+    if spreadsh==None:
+	spreadsh=FreeCAD.activeDocument().addObject('Spreadsheet::Sheet','Spreadsheet')    
+	spreadsh.Label = "spreadsheet"
 
     if filename=="":filename="/tmp/spreadsh_.csv"
     if flag=="read" or flag=="create":
