@@ -106,6 +106,20 @@ class Piece:
     spreedsheetstr="spreadsheet"
     csvfile=""
     stagepointer=""
+    stepfile="" #directory for step-zoo
+    anno1=None #object for annotation group
+    anno2=None
+    anno3=None
+    anno4=None
+    anno5=None
+    anno6=None
+    anno7=None
+    anno8=None
+    anno5_1=None
+    anno10=None
+    #>>> Pieces.index(Pieces[3])
+    #0, bug?
+    currentPi_index=-1
     fc_docname="femcalibr2testdoc"
     
 

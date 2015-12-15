@@ -656,6 +656,10 @@ del sys.modules["fem2dheatconductiongui"]
 import pointtopost
 import fem2dheatconductiongui
 
+from fem2dheatconductiongui import Pi
+from fem2dheatconductiongui import Pieces
+
+
 #### test start up gui end
 
 ###
@@ -1049,6 +1053,14 @@ spreadvar
 #new guifunction:point2post
 #1) 4 procedures: naming all: point2post point2postedit 
     
+#zusammenflicken
+obj_nr_before=len(FreeCAD.ActiveDocument.Objects)
+for i in range(84,112):App.activeDocument().addObject("Part::Compound","Compound")
+>>> App.activeDocument().Compound.Links = [App.activeDocument().Part__Feature020,]
+>>> App.ActiveDocument.recompute(   
+  for i in range(84,112):App.activeDocument().addObject("Part::Compound","Compound")
+>>> App.activeDocument().Compound.Links = [App.activeDocument().Part__Feature020,]
+>>> App.ActiveDocument.recompute(
     
-    
- 
+>>> Pieces.index(Pieces[3])
+0
