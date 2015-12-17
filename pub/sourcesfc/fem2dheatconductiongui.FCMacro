@@ -59,7 +59,7 @@ class MeshGmsh(QtGui.QWidget):
         self.annotate_all.setText("cl_samples")
 	self.annotate_all.setToolTip("A:obsoleted, now used for sample commandline and hints (tooltips)\n B:annotate nodes elements edges, activate by hitting space in combo view\n \
 	in general is it easier (then spending time in\n programming a gui for debug and demo purposes and\n for the user learning doubtful limiting syntax)\n doing the accessing (whatever!) visualization\n (annotation) from the command line\n \
-	look for templates in the demo scripts:\n anno7=pointtopost.visu_annotate_note(Pi.femmesh2,[],['T:'+str(round(float(j),2))\n \ for j in Pi.solutiondata[0][0]]) \n anno7.Label='Ann_resultT_N_'+\n \'Pi'+str(Pi.currentPi_index)\n \
+	look for templates in the demo scripts:\n anno7=pointtopost.visu_annotate_note(Pi.femmesh2,[],['T:'+str(round(float(j),2))\n \ for j in Pi.solutiondata[0][0]]) \n anno7.Label='Ann_resultT_N_'+\n \'Pi'+str(Pieces.index(Pi))\n \
 	Systematic: There the pattern: a) selected mesh\n \ things (1nodes, 2elements, 3mesh boundary edges\n \, 4topo faces=bodies, 5topo edges) b) selection of the former: all, gui selected, lists, neighbors\n \ elements of edges, double nodes, double edges,\n \ etc c) you got according to case of a \n (modifiable) annotation strings which is\n \ 1:list_id,id,Temperature, any_result_value 2:\n \
 	list,id,k_value, Materialname,body_id,neighbor\n \
 	nodes,Energyflux,whatever_resultvalue\n \
@@ -134,7 +134,8 @@ class MeshGmsh(QtGui.QWidget):
 
         self.le_point2post = QtGui.QLineEdit(self)
         self.le_point2post.setToolTip("this  flag controlls the workflow in post2point mode.\n last digit 2: starting stage(1 -12) \n penultimate digit 3,4: endstage (99 stage 12,end 98:current stage pointer) \n5: replace existing objects\n6 which boundary source(1cvs,2spread,0default)\n example:10009900: from beginning to end, do not replace, take default registered boundaries")
-        self.le_point2post.setText("10200301")
+        glob_le_opt_pp="11101302"
+        self.le_point2post.setText(glob_le_opt_pp)
 
         # Trigger button annotate_t_results 0
         self.visu = QtGui.QPushButton(self)
@@ -142,12 +143,12 @@ class MeshGmsh(QtGui.QWidget):
         self.visu.setToolTip("visu function according to option")
 
         self.le_visu = QtGui.QLineEdit(self)
-        self.le_visu.setToolTip("integer controlls visufunction number\n   -2visu_annotate_element(Pi.femmesh1.FemMesh) \n -3 visu_annotate_note \n -4 visu_annotate_edge_element\n -5 visu_annotate_note  #annotate double nodes\n -6 visu_annotate_edge #annotate double edges\n -7 visu_bnd_tedge(Pi.comp_topo_edges,Pi.bnd_tegdeL,Pi.Bnds)\n -8 visu_bnd_bodies(Pi.compound0,Pi.Bodies) \n -9 visu_annotate_element(Pi.femmesh2.FemMesh,Pi.egdegroup[1],Pi.bodyflag)\n -10 visu_annotate_edge_element(Pi.femmesh2.FemMesh,[],Pi.egdegroup[0])\n -11 gradient_color_mesh(Pi.solutiondata[0][0],Pi.femmesh2)\n -12 visu_annotate_note\#annotate T-Resultsn -13 \n -14 \n -15 \n -16")
+        self.le_visu.setToolTip("integer controlls visufunction number\n   -2visu_annotate_element(Pi.femmesh1.FemMesh) \n -3 visu_annotate_note \n -4 visu_annotate_edge_element\n -5 visu_annotate_note  #annotate double nodes\n -6 visu_annotate_edge #annotate double edges\n -7 visu_bnd_tedge(Pi.comp_topo_edges,Pi.bnd_tegdeL,Pi.Bnds)\n -8 visu_bnd_bodies(Pi.compound0,Pi.Bodies) \n -9 visu_annotate_element(Pi.femmesh2.FemMesh,Pi.egdegroup[1],Pi.bodyflag)\n -10 visu_annotate_edge_element(Pi.femmesh2.FemMesh,[],Pi.egdegroup[0])\n -11 gradient_color_mesh(Pi.solutiondata[0][0],Pi.femmesh2)\n -12 visu_annotate_note\#annotate T-Resultsn -13 pointtopost.man_mv_obj_dir(Pieces) group\n -14 pointtopost.man_mv_obj_dir(Pieces,1) ungroup\n -15 \n -16")
         self.le_visu.setText("2,3,4,5,6,7,8,9,10")
 
         self.le_cmd_line_opt_flag = QtGui.QLineEdit(self)
         self.le_cmd_line_opt_flag.setToolTip("this general flag controlls the workflow.\n last digit 1: gui-selection regarded for workflow(1 on, 0 off) \n penultimate digit 2: gui-selection of femmeshes regarded for visualisation(1 on, 0 off) \n3: read boundary conditions(stage7) (0 from spreadsheet, 1 from cvs-file\neg. 100101 means selection based workflow on, selection based gui visualization off,boundary condition read from file\n examples: Workflow from demo pointlist (1) (2) (3) .. \n from selected object (2) (3)..")
-        self.le_cmd_line_opt_flag.setText("100001")
+        self.le_cmd_line_opt_flag.setText("100000")
 
         self.le_cmd_line_opt_mesh = QtGui.QLineEdit(self)
         self.le_cmd_line_opt_mesh.setToolTip("mesh option (3)\n 1: gmsh =2.2 =0.1 =auto\n(maxsize, minsize, algo or:\ngmsh =1.2 =0.05 =auto \n2:netgen radius to be implemented ")
@@ -271,6 +272,11 @@ class MeshGmsh(QtGui.QWidget):
         self.deletesel.clicked.connect(self.gui_removeobjectswithchildren)
         self.point2post.clicked.connect(self.gui_point2post)
         self.visu.clicked.connect(self.gui_visu)
+        
+        #test and debug:
+        #call annotate_all
+        #t.gui_annotate_all()
+
         #self.stage2trigger.clicked.connect(self.add_points_in_compound)
         #self.stage2trigger.clicked.connect(self.add_points_in_compound)
         #self.cb_max_elme_size.stateChanged.connect(self.max_size_state)
@@ -384,7 +390,7 @@ class MeshGmsh(QtGui.QWidget):
 	Pi.occpointsL=pointtopost.dinDINENISO10211_1topoints()
 	print "draw faces"
 	Pi.compound0=makefacefrompointsL(Pi.occpointsL)
-	Pi.compound0.Label=Pi.compound0name+"Pi"+str(Pi.currentPi_index)
+	Pi.compound0.Label=Pi.compound0name+"Pi"+str(Pieces.index(Pi))
 
     def add_points_in_compound(self):
 	cmd_line_opt = self.le_cmd_line_opt_flag.text()
@@ -395,7 +401,7 @@ class MeshGmsh(QtGui.QWidget):
 	    print "read from selection"
 	#last index 1? use selection
 	Pi.compound1=pointtopost.addpointstoface(Pi.compound0)
-	Pi.compound1.Label=Pi.compound1name+"Pi"+str(Pi.currentPi_index)
+	Pi.compound1.Label=Pi.compound1name+"Pi"+str(Pieces.index(Pi))
 
     def gui_gmsh_meshing(self):
 	import re
@@ -413,21 +419,21 @@ class MeshGmsh(QtGui.QWidget):
 	    Pi.ng2D.gmshalgoname=args[3]
 	    print args[2]
 	Pi.femmesh1=pointtopost.gmshmesh(Pi.compound1, Pi.ng2D)
-	Pi.femmesh1.Label=Pi.femmesh1name+"Pi"+str(Pi.currentPi_index)
+	Pi.femmesh1.Label=Pi.femmesh1name+"Pi"+str(Pieces.index(Pi))
 
 	print "make mb egdes"
 	#Pi.comp_mb_edges=pointtopost.make_mb_edge(Pi.femmesh1)
 	#buggy ... 
-	#Pi.comp_mb_edges.Label=Pi.comp_mb_edgesstr+"Pi"+str(Pi.currentPi_index)
+	#Pi.comp_mb_edges.Label=Pi.comp_mb_edgesstr+"Pi"+str(Pieces.index(Pi))
 	
 	Pi.comp_topo_edges=pointtopost.make_topo_edge(Pi.compound1)
-	Pi.comp_topo_edges.Label=Pi.comp_topo_edgesstr+"Pi"+str(Pi.currentPi_index)
+	Pi.comp_topo_edges.Label=Pi.comp_topo_edgesstr+"Pi"+str(Pieces.index(Pi))
 
 
     def gui_annotate_all(self):
 	#obsoleted, now used for sample commandline and hints (tooltips)
 	#annotate all elements
-	print "change current piece Pi to index" +str(Pi.currentPi_index)+ "\ni=1;fem2dheatconductiongui.Pi=fem2dheatconductiongui.Pieces[i]\nfem2dheatconductiongui.Pi.currentPi_index=i\n"
+	print "change current piece Pi to index" +str(Pieces.index(Pi))+ "\ni=1;fem2dheatconductiongui.Pi=fem2dheatconductiongui.Pieces[i]\n"
 	
  
 	#cmd_line_opt = self.le_cmd_line_opt_flag.text()
@@ -437,21 +443,21 @@ class MeshGmsh(QtGui.QWidget):
 	    #Pi.femmesh1=selection[0]
 	    #print "read femmesh1 from selection"
 	#anno1=pointtopost.visu_annotate_element(Pi.femmesh1.FemMesh)
-	#anno1.Label="Ann_all_Face_"+"Pi"+str(Pi.currentPi_index)
+	#anno1.Label="Ann_all_Face_"+"Pi"+str(Pieces.index(Pi))
 	#anno1.ViewObject.hide()
 	#anno1.ViewObject.show()
 	#anno1.ViewObject.hide()
 
 	##annotate all nodes
 	#anno2=pointtopost.visu_annotate_note(Pi.femmesh1)
-	#anno2.Label="Ann_all_N_"+"Pi"+str(Pi.currentPi_index)
+	#anno2.Label="Ann_all_N_"+"Pi"+str(Pieces.index(Pi))
 	#anno2.ViewObject.hide()
 	#anno2.ViewObject.show()
 	#anno2.ViewObject.hide()
 
 	##annotate all mesh boundary edges
 	#anno3=pointtopost.visu_annotate_edge_element(Pi.femmesh1.FemMesh)
-	#anno3.Label="Ann_mb_E_"+"Pi"+str(Pi.currentPi_index)
+	#anno3.Label="Ann_mb_E_"+"Pi"+str(Pieces.index(Pi))
 	#anno3.ViewObject.hide()
 	#anno3.ViewObject.show()
 	#anno3.ViewObject.hide()
@@ -469,7 +475,7 @@ class MeshGmsh(QtGui.QWidget):
 	Pi.dnL=pointtopost.checkfordoublenodes(Pi.femmesh1.FemMesh)
 	#annotate double nodes
 	anno4=pointtopost.visu_annotate_note(Pi.femmesh1,Pi.dnL[0])
-	anno4.Label="Ann_double_N_"+"Pi"+str(Pi.currentPi_index)
+	anno4.Label="Ann_double_N_"+"Pi"+str(Pieces.index(Pi))
 	anno4.ViewObject.hide()
 	anno4.ViewObject.show()
 	anno4.ViewObject.hide()
@@ -477,7 +483,7 @@ class MeshGmsh(QtGui.QWidget):
 
 	#annotate double edges
 	anno5=pointtopost.visu_annotate_edge_element(Pi.femmesh1.FemMesh, [i[3] for i in Pi.dnE])
-	anno5.Label="Ann_double_E_"+"Pi"+str(Pi.currentPi_index)
+	anno5.Label="Ann_double_E_"+"Pi"+str(Pieces.index(Pi))
 	anno5.ViewObject.hide()
 	anno5.ViewObject.show()
 	anno5.ViewObject.hide()
@@ -493,7 +499,7 @@ class MeshGmsh(QtGui.QWidget):
 	Pi.facesE=pointtopost.rereference_elments(Pi.femmesh1,Pi.dnL[2],Pi.edgeL)
 
 	Pi.femmesh2=pointtopost.rebuild_mesh(Pi.femmesh1,Pi.nodeL,Pi.facesE)
-	Pi.femmesh2.Label=Pi.femmesh2name+"Pi"+str(Pi.currentPi_index)
+	Pi.femmesh2.Label=Pi.femmesh2name+"Pi"+str(Pieces.index(Pi))
 
 
 	dn2L=pointtopost.checkfordoublenodes(Pi.femmesh2.FemMesh)
@@ -532,7 +538,7 @@ class MeshGmsh(QtGui.QWidget):
 	Pi.bnd_tegdeL, Pi.Bnds, Pi.Bodies= pointtopost.register_bodies_and_boundaries(Pi.bnd_tegdeL,Pi.Bodies,Pi.Bnds,Pi.compound0)
 	#write bodies and boundaries from pi to spread
 	Pi.spreedsheet,Pi.Bodies,Pi.Bnds,Pi.bnd_tegdeL=pointtopost.write_bnd_pi_to_spreadsheet(Pi.bnd_tegdeL,Pi.Bnds,Pi.Bodies,Pi.spreedsheet)
-	Pi.spreedsheet.Label=Pi.spreedsheetstr+"Pi"+str(Pi.currentPi_index)
+	Pi.spreedsheet.Label=Pi.spreedsheetstr+"Pi"+str(Pieces.index(Pi))
 	
 	#write spreadsh to csv
 	#pointtopost.open_spreadsh_csv(Pi.spreedsheet,Pi.csvfile,"write")
@@ -553,7 +559,8 @@ class MeshGmsh(QtGui.QWidget):
 	if (cmd_line_opt[len(cmd_line_opt)-3]=="1"):
 	    pointtopost.open_spreadsh_csv(Pi.spreedsheet,Pi.csvfile,"read")
 	    #write spreadsh to pi
-	    Pi.spreedsheet,Pi.Bodies,Pi.Bnds,Pi.bnd_tegdeL=pointtopost.write_bnd_pi_to_spreadsheet(Pi.bnd_tegdeL,Pi.Bnds,Pi.Bodies,Pi.spreedsheet, "read")	    
+	    Pi.spreedsheet,Pi.Bodies,Pi.Bnds,Pi.bnd_tegdeL=pointtopost.write_bnd_pi_to_spreadsheet(Pi.bnd_tegdeL,Pi.Bnds,Pi.Bodies,Pi.spreedsheet, "read")
+	    Pi.spreedsheet.Label=Pi.spreedsheetstr+"Pi"+str(Pieces.index(Pi))
 	else:
 	    #write spreadsh to pi: case user edits internal spreadsheet
 	    Pi.spreedsheet,Pi.Bodies,Pi.Bnds,Pi.bnd_tegdeL=pointtopost.write_bnd_pi_to_spreadsheet(Pi.bnd_tegdeL,Pi.Bnds,Pi.Bodies,Pi.spreedsheet, 	    "read")	    
@@ -582,14 +589,14 @@ class MeshGmsh(QtGui.QWidget):
 	pass
 	#annotate boundary neighbor cells
 	anno5=pointtopost.visu_annotate_element(Pi.femmesh2.FemMesh,Pi.egdegroup[1],Pi.bodyflag)
-	anno5.Label="Ann_bnd_neigh_cells_"+"Pi"+str(Pi.currentPi_index)
+	anno5.Label="Ann_bnd_neigh_cells_"+"Pi"+str(Pieces.index(Pi))
 	anno5.ViewObject.hide()
 	anno5.ViewObject.show()
 	anno5.ViewObject.hide()
 
 	#annotate boundary edges with edgegroup
 	anno6=pointtopost.visu_annotate_edge_element(Pi.femmesh2.FemMesh,[],Pi.egdegroup[0])
-	anno6.Label="Ann_bndgroup_E_"+"Pi"+str(Pi.currentPi_index)
+	anno6.Label="Ann_bndgroup_E_"+"Pi"+str(Pieces.index(Pi))
 	anno6.ViewObject.hide()
 	anno6.ViewObject.show()
 	anno6.ViewObject.hide()
@@ -618,7 +625,7 @@ class MeshGmsh(QtGui.QWidget):
 
 	#annotate T-Results
 	anno7=pointtopost.visu_annotate_note(Pi.femmesh2,[],["T:"+str(round(float(j),2)) for j in Pi.solutiondata[0][0]])
-	anno7.Label="Ann_resultT_N_"+"Pi"+str(Pi.currentPi_index)
+	anno7.Label="Ann_resultT_N_"+"Pi"+str(Pieces.index(Pi))
 	anno7.ViewObject.hide()
 	anno7.ViewObject.show()
 	anno7.ViewObject.hide()
@@ -646,7 +653,7 @@ class MeshGmsh(QtGui.QWidget):
 		FreeCAD.newDocument(Pi.fc_docname)
 	    Pi.occpointsL=pointtopost.dinDINENISO10211_1topoints()
 	    Pi.compound0=makefacefrompointsL(Pi.occpointsL)
-	    Pi.compound0.Label=Pi.compound0name+"Pi"+str(Pi.currentPi_index)
+	    Pi.compound0.Label=Pi.compound0name+"Pi"+str(Pieces.index(Pi))
 
 	stagenr=2
 	if(stagenr>=startstage and stagenr <= endstage) :
@@ -659,7 +666,7 @@ class MeshGmsh(QtGui.QWidget):
 		print "read from selection"
 	    #last index 1? use selection
 	    Pi.compound1=pointtopost.addpointstoface(Pi.compound0)
-	    Pi.compound1.Label=Pi.compound1name+"Pi"+str(Pi.currentPi_index)
+	    Pi.compound1.Label=Pi.compound1name+"Pi"+str(Pieces.index(Pi))
 
 	stagenr=3
 	if(stagenr>=startstage and stagenr <= endstage) :
@@ -679,15 +686,15 @@ class MeshGmsh(QtGui.QWidget):
 		Pi.ng2D.gmshalgoname=args[3]
 		print args[2]
 	    Pi.femmesh1=pointtopost.gmshmesh(Pi.compound1, Pi.ng2D)
-	    Pi.femmesh1.Label=Pi.femmesh1name+"Pi"+str(Pi.currentPi_index)
+	    Pi.femmesh1.Label=Pi.femmesh1name+"Pi"+str(Pieces.index(Pi))
 
 	    print "make mb egdes"
 	    #Pi.comp_mb_edges=pointtopost.make_mb_edge(Pi.femmesh1)
 	    #buggy ... 
-	    #Pi.comp_mb_edges.Label=Pi.comp_mb_edgesstr+"Pi"+str(Pi.currentPi_index)
+	    #Pi.comp_mb_edges.Label=Pi.comp_mb_edgesstr+"Pi"+str(Pieces.index(Pi))
 	    
 	    Pi.comp_topo_edges=pointtopost.make_topo_edge(Pi.compound1)
-	    Pi.comp_topo_edges.Label=Pi.comp_topo_edgesstr+"Pi"+str(Pi.currentPi_index)
+	    Pi.comp_topo_edges.Label=Pi.comp_topo_edgesstr+"Pi"+str(Pieces.index(Pi))
 	stagenr=4
 	if(stagenr>=startstage and stagenr <= endstage) :
 	    print "stage4"
@@ -710,7 +717,7 @@ class MeshGmsh(QtGui.QWidget):
 	    Pi.facesE=pointtopost.rereference_elments(Pi.femmesh1,Pi.dnL[2],Pi.edgeL)
 
 	    Pi.femmesh2=pointtopost.rebuild_mesh(Pi.femmesh1,Pi.nodeL,Pi.facesE)
-	    Pi.femmesh2.Label=Pi.femmesh2name+"Pi"+str(Pi.currentPi_index)
+	    Pi.femmesh2.Label=Pi.femmesh2name+"Pi"+str(Pieces.index(Pi))
 
 
 	    dn2L=pointtopost.checkfordoublenodes(Pi.femmesh2.FemMesh)
@@ -737,14 +744,18 @@ class MeshGmsh(QtGui.QWidget):
 	#Pi.egdegroup=pointtopost.get_edgegroup_and_neighbor(Pi.femmesh2,Pi.compound0,Pi.faceN,Pi.boundaries)
 	stagenr=7
 	if(stagenr>=startstage and stagenr <= endstage) :
+	    pointtopost.prepare_elemer_output(Pi.gridpath)
 	    if(bnd_read_mode==0) :
 		print "stage7.1: default value (for further modification"
+		
+		#need the dirs
+		
 		#register workflow piece from bodies and boundaries with hardcoded default
 		Pi.bnd_tegdeL=[[1,3],[18]]
 		Pi.bnd_tegdeL, Pi.Bnds, Pi.Bodies= pointtopost.register_bodies_and_boundaries(Pi.bnd_tegdeL,Pi.Bodies,Pi.Bnds,Pi.compound0)
 		#write bodies and boundaries from pi to spread
 		Pi.spreedsheet,Pi.Bodies,Pi.Bnds,Pi.bnd_tegdeL=pointtopost.write_bnd_pi_to_spreadsheet(Pi.bnd_tegdeL,Pi.Bnds,Pi.Bodies,Pi.spreedsheet)
-		Pi.spreedsheet.Label=Pi.spreedsheetstr+"Pi"+str(Pi.currentPi_index)
+		Pi.spreedsheet.Label=Pi.spreedsheetstr+"Pi"+str(Pieces.index(Pi))
 		#write spreadsh to csv, not overwrite
 		#pointtopost.open_spreadsh_csv(Pi.spreedsheet,Pi.csvfile,"write")
 
@@ -754,11 +765,12 @@ class MeshGmsh(QtGui.QWidget):
 		print "stage7.2 read from cvs bnd_read_mode==1"
 		Pi.spreedsheet=pointtopost.open_spreadsh_csv(Pi.spreedsheet,Pi.csvfile,"read")
 		#write spreadsh to pi
-		Pi.spreedsheet,Pi.Bodies,Pi.Bnds,Pi.bnd_tegdeL=pointtopost.write_bnd_pi_to_spreadsheet(Pi.bnd_tegdeL,Pi.Bnds,Pi.Bodies,Pi.spreedsheet, "read")	    
+		Pi.spreedsheet,Pi.Bodies,Pi.Bnds,Pi.bnd_tegdeL=pointtopost.write_bnd_pi_to_spreadsheet(Pi.bnd_tegdeL,Pi.Bnds,Pi.Bodies,Pi.spreedsheet, "read",Pi.compound0)	
+		Pi.spreedsheet.Label=Pi.spreedsheetstr+"Pi"+str(Pieces.index(Pi))
 	    if(bnd_read_mode==2):
 		print "stage7.2 read from spread bnd_read_mode==2"
 		#write spreadsh to pi: case user edits internal spreadsheet
-		Pi.spreedsheet,Pi.Bodies,Pi.Bnds,Pi.bnd_tegdeL=pointtopost.write_bnd_pi_to_spreadsheet(Pi.bnd_tegdeL,Pi.Bnds,Pi.Bodies,Pi.spreedsheet, "read")	    
+		Pi.spreedsheet,Pi.Bodies,Pi.Bnds,Pi.bnd_tegdeL=pointtopost.write_bnd_pi_to_spreadsheet(Pi.bnd_tegdeL,Pi.Bnds,Pi.Bodies,Pi.spreedsheet, "read",Pi.compound0)	    
 		#write  spreadsh to csv
 		pointtopost.open_spreadsh_csv(Pi.spreedsheet,Pi.csvfile,"write")
 
@@ -774,22 +786,41 @@ class MeshGmsh(QtGui.QWidget):
 	    Pi.bodyflag=get_elementbodysflag(Pi.femmesh2,Pi.compound0,Pi.faceN)
 	    Pi.egdegroup=pointtopost.get_edgegroup_and_neighbor(Pi.femmesh2,Pi.compound0,Pi.faceN,Pi.boundaries)
 
-	    stagenr=9
+	stagenr=9
 	if(stagenr>=startstage and stagenr <= endstage) :
 	    print "stage9"
+	    pointtopost.prepare_elemer_output(Pi.gridpath)
 	    s=pointtopost.write_elmer_sif_file(Pi.siftemplfile,Pi.siffile,Pi.Bodies,Pi.Bnds)
-	    
+
 	stagenr=10
 	if(stagenr>=startstage and stagenr <= endstage) :
-	    print "stage10"
-	    pointtopost.process_elmer_sif_file(Pi.siffile,Pi.epsourcefile,Pi.fempath,1)
-	
-	
+	    print "stage10:export to elmer mesh"
+	    pointtopost.prepare_elemer_output(Pi.gridpath)
+
+	    pointtopost.write_elemer_nodes_file(Pi.femmesh2,Pi.gridpath)
+
+	    pointtopost.write_elmer_elements_file(Pi.femmesh2,Pi.bodyflag,Pi.gridpath)
+
+	    pointtopost.write_elemer_boundary_file(Pi.femmesh2,Pi.egdegroup,Pi.gridpath)
+	    
+	    #writing header file
+	    pointtopost.write_elmer_header_file(Pi.femmesh2,Pi.gridpath)
+
+	    #export to elmer end
+
+	    
 	stagenr=11
 	if(stagenr>=startstage and stagenr <= endstage) :
 	    print "stage11"
-	    Pi.solutionheader, Pi.solutiondata, Pi.headerline=pointtopost.read_ep_result(Pi.epfile)
+	    pointtopost.process_elmer_sif_file(Pi.siffile,Pi.epsourcefile,Pi.fempath,1)
+	
+	
+	stagenr=12
+	if(stagenr>=startstage and stagenr <= endstage) :
 	    print "stage12"
+	    print Pi.epfile
+	    Pi.solutionheader, Pi.solutiondata, Pi.headerline=pointtopost.read_ep_result(Pi.epfile)
+	    print "stage13: void"
 
     def gui_visu(self):
 	print "gui_visu"
@@ -812,7 +843,7 @@ class MeshGmsh(QtGui.QWidget):
 
 	    #print to console? how?
 	    anno1=pointtopost.visu_annotate_element(Pi.femmesh1.FemMesh)
-	    anno1.Label="Ann_all_Face_"+"Pi"+str(Pi.currentPi_index)
+	    anno1.Label="Ann_all_Face_"+"Pi"+str(Pieces.index(Pi))
 	    anno1.ViewObject.hide()
 	    anno1.ViewObject.show()
 	    anno1.ViewObject.hide()
@@ -821,7 +852,7 @@ class MeshGmsh(QtGui.QWidget):
 	if(set(args).issuperset([gui_mode])) :
 	    #annotate all nodes
 	    anno2=pointtopost.visu_annotate_note(Pi.femmesh1)
-	    anno2.Label="Ann_all_N_"+"Pi"+str(Pi.currentPi_index)
+	    anno2.Label="Ann_all_N_"+"Pi"+str(Pieces.index(Pi))
 	    anno2.ViewObject.hide()
 	    anno2.ViewObject.show()
 	    anno2.ViewObject.hide()
@@ -830,7 +861,7 @@ class MeshGmsh(QtGui.QWidget):
 	if(set(args).issuperset([gui_mode])) :
 	    #annotate all mesh boundary edges
 	    anno3=pointtopost.visu_annotate_edge_element(Pi.femmesh1.FemMesh)
-	    anno3.Label="Ann_mb_E_"+"Pi"+str(Pi.currentPi_index)
+	    anno3.Label="Ann_mb_E_"+"Pi"+str(Pieces.index(Pi))
 	    anno3.ViewObject.hide()
 	    anno3.ViewObject.show()
 	    anno3.ViewObject.hide()
@@ -839,7 +870,7 @@ class MeshGmsh(QtGui.QWidget):
 	if(set(args).issuperset([gui_mode])) :
 	    #annotate double nodes
 	    anno4=pointtopost.visu_annotate_note(Pi.femmesh1,Pi.dnL[0])
-	    anno4.Label="Ann_double_N_"+"Pi"+str(Pi.currentPi_index)
+	    anno4.Label="Ann_double_N_"+"Pi"+str(Pieces.index(Pi))
 	    anno4.ViewObject.hide()
 	    anno4.ViewObject.show()
 	    anno4.ViewObject.hide()
@@ -848,7 +879,7 @@ class MeshGmsh(QtGui.QWidget):
 	if(set(args).issuperset([gui_mode])) :
 	    #annotate double edges
 	    anno5=pointtopost.visu_annotate_edge_element(Pi.femmesh1.FemMesh, [i[3] for i in Pi.dnE])
-	    anno5.Label="Ann_double_E_"+"Pi"+str(Pi.currentPi_index)
+	    anno5.Label="Ann_double_E_"+"Pi"+str(Pieces.index(Pi))
 	    anno5.ViewObject.hide()
 	    anno5.ViewObject.show()
 	    anno5.ViewObject.hide()
@@ -867,7 +898,7 @@ class MeshGmsh(QtGui.QWidget):
 	if(set(args).issuperset([gui_mode])) :
 	    #annotate boundary neighbor cells
 	    anno5_1=pointtopost.visu_annotate_element(Pi.femmesh2.FemMesh,Pi.egdegroup[1],Pi.bodyflag)
-	    anno5_1.Label="Ann_bnd_neigh_cells_"+"Pi"+str(Pi.currentPi_index)
+	    anno5_1.Label="Ann_bnd_neigh_cells_"+"Pi"+str(Pieces.index(Pi))
 	    anno5_1.ViewObject.hide()
 	    anno5_1.ViewObject.show()
 	    anno5_1.ViewObject.hide()	
@@ -876,7 +907,7 @@ class MeshGmsh(QtGui.QWidget):
 	if(set(args).issuperset([gui_mode])) :
 	    #annotate boundary edges with edgegroup
 	    anno6=pointtopost.visu_annotate_edge_element(Pi.femmesh2.FemMesh,[],Pi.egdegroup[0])
-	    anno6.Label="Ann_bndgroup_E_"+"Pi"+str(Pi.currentPi_index)
+	    anno6.Label="Ann_bndgroup_E_"+"Pi"+str(Pieces.index(Pi))
 	    anno6.ViewObject.hide()
 	    anno6.ViewObject.show()
 	    anno6.ViewObject.hide()
@@ -895,11 +926,22 @@ class MeshGmsh(QtGui.QWidget):
 	    #do command how? (T)
 	    print 'anno7=pointtopost.visu_annotate_note(Pi.femmesh2,[],["T:"+str(round(float(j),2)) for j in Pi.solutiondata[0][0]])'
 	    #print to console? how?
-	    anno7.Label="Ann_resultT_N_"+"Pi"+str(Pi.currentPi_index)
+	    anno7.Label="Ann_resultT_N_"+"Pi"+str(Pieces.index(Pi))
 	    anno7.ViewObject.hide()
 	    anno7.ViewObject.show()
 	    anno7.ViewObject.hide()
 
+	gui_mode=13    
+	if(set(args).issuperset([gui_mode])) :
+	    #annotate T-Results
+	    pointtopost.man_mv_obj_dir(Pieces)
+	    print 'pointtopost.man_mv_obj_dir(Pieces)'
+
+	gui_mode=14    
+	if(set(args).issuperset([gui_mode])) :
+	    #annotate T-Results
+	    pointtopost.man_mv_obj_dir(Pieces,1)
+	    print 'pointtopost.man_mv_obj_dir(Pieces,1)'
 
 	return
     
@@ -911,18 +953,9 @@ import pointtopost
 from pointtopost import *
 Pieces=[]
 i=0
-Pieces.append(Piece)
+Pieces.append(Piece())
 Pi=Pieces[i]
-Pi.currentPi_index=i
-print "Pi.currentPi_index=i"+str(i)
 pointtopost.testinit151024(Pi) #default
-#load optionally config file
-try:
-    pass
-    #
-    execfile(os.environ["FEMProjScripts"]+"sourcesfc/pp_config.py")
-except OSError:
-    pass
 
 mw = FreeCADGui.getMainWindow()
 d = QtGui.QDockWidget()
@@ -930,6 +963,14 @@ d1=d.setWidget(MeshGmsh())
 d.toggleViewAction().setText("Gmsh")
 d.setAttribute(QtCore.Qt.WA_DeleteOnClose)
 d.setWindowTitle(" 2D FEM multi boody heat conduction ") 
-mw.addDockWidget(QtCore. Qt.RightDockWidgetArea, d)
-
+d2=mw.addDockWidget(QtCore. Qt.RightDockWidgetArea, d)
+t=MeshGmsh()
+FreeCAD.myWidget=t
 # END OF MACRO
+#load optionally config file
+try:
+    pass
+    #
+    execfile(os.environ["FEMProjScripts"]+"sourcesfc/pp_config.py")
+except OSError:
+    pass

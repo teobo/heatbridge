@@ -3,6 +3,10 @@
 import os
 from re import search
 for key in os.environ.keys():
+   if not search("FEM_TEMP_PATH1", key):
+      os.environ["FEM_TEMP_PATH1"]="/tmp/"
+
+for key in os.environ.keys():
    if not search("FEM_PROTO_PATH1", key):
       os.environ["FEM_PROTO_PATH1"]=os.environ["FEMProjScripts"]+"testbed1/salome_erste2D/"
 

@@ -656,9 +656,9 @@ del sys.modules["fem2dheatconductiongui"]
 import pointtopost
 import fem2dheatconductiongui
 
-from fem2dheatconductiongui import Pi
-from fem2dheatconductiongui import Pieces
-
+#from fem2dheatconductiongui import Pi
+#from fem2dheatconductiongui import Pieces
+# no no
 
 #### test start up gui end
 
@@ -1046,21 +1046,58 @@ else:
    
 
 
-bnd_tegdeL
-spreadvar
+#prototype code man_mv_obj_dir
+#lenlinks=len(FreeCAD.ActiveDocument.Objects)-1
+piL=fem2dheatconductiongui.Pieces#
+ungroup_flag=1
+for m_elem in piL:
+    a=[]
+    if ungroup_flag!=0:
+	try:FreeCAD.ActiveDocument.removeObject(m_elem.group.Name)
+	except BaseException:
+	    pass
+	continue
+    
+    for a1 in [m_elem.compound0,\
+    m_elem.compound0,m_elem.compound1,m_elem.femmesh1,\
+    m_elem.comp_mb_edges,m_elem.comp_topo_edges,m_elem.comp_topo_points,\
+    m_elem.femmesh2,m_elem.spreedsheet,m_elem.anno1,\
+    m_elem.anno1,m_elem.anno2,m_elem.anno3,\
+    m_elem.anno4,m_elem.anno5,m_elem.anno6,\
+    m_elem.anno5_1,\
+    m_elem.anno7,m_elem.anno8]:
+	try: 
+	    a1.TypeId!=""
+	    a.append(a1)
+	except BaseException:pass
+    try: 
+	m_elem.group.TypeId=='App::DocumentObjectGroup'
+    except BaseException:
+	m_elem.group=FreeCAD.ActiveDocument.addObject("App::DocumentObjectGroup","Group")
+    
+    m_elem.group.Group = a
+    a1_name= "Group"+"Pi"+str(fem2dheatconductiongui.Pieces.index(m_elem))
+    #for a3 in FreeCAD.ActiveDocument.getObjectsByLabel(a1_name):
+    m_elem.group.Label=a1_name
+    print a1_name
+    FreeCAD.ActiveDocument.recompute()
 
 
-#new guifunction:point2post
-#1) 4 procedures: naming all: point2post point2postedit 
+
+    #a.append(anno)
+    a.append(FreeCAD.ActiveDocument.Objects[len(FreeCAD.ActiveDocument.Objects)-1])
+    anno.BasePosition = Pi.compound0.Links[m_elem].Shape.BoundBox.Center
+    LabelTexti = "" + str(Pi.Bodies[m_elem].name)
+    LabelTextb = " k:" +str(Pi.Bodies[m_elem].k)
+    #print "index"+str(index)
+    LabelTexte =" i:" + str(m_elem)
+    anno.LabelText=LabelTexti+LabelTextb+LabelTexte
+    Pi.compound1.Links[m_elem].ViewObject.ShapeColor=(0.1+m_elem*(0.9/lenlinks),0.00,1-+m_elem*(0.9/lenlinks))
+    Pi.compound1.Links[m_elem].ViewObject.Visibility=1
     
-#zusammenflicken
-obj_nr_before=len(FreeCAD.ActiveDocument.Objects)
-for i in range(84,112):App.activeDocument().addObject("Part::Compound","Compound")
->>> App.activeDocument().Compound.Links = [App.activeDocument().Part__Feature020,]
->>> App.ActiveDocument.recompute(   
-  for i in range(84,112):App.activeDocument().addObject("Part::Compound","Compound")
->>> App.activeDocument().Compound.Links = [App.activeDocument().Part__Feature020,]
->>> App.ActiveDocument.recompute(
-    
->>> Pieces.index(Pieces[3])
-0
+group_m_elem_Anno=FreeCAD.ActiveDocument.addObject("App::DocumentObjectGroup","Group")
+#g=App.ActiveDocument.Objects[len(App.ActiveDocument.Objects)-1]
+group_m_elem_Anno.Group = a
+group_m_elem_Anno.Label="Bodies_Anno."
+FreeCAD.ActiveDocument.recompute()
+#check double nodes end

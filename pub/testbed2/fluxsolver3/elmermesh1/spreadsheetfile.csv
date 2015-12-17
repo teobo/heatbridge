@@ -1,0 +1,29 @@
+bnd_index	bnd_name	Rs	T_ext	tedge(i)	body_index	K	body_nane
+0	cold	0.13	259	[1, 3]	0	0.03	wdv1
+1	cold	0.1	292	[18]	1	0.03	wdv2
+					2	0.03	wdv3
+					3	0.1	KS
+					4	0.33	wdv5
+					5	0.1	wdv6
+					6	0.2	wdv7
+					7	0.3	wdv8
+					8	0.4	wdv9
+					9	0.5	wdv10
+					10	0.6	wdv11
+					11	0.7	wdv12
+					12	0.8	wdv13
+					13	0.9	wdv14
+					14	1	wdv15
+					15	1.1	wdv16
+					16	1.2	wdv17
+					17	1.3	wdv18
+					18	1.4	wdv19
+					19	1.5	wdv20
+					20	1.6	wdv21
+					21	1.7	wdv22
+					22	1.8	wdv23
+					23	1.9	wdv24
+					24	2	wdv25
+					25	2.1	wdv26
+					26	2.2	wdv27
+					27	2.3	wdv28

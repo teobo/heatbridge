@@ -115,12 +115,14 @@ class Piece:
     anno6=None
     anno7=None
     anno8=None
+    anno9=None
     anno5_1=None
     anno10=None
     #>>> Pieces.index(Pieces[3])
     #0, bug?
     currentPi_index=-1
     fc_docname="femcalibr2testdoc"
+    group=None
     
 
 def dinDINENISO10211_1topoints():
@@ -147,42 +149,49 @@ def dinDINENISO10211_1topoints():
     pointsL.append([Vector (round(i.x,10),round(i.y,6),round(i.z,6)) for i in points])
     return pointsL
 
-def testinit151024(Pieces,i=0):
+def testinit151024(Piec,indexPiec=0,tempdir="/tmp/"):
     '''
     prepare Piece with default data
     (3d to be implemented)
     '''
-    Pieces.Bodies=[]
-    Pieces.Bodies.append(Body())
-    Pieces.Bodies.append(Body())
-    Pieces.Bodies.append(Body())
-    Pieces.Bodies[0].k=1
-    Pieces.Bodies[1].k=0.03
-    Pieces.Bodies[2].k=0.10
-    Pieces.Bnds=[]
-    Pieces.Bnds.append(Bnd())
-    Pieces.Bnds.append(Bnd())
-    Pieces.Bnds[0].T=259
-    Pieces.Bnds[1].T=292
+    
+    Piec.Bodies=[]
+    Piec.Bodies.append(Body())
+    Piec.Bodies.append(Body())
+    Piec.Bodies.append(Body())
+    Piec.Bodies[0].k=1
+    Piec.Bodies[1].k=0.03
+    Piec.Bodies[2].k=0.10
+    Piec.Bnds=[]
+    Piec.Bnds.append(Bnd())
+    Piec.Bnds.append(Bnd())
+    Piec.Bnds[0].T=259
+    Piec.Bnds[1].T=292
     ###
-    Pieces.fempath = "/tmp/elmermesh/"
+    try:
+	tempdir=os.environ["FEM_TEMP_PATH1"]
+    except OSError:
+	pass
+
+    Piec.fempath = tempdir+"elmermesh"+str(indexPiec)+"/"
     ###
-    Pieces.siftemplfile = os.environ["FEM_PROTO_FLUX3_PATH"]+'flux_templ_2bodys.sif'
+    Piec.siftemplfile = os.environ["FEM_PROTO_FLUX3_PATH"]+'flux_templ_2bodys.sif'
     ###
-    Pieces.siffile = "/tmp/elmermesh/"+"flux.sif"
+    Piec.siffile = Piec.fempath+"flux.sif"
     ###
-    Pieces.gridpath = "/tmp/elmermesh/"+"angle/" # where ElmerSolver takes mesh from
+    Piec.gridpath = Piec.fempath+"angle/" # where ElmerSolver takes mesh from
     ###
-    Pieces.epfile ="/tmp/elmermesh/"+"case.ep"
-    Pieces.eptemplfile ="/tmp/elmermesh/"+"angle/TempDist.ep"
+    print Piec.epfile
+    Piec.epfile = Piec.fempath+"case.ep"
+    Piec.eptemplfile = Piec.fempath+"angle/TempDist.ep"
     ###
-    Pieces.epsourcefile = os.environ["FEM_PROTO_FLUX3_PATH"]+"cmd1.txt"
-    Pieces.vtufile = "/tmp/elmermesh/"+"angle/case0001.vtu"
-    Pieces.pngfile ="/tmp/elmermesh/"+"elmermesh.png"
-    Pieces.csvfile ="/tmp/elmermesh/"+"spreadsheetfile.csv"
-    Pieces.brepfile = os.environ["FEM_PROTO_PATH1"] +"Partition_1_erste2D.brep"
-    Pieces.ng2D=NG_2D
-    return Pieces
+    Piec.epsourcefile = os.environ["FEM_PROTO_FLUX3_PATH"]+"cmd1.txt"
+    Piec.vtufile = Piec.fempath+"angle/case0001.vtu"
+    Piec.pngfile =Piec.fempath+"elmermesh.png"
+    Piec.csvfile =Piec.fempath+"spreadsheetfile.csv"
+    Piec.brepfile = os.environ["FEM_PROTO_PATH1"] +"Partition_1_erste2D.brep"
+    Piec.ng2D=NG_2D
+    return Piec
     
 def makefacefrompointsL(occpointsL):
     '''
@@ -284,8 +293,12 @@ def removeobjectswithchildren(docobjL):
 		i.Document.removeObject(j.Name)
 	    i.Document.removeObject(i.Name)
 	    continue
-	
-	i.Document.removeObject(i.Name)
+
+	try:
+	    i.Document.removeObject(i.Name)
+	except BaseException:
+	    pass
+	    
     return 
 #ok
 
@@ -903,11 +916,11 @@ def prepare_elemer_output(gridpath=""):
     else:
 	elmer_mesh_path=gridpath
     
-    
-    try:
-	os.makedirs(elmer_mesh_path)
-    except OSError:
-	pass
+    if not os.path.exists(elmer_mesh_path):os.makedirs(elmer_mesh_path)
+    #try:
+	#os.makedirs(elmer_mesh_path)
+    #except OSError:
+	#pass
 
     path=elmer_mesh_path+"mesh.nodes"
 
@@ -1248,20 +1261,24 @@ def register_bodies_and_boundaries(bnd_tegdeL,Bodies,Bnds,compound0):
 	Bnds[i].Rs=bnd_rs[i]
     return bnd_tegdeL, Bnds, Bodies
 
-def write_bnd_pi_to_spreadsheet(bnd_tegdeL,Bnds,Bodies,spreadsh, flag=""):
+def write_bnd_pi_to_spreadsheet(bnd_tegdeL,Bnds,Bodies,spreadsh,flag="",compound0=None):
     '''
     (Bnds,Bodies,spreadsh, flag="")
      return spreadsh
     '''
     try:
-	spreadsh==None
+	spreadsh.TypeId=="None"
     except BaseException:
 	spreadsh=None
+	print "spreadsh=None"
     # if it is deleted, assign it object with none
     if spreadsh==None:
 	spreadsh=FreeCAD.activeDocument().addObject('Spreadsheet::Sheet','Spreadsheet')    
 	spreadsh.Label = "spreadsheet"
-    c=["","A", "B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]  
+	print "new spreadsh"
+	print spreadsh.TypeId
+	
+    c=["","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]  
     
     #i1=5
     #spreadsh.set(c[i1]+str(1), "tedge(i)")
@@ -1303,6 +1320,7 @@ def write_bnd_pi_to_spreadsheet(bnd_tegdeL,Bnds,Bodies,spreadsh, flag=""):
 	pass
     else:
 	spreadsh.set(c[i1]+str(1), "bnd_index")
+	
     for i in range(len(bnd_tegdeL)):     
 	if flag=="read":
 	    pass
@@ -1343,7 +1361,11 @@ def write_bnd_pi_to_spreadsheet(bnd_tegdeL,Bnds,Bodies,spreadsh, flag=""):
 	    spreadsh.set(c[i1]+str(i+2), str(Bnds[i].T))
 	#FreeCAD.ActiveDocument.recompute()
 
-
+    ##Bodies
+    if flag=="read":
+	Bodies=[]
+	for i in range(len(compound0.Links)):
+	    Bodies.append(Body())
 
     i1=6
     spreadsh.set(c[i1]+str(1), "body_index")
@@ -1384,9 +1406,11 @@ def open_spreadsh_csv(spreadsh,filename,flag):
     -remove spreadsheet object for performance
     '''
     try:
-	spreadsh==None
+	spreadsh.TypeId=="None"
     except BaseException:
 	spreadsh=None
+	print "spreadsh=None"
+	
     # if it is deleted, assign it object with none
     if spreadsh==None:
 	spreadsh=FreeCAD.activeDocument().addObject('Spreadsheet::Sheet','Spreadsheet')    
@@ -1411,6 +1435,7 @@ def open_spreadsh_csv(spreadsh,filename,flag):
 def process_elmer_sif_file(siffile,epsourcefile,fempath,debug=1001):
     '''
     run Elmer
+    (siffile,epsourcefile,fempath,debug=1001)
     '''
     os.chdir("%s" % fempath)
     stdin, stdout = os.popen2('echo %s > ELMERSOLVER_STARTINFO ; ElmerSolver;'% os.path.basename(siffile));a=stdout.read() #popen2 wait until finished - hopefully
@@ -1485,6 +1510,49 @@ def read_ep_result(epfile):
     return solutionheader, solutiondata, headerline
 
 def gradient_color_mesh(solutiondata,femmesh2):
+    '''
+    (solutiondata,femmesh2)
+    '''
     a1=[float(i) for i in solutiondata]
     b=femmesh2.FemMesh.Nodes.keys()
     femmesh2.ViewObject.setNodeColorByScalars(b,[i-min(a1) for i in a1])
+
+def man_mv_obj_dir(piL,ungroup_flag=0):
+    '''
+    object manangement
+    insert (ungroup) each object to its piece group 
+    (piL,ungroup_flag=0)
+    '''
+    for m_elem in piL:
+	a=[]
+	if ungroup_flag!=0:
+	    try:FreeCAD.ActiveDocument.removeObject(m_elem.group.Name)
+	    except BaseException:
+		pass
+	    continue
+	
+	for a1 in [m_elem.compound0,\
+	m_elem.compound0,m_elem.compound1,m_elem.femmesh1,\
+	m_elem.comp_mb_edges,m_elem.comp_topo_edges,m_elem.comp_topo_points,\
+	m_elem.femmesh2,m_elem.spreedsheet,m_elem.anno1,\
+	m_elem.anno1,m_elem.anno2,m_elem.anno3,\
+	m_elem.anno4,m_elem.anno5,m_elem.anno6,\
+	m_elem.anno5_1,\
+	m_elem.anno7,m_elem.anno8]:
+	    try: 
+		a1.TypeId!=""
+		a.append(a1)
+	    except BaseException:pass
+	try: 
+	    m_elem.group.TypeId=='App::DocumentObjectGroup'
+	except BaseException:
+	    m_elem.group=FreeCAD.ActiveDocument.addObject("App::DocumentObjectGroup","Group")
+	
+	m_elem.group.Group = a
+	a1_name= "Group"+"Pi"+str(piL.index(m_elem))
+	#for a3 in FreeCAD.ActiveDocument.getObjectsByLabel(a1_name):
+	m_elem.group.Label=a1_name
+	print a1_name
+	FreeCAD.ActiveDocument.recompute()
+
+  
