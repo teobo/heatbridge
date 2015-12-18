@@ -1084,20 +1084,72 @@ for m_elem in piL:
 
 
 
-    #a.append(anno)
-    a.append(FreeCAD.ActiveDocument.Objects[len(FreeCAD.ActiveDocument.Objects)-1])
-    anno.BasePosition = Pi.compound0.Links[m_elem].Shape.BoundBox.Center
-    LabelTexti = "" + str(Pi.Bodies[m_elem].name)
-    LabelTextb = " k:" +str(Pi.Bodies[m_elem].k)
-    #print "index"+str(index)
-    LabelTexte =" i:" + str(m_elem)
-    anno.LabelText=LabelTexti+LabelTextb+LabelTexte
-    Pi.compound1.Links[m_elem].ViewObject.ShapeColor=(0.1+m_elem*(0.9/lenlinks),0.00,1-+m_elem*(0.9/lenlinks))
-    Pi.compound1.Links[m_elem].ViewObject.Visibility=1
-    
-group_m_elem_Anno=FreeCAD.ActiveDocument.addObject("App::DocumentObjectGroup","Group")
-#g=App.ActiveDocument.Objects[len(App.ActiveDocument.Objects)-1]
-group_m_elem_Anno.Group = a
-group_m_elem_Anno.Label="Bodies_Anno."
+
+
+-pngfile
+-activeview # else?
+-isolate the one piece, putoff all other objects
+
+### drop pic per piece
+FreeCADGui.SendMsgToActiveView("ViewFit")
+Gui.SendMsgToActiveView("ViewSelection")
+Gui.SendMsgToActiveView("ViewSelection")
+FreeCADGui.activeDocument().activeView().viewRight()
+FreeCADGui.SendMsgToActiveView("ViewFit")
+time.sleep(1)
 FreeCAD.ActiveDocument.recompute()
-#check double nodes end
+time.sleep(1)
+FreeCADGui.activeDocument().activeView().saveImage( fem2dheatconductiongui.Pi.pngfile, 1000, 1000, 'Current')
+
+#hide all
+vis_obj=FreeCAD.ActiveDocument.Objects
+flag=False
+
+for i in vis_obj:i.ViewObject.Visibility=flag
+
+#show some for registering
+#vis_obj=fem2dheatconductiongui.Pi.compound0.Links
+vis_obj=fem2dheatconductiongui.Pi.comp_topo_edges.Links
+
+#vis_obj=[fem2dheatconductiongui.Pi.compound0,fem2dheatconductiongui.Pi.comp_topo_edges]
+flag=True
+for i in vis_obj:
+    i.ViewObject.Visibility=flag
+    #i.Name="tedge_ind"+str(i)
+
+#show bodies colored
+vis_obj=fem2dheatconductiongui.Pi.compound0.Links
+#vis_obj=fem2dheatconductiongui.Pi.comp_topo_edges.Links
+#vis_obj=[fem2dheatconductiongui.Pi.compound0,fem2dheatconductiongui.Pi.comp_topo_edges]
+flag=True
+for i in vis_obj:
+    i.ViewObject.Visibility=flag
+
+#result mesh colored with boudary anno
+#vis_obj=fem2dheatconductiongui.Pi.compound0.Links
+#vis_obj=fem2dheatconductiongui.Pi.comp_topo_edges.Links
+#hide all first
+vis_obj=FreeCAD.ActiveDocument.Objects
+flag=False
+for i in vis_obj:
+    i.ViewObject.Visibility=flag
+
+vis_obj=[fem2dheatconductiongui.Pi.femmesh1]
+flag=True
+t.gui_visu() #run 11,12,13 to be implemented
+# to implemented boundary anno, lowest T on bnd
+for i in vis_obj:
+    i.ViewObject.Visibility=flag
+    i.ViewObject.DisplayMode = "Wireframe"
+
+vis_obj=[fem2dheatconductiongui.Pi.femmesh2]
+flag=True
+for i in vis_obj:
+    i.ViewObject.Visibility=flag
+    i.ViewObject.DisplayMode = "Faces & Wireframe"
+
+FreeCADGuia.Snapper.grid.off()
+FreeCADGui.SendMsgToActiveView("ViewFit")
+
+FreeCADGui.activeDocument().activeView().saveImage( fem2dheatconductiongui.Pi.pngfile, 1000, 1000, 'Current')
+

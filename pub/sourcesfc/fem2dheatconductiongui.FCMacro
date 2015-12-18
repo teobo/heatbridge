@@ -143,8 +143,8 @@ class MeshGmsh(QtGui.QWidget):
         self.visu.setToolTip("visu function according to option")
 
         self.le_visu = QtGui.QLineEdit(self)
-        self.le_visu.setToolTip("integer controlls visufunction number\n   -2visu_annotate_element(Pi.femmesh1.FemMesh) \n -3 visu_annotate_note \n -4 visu_annotate_edge_element\n -5 visu_annotate_note  #annotate double nodes\n -6 visu_annotate_edge #annotate double edges\n -7 visu_bnd_tedge(Pi.comp_topo_edges,Pi.bnd_tegdeL,Pi.Bnds)\n -8 visu_bnd_bodies(Pi.compound0,Pi.Bodies) \n -9 visu_annotate_element(Pi.femmesh2.FemMesh,Pi.egdegroup[1],Pi.bodyflag)\n -10 visu_annotate_edge_element(Pi.femmesh2.FemMesh,[],Pi.egdegroup[0])\n -11 gradient_color_mesh(Pi.solutiondata[0][0],Pi.femmesh2)\n -12 visu_annotate_note\#annotate T-Resultsn -13 pointtopost.man_mv_obj_dir(Pieces) group\n -14 pointtopost.man_mv_obj_dir(Pieces,1) ungroup\n -15 \n -16")
-        self.le_visu.setText("2,3,4,5,6,7,8,9,10")
+        self.le_visu.setToolTip("integer controlls visufunction number\n   -2visu_annotate_element(Pi.femmesh1.FemMesh) \n -3 visu_annotate_note \n -4 visu_annotate_edge_element\n -5 visu_annotate_note  #annotate double nodes\n -6 visu_annotate_edge #annotate double edges\n -7 visu_bnd_tedge(Pi.comp_topo_edges,Pi.bnd_tegdeL,Pi.Bnds)\n -8 visu_bnd_bodies(Pi.compound0,Pi.Bodies) \n -9 visu_annotate_element(Pi.femmesh2.FemMesh,Pi.egdegroup[1],Pi.bodyflag)\n -10 visu_annotate_edge_element(Pi.femmesh2.FemMesh,[],Pi.egdegroup[0])\n -11 gradient_color_mesh(Pi.solutiondata[0][0],Pi.femmesh2)\n -12 visu_annotate_note\#annotate T-Resultsn -13 pointtopost.man_mv_obj_dir(Pieces) group\n -14 pointtopost.man_mv_obj_dir(Pieces,1) ungroup\n -15 hide all\n -16 pointtopost.drop_pic(Pi.femmesh1,Pi.femmesh2,Pi.pngfile)")
+        self.le_visu.setText("7,11,12,13")
 
         self.le_cmd_line_opt_flag = QtGui.QLineEdit(self)
         self.le_cmd_line_opt_flag.setToolTip("this general flag controlls the workflow.\n last digit 1: gui-selection regarded for workflow(1 on, 0 off) \n penultimate digit 2: gui-selection of femmeshes regarded for visualisation(1 on, 0 off) \n3: read boundary conditions(stage7) (0 from spreadsheet, 1 from cvs-file\neg. 100101 means selection based workflow on, selection based gui visualization off,boundary condition read from file\n examples: Workflow from demo pointlist (1) (2) (3) .. \n from selected object (2) (3)..")
@@ -942,7 +942,17 @@ class MeshGmsh(QtGui.QWidget):
 	    #annotate T-Results
 	    pointtopost.man_mv_obj_dir(Pieces,1)
 	    print 'pointtopost.man_mv_obj_dir(Pieces,1)'
-
+	    
+	gui_mode=15    
+	if(set(args).issuperset([gui_mode])) :	
+	    vis_obj=FreeCAD.ActiveDocument.Objects
+	    flag=False
+	    for i in vis_obj:
+		i.ViewObject.Visibility=flag
+	
+	gui_mode=16    
+	if(set(args).issuperset([gui_mode])) :	
+	    pointtopost.drop_pic(Pi.femmesh1,Pi.femmesh2,Pi.pngfile) 
 	return
     
 	

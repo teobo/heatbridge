@@ -6,6 +6,7 @@
 ## Version: 04/12/2015
 #print "pp_config"
 import fem2dheatconductiongui
+import shutil
 
 try:FreeCAD.closeDocument(FreeCAD.ActiveDocument.Name)
 except:pass
@@ -55,24 +56,31 @@ print t1-time.time()
 i=1;Pi=Pieces[i]
 pointtopost.testinit151024(Pi,Pieces.index(Pi))
 # put cvs file from template
-import shutil
+
 if os.path.exists(Pi.fempath):	
     shutil.rmtree(Pi.fempath)
 
 if not os.path.exists(fem2dheatconductiongui.Pi.csvfile):
     try:os.makedirs(Pi.fempath)
     except:pass
-    import shutil
     dst=Pi.fempath+"spreadsheetfile.csv" #
     src=os.environ["FEM_PROTO_FLUX3_PATH"]+"elmermesh"+str(Pieces.index(Pi))+'/spreadsheetfile.csv'
     shutil.copyfile(src,dst)   
-#t.gui_point2post()
+t.gui_point2post()
+t.gui_visu() #run 11,12,13 controll to be implemented,#scale color
+pointtopost.drop_pic(Pi.femmesh1,Pi.femmesh2,Pi.pngfile) 
+
 print t1-time.time()
 
 i=2;Pi=Pieces[i]
-#pointtopost.testinit151024(Pi,Pieces.index(Pi))
-#t.gui_point2post()
+pointtopost.testinit151024(Pi,Pieces.index(Pi))
+t.gui_point2post()
+t.gui_visu() #run 11,12,13 controll to be implemented,#scale color
+pointtopost.drop_pic(Pi.femmesh1,Pi.femmesh2,Pi.pngfile) 
 print t1-time.time()
+
+
+
 #unittest: the 3 pieces end:
 #ok: restarted freecad
 #ok rm -r /tmp/elmermesh1:ok replace csv before ok
@@ -85,3 +93,5 @@ glob_le_opt_pp="11001302" # no effect,?
 
 pointtopost.man_mv_obj_dir(Pieces)
 #group objects
+
+

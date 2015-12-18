@@ -1555,4 +1555,34 @@ def man_mv_obj_dir(piL,ungroup_flag=0):
 	print a1_name
 	FreeCAD.ActiveDocument.recompute()
 
-  
+def drop_pic(femmesh1,femmesh2,pngfile):
+    '''
+    per piece snapshot
+    (femmesh1,femmesh2,pngfile)
+    '''
+    #per piece snapshot
+    #hide all
+    vis_obj=FreeCAD.ActiveDocument.Objects
+    flag=False
+    for i in vis_obj:i.ViewObject.Visibility=flag
+
+    vis_obj=[femmesh1]
+    flag=True
+    # to implemented boundary anno, lowest T on bnd
+    for i in vis_obj:
+	i.ViewObject.Visibility=flag
+	i.ViewObject.DisplayMode = "Wireframe"
+
+    vis_obj=[femmesh2]
+    flag=True
+    for i in vis_obj:
+	i.ViewObject.Visibility=flag
+	i.ViewObject.DisplayMode = "Faces & Wireframe"
+    #import Gui
+    FreeCADGui.Snapper.grid.off()
+    FreeCADGui.SendMsgToActiveView("ViewFit")
+
+    FreeCADGui.activeDocument().activeView().saveImage( pngfile, 1000, 1000, 'Current')
+    #per piece snapshot end
+
+
