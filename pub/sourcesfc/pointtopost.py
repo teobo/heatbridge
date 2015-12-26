@@ -122,7 +122,7 @@ class Piece:
     #0, bug?
     currentPi_index=-1
     fc_docname="femcalibr2testdoc"
-    group=None
+    group=None #"Ann_bnd_edges_"+"Pi" All
     
 
 def dinDINENISO10211_1topoints():
@@ -782,13 +782,15 @@ def visu_bnd_tedge(compoundO,bnd,PiBnds=None,thicken="yes"):
 	    anno = FreeCAD.ActiveDocument.addObject("App::AnnotationLabel","surveyLabel")
 	    a.append(FreeCAD.ActiveDocument.Objects[len(FreeCAD.ActiveDocument.Objects)-1])
 	    anno.BasePosition = compoundO.Links[j].Shape.BoundBox.Center
+	    LabelTextedgi =str(j)
+
 	    LabelTexti = "i" + str(k)
 	    LabelTextg = " T_ext:" +str(PiBnds[k-1].T)
 	    #print "index"+str(index)
 	    LabelTexte =" Rs:" + str(PiBnds[k-1].Rs)
 	    LabelTextn =" Name:" +str(PiBnds[k-1].name)
 	    LabelTextedg =" edg:" +str(compoundO.Links[j].Name)
-	    anno.LabelText =LabelTexti+LabelTextg+LabelTexte+LabelTextn+LabelTextedg
+	    anno.LabelText =LabelTextedgi+LabelTexti+LabelTextg+LabelTexte+LabelTextn+LabelTextedg
 	    anno.ViewObject.BackgroundColor=(l, 0.5, 1.0, 0.0)
     group_m_elem_Anno=FreeCAD.ActiveDocument.addObject("App::DocumentObjectGroup","Group")
     #g=App.ActiveDocument.Objects[len(App.ActiveDocument.Objects)-1]
@@ -865,6 +867,7 @@ def get_edgegroup_and_neighbor(femmesh2,compountO,faceN,bnd):
     neighbourelem2=[0]*len(femmesh2.FemMesh.Edges)
     #bnd=[]
     igroupbias=len(faceN)+1
+    #project note convention: Boundary enumeration: body 1, 2, 3,| Nullbnd, Pi.Bnd(1), Pi.Bnd(2)
     for i in femmesh2.FemMesh.Edges:
 	igroup=0+igroupbias
 	#print str(i) +" imEdge " 
@@ -1198,7 +1201,9 @@ def write_elmer_sif_file(siftemplfile,siffile,Bodies,Bnds):
     for i in range(len(Bnds)):
 	#change contents: Target Boundary number	
 	subpattern='(  Target Boundaries\(1\) =) [0-9]+?'
-	substitutepattern="  Target Boundaries(1) = "+ str(len(Bodies)+i+1)
+	substitutepattern="  Target Boundaries(1) = "+ str(len(Bodies)+i+2)
+	##project note convention: Boundary enumeration: body 1, 2, 3,| Nullbnd, Pi.Bnd(1), Pi.Bnd(2)
+  
 	subpassage=it[0]
 	it2= re.sub(subpattern, substitutepattern,subpassage,flags=re.MULTILINE+re.DOTALL)
 

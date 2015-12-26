@@ -1167,3 +1167,6 @@ fem2dheatconductiongui.MeshGmsh.gui_visu(fem2dheatconductiongui.t,"17".)
 
 #
 Draft.makeWire([i.Point for i in a.Vertexes])
+
+#project note convention: Boundary enumeration: body 1, 2, 3,| Nullbnd, Pi.Bnd(1), Pi.Bnd(2)
+  

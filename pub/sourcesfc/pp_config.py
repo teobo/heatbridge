@@ -59,8 +59,8 @@ i=1;Pi=Pieces[i]
 pointtopost.testinit151024(Pi,Pieces.index(Pi))
 
 #remove whole dir for testing purpose
-if os.path.exists(Pi.fempath):	
-    shutil.rmtree(Pi.fempath)
+#if os.path.exists(Pi.fempath):	
+#    shutil.rmtree(Pi.fempath)
 
 # put cvs file from template
 if not os.path.exists(fem2dheatconductiongui.Pi.csvfile):
@@ -71,8 +71,12 @@ if not os.path.exists(fem2dheatconductiongui.Pi.csvfile):
     shutil.copyfile(src,dst)   
 
 t.gui_point2post("11101302")#
+
+#visu
 t.gui_visu("7,8,11,12,13,15,16") 
 t.gui_visu("15,17") #prefined for 
+for i in [Pi.femmesh2]+[Pi.anno8]:
+    i.ViewObject.Visibility=True
 
 #pointtopost.drop_pic(Pi.femmesh1,Pi.femmesh2,Pi.pngfile) # ok
 
@@ -89,10 +93,10 @@ if not os.path.exists(fem2dheatconductiongui.Pi.csvfile):
     src=os.environ["FEM_PROTO_FLUX3_PATH"]+"elmermesh"+str(Pieces.index(Pi))+'/spreadsheetfile.csv'
     shutil.copyfile(src,dst)   
 
-#t.gui_point2post("11101302")#
-#t.gui_visu("7,8,11,12,13,15,16") #run 11,12,13 controll to be implemented,#scale color
-#t.gui_visu("17")
-#pointtopost.drop_pic(Pi.femmesh1,Pi.femmesh2,Pi.pngfile) 
+t.gui_point2post("11101302")#
+t.gui_visu("7,8,11,12,13,15,16") #run 11,12,13 controll to be implemented,#scale color
+t.gui_visu("15,17")
+
 print t1-time.time()
 
 
