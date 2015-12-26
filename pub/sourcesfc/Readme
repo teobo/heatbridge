@@ -6,9 +6,26 @@ apt-get install gmsh elmer freecad
 
 How do you test?
 ------------------------------
-#running the macros:
+#setting up as macros on linux:
 ln -s fem2dheatconductiongui.FCMacro ~/.FreeCAD/fem2dheatconductiongui.py
 cp pointtopost.py fem2dheatconductiongui.FCMacro ~/.FreeCAD/
+ 
+#### test start up gui: (re)import modules
+import os
+import sys
+try:
+    execfile(os.environ["FEMProjScripts"]+"../local/projenv.py")
+except OSError:
+    pass
+
+fem2dheatconductiongui.MeshGmsh.close(fem2dheatconductiongui.d)
+del sys.modules["pointtopost"]
+del sys.modules["fem2dheatconductiongui"]
+import pointtopost
+import fem2dheatconductiongui
+
+#### test start up gui end
+#pp_config for scripting
 
 #you can run (in the FC-Python console portions of) code from 
 a) testmain151024.py
@@ -20,7 +37,7 @@ export FEMProjScripts="/home/urlocalinstalpath/pub/"
 cd $FEMProjScripts
 #else adapt pathes manually
 
--demo elmer export and screenshots https://github.com/teobo/heatbridge/blob/master/pub/testbed2/fluxsolver3/bkfromtmp/
+-sample elmer export and screenshots https://github.com/teobo/heatbridge/blob/master/pub/testbed2/fluxsolver3/bkfromtmp/
 
 
 Features:
@@ -31,3 +48,19 @@ Features:
 -freecad pre and post processing
 -demo script (60%: ready mesh adaption, result checking, piece batch processing are missing)
 -gui (under construction 25% ready)
+
+Architecture:
+--------------
+pointtopost.py library using fc-python-scripting
+    fem2dheatconductiongui.FCMacro code for fc-heatbridge-gui
+	pp_config.py config and scripting interface python
+	
+Testing and Bug reports
+------------------------------
+https://github.com/teobo/heatbridge/issues
+
+Links
+-----
+for example: http://geuz.org/gmsh/doc/preprints/gmsh_paper_preprint.pdf Gmsh: a three-dimensional finite element mesh generator with
+built-in pre- and post-processing facilities, on " overall philosophy,
+the main design choices and some of the original algorithms", 2009

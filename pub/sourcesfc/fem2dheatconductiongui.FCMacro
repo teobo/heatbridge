@@ -91,7 +91,7 @@ class MeshGmsh(QtGui.QWidget):
         self.register_bodies_boundaries.setText("reg_groups(7)")
         self.register_bodies_boundaries.setToolTip("prototype passthroug: \n1)assign default boundaries to internal structure\n Pi.bnd_tegdeL, Pi.Bnds, Pi.Bodies= pointtopost.register_bodies_and_boundaries\n2)calculate results of boundary assignment for next stage (export to solver)\n get_edgegroup_and_neighbor \n get_elementbodysflag\n get_bnd_nodesbytedge\n getnodesbycompoundface\ngetnodesbycompoundedge\n3) visualize topo edge\n visu_bnd_tedge")
 
-        # Trigger button register_bodies_boundaries 7
+        # Trigger button register_bodies_boundaries 7.1
         self.init_reg_bnd = QtGui.QPushButton(self)
         self.init_reg_bnd.setText("init_reg(7.1)")
         self.init_reg_bnd.setToolTip("initial registering hardcoded defaults\n of boundary conditions): \n1)Dataflow model\n csv--spreadsheet--pi--gui\n here:write defaults to: csv,spreadsheet,pi,gui\n -visu_bnd_bodies \n -visu_bnd_tedge \n -open_spreadsh_csv(write \n .write_bnd_pi_to_spreadsheet")
@@ -143,8 +143,8 @@ class MeshGmsh(QtGui.QWidget):
         self.visu.setToolTip("visu function according to option")
 
         self.le_visu = QtGui.QLineEdit(self)
-        self.le_visu.setToolTip("integer controlls visufunction number\n   -2visu_annotate_element(Pi.femmesh1.FemMesh) \n -3 visu_annotate_note \n -4 visu_annotate_edge_element\n -5 visu_annotate_note  #annotate double nodes\n -6 visu_annotate_edge #annotate double edges\n -7 visu_bnd_tedge(Pi.comp_topo_edges,Pi.bnd_tegdeL,Pi.Bnds)\n -8 visu_bnd_bodies(Pi.compound0,Pi.Bodies) \n -9 visu_annotate_element(Pi.femmesh2.FemMesh,Pi.egdegroup[1],Pi.bodyflag)\n -10 visu_annotate_edge_element(Pi.femmesh2.FemMesh,[],Pi.egdegroup[0])\n -11 gradient_color_mesh(Pi.solutiondata[0][0],Pi.femmesh2)\n -12 visu_annotate_note\#annotate T-Resultsn -13 pointtopost.man_mv_obj_dir(Pieces) group\n -14 pointtopost.man_mv_obj_dir(Pieces,1) ungroup\n -15 hide all\n -16 pointtopost.drop_pic(Pi.femmesh1,Pi.femmesh2,Pi.pngfile)")
-        self.le_visu.setText("7,11,12,13")
+        self.le_visu.setToolTip("integer controlls visufunction number\n   -2visu_annotate_element(Pi.femmesh1.FemMesh) \n -3 visu_annotate_note \n -4 visu_annotate_edge_element\n -5 visu_annotate_note  #annotate double nodes\n -6 visu_annotate_edge #annotate double edges\n -7 visu_bnd_tedge(Pi.comp_topo_edges,Pi.bnd_tegdeL,Pi.Bnds) \n     color topoedges compound and show + Annotations\n -8 visu_bnd_bodies(Pi.compound0,Pi.Bodies) \n  color shapes compound0 and show + Annotations\n -9 visu_annotate_element(Pi.femmesh2.FemMesh,Pi.egdegroup[1],Pi.bodyflag)\n -10 visu_annotate_edge_element(Pi.femmesh2.FemMesh,[],Pi.egdegroup[0])\n -11 gradient_color_mesh(Pi.solutiondata[0][0],Pi.femmesh2)\n -12 visu_annotate_note\#annotate T-Results\n -13 pointtopost.man_mv_obj_dir(Pieces) group\n -14 pointtopost.man_mv_obj_dir(Pieces,1) ungroup\n -15 hide all\n -16 pointtopost.drop_pic(Pi.femmesh1,Pi.femmesh2,Pi.pngfile)\n -17 vis_obj=Pi.compound0.Links +Pi.comp_topo_edges.Links bndnbody\n -18 annotate all edges ")
+        self.le_visu.setText("7,8,11,12,13,15")
 
         self.le_cmd_line_opt_flag = QtGui.QLineEdit(self)
         self.le_cmd_line_opt_flag.setToolTip("this general flag controlls the workflow.\n last digit 1: gui-selection regarded for workflow(1 on, 0 off) \n penultimate digit 2: gui-selection of femmeshes regarded for visualisation(1 on, 0 off) \n3: read boundary conditions(stage7) (0 from spreadsheet, 1 from cvs-file\neg. 100101 means selection based workflow on, selection based gui visualization off,boundary condition read from file\n examples: Workflow from demo pointlist (1) (2) (3) .. \n from selected object (2) (3)..")
@@ -435,32 +435,10 @@ class MeshGmsh(QtGui.QWidget):
 	#annotate all elements
 	print "change current piece Pi to index" +str(Pieces.index(Pi))+ "\ni=1;fem2dheatconductiongui.Pi=fem2dheatconductiongui.Pieces[i]\n"
 	
+	print 'trigger visu_generic button\nfem2dheatconductiongui.MeshGmsh.gui_visu(fem2dheatconductiongui.t,"15")\n'
+
+	print 'trigger pointtopost button process current piece from stage 2 to 13 using cvs template\nfem2dheatconductiongui.MeshGmsh.gui_point2post(fem2dheatconductiongui.t,"11101302")\n'
  
-	#cmd_line_opt = self.le_cmd_line_opt_flag.text()
-	#print cmd_line_opt
-	#selection = FreeCADGui.Selection.getSelection()
-	#if selection and (cmd_line_opt[len(cmd_line_opt)-2]=="1") :
-	    #Pi.femmesh1=selection[0]
-	    #print "read femmesh1 from selection"
-	#anno1=pointtopost.visu_annotate_element(Pi.femmesh1.FemMesh)
-	#anno1.Label="Ann_all_Face_"+"Pi"+str(Pieces.index(Pi))
-	#anno1.ViewObject.hide()
-	#anno1.ViewObject.show()
-	#anno1.ViewObject.hide()
-
-	##annotate all nodes
-	#anno2=pointtopost.visu_annotate_note(Pi.femmesh1)
-	#anno2.Label="Ann_all_N_"+"Pi"+str(Pieces.index(Pi))
-	#anno2.ViewObject.hide()
-	#anno2.ViewObject.show()
-	#anno2.ViewObject.hide()
-
-	##annotate all mesh boundary edges
-	#anno3=pointtopost.visu_annotate_edge_element(Pi.femmesh1.FemMesh)
-	#anno3.Label="Ann_mb_E_"+"Pi"+str(Pieces.index(Pi))
-	#anno3.ViewObject.hide()
-	#anno3.ViewObject.show()
-	#anno3.ViewObject.hide()
 
 
     def gui_annotate_doubles(self):
@@ -637,9 +615,12 @@ class MeshGmsh(QtGui.QWidget):
 	    docobj2L=selection
 	    pointtopost.removeobjectswithchildren(docobj2L)
 	
-    def gui_point2post(self):
-	#
-	cmd_line_opt = self.le_point2post.text()
+    def gui_point2post(self,arg_line=""):
+	print "gui_point2post " + arg_line
+	if arg_line=="":
+	    cmd_line_opt = self.le_point2post.text()
+	else:
+	    cmd_line_opt = arg_line
 	len_c=len(cmd_line_opt)
 	startstage=int(cmd_line_opt[len_c-2:len_c])
 	endstage=int(cmd_line_opt[len_c-4:len_c-2])
@@ -822,13 +803,17 @@ class MeshGmsh(QtGui.QWidget):
 	    Pi.solutionheader, Pi.solutiondata, Pi.headerline=pointtopost.read_ep_result(Pi.epfile)
 	    print "stage13: void"
 
-    def gui_visu(self):
-	print "gui_visu"
-	cmd_line_opt = self.le_visu.text()
+    def gui_visu(self,arg_line=""):
+	print "gui_visu " + arg_line
+	if arg_line=="":
+	    cmd_line_opt = self.le_visu.text()
+	else:
+	    cmd_line_opt = arg_line
+	    
 	len_c=len(cmd_line_opt)
 	gui_mode=int(cmd_line_opt[len_c-1])
 	import re
-	line = self.le_visu.text()
+	line = cmd_line_opt
 	args=[int(i) for i in re.split('\n|\ |:|=|\,|\[|\]',line) if i]
 	print args
 
@@ -842,75 +827,83 @@ class MeshGmsh(QtGui.QWidget):
 	    print 'anno1=pointtopost.visu_annotate_element(Pi.femmesh1.FemMesh)'
 
 	    #print to console? how?
-	    anno1=pointtopost.visu_annotate_element(Pi.femmesh1.FemMesh)
-	    anno1.Label="Ann_all_Face_"+"Pi"+str(Pieces.index(Pi))
-	    anno1.ViewObject.hide()
-	    anno1.ViewObject.show()
-	    anno1.ViewObject.hide()
+	    Pi.anno1=pointtopost.visu_annotate_element(Pi.femmesh1.FemMesh)
+	    Pi.anno1.Label="Ann_all_Face_"+"Pi"+str(Pieces.index(Pi))
+	    Pi.anno1.ViewObject.hide()
+	    Pi.anno1.ViewObject.show()
+	    Pi.anno1.ViewObject.hide()
 
 	gui_mode=3
 	if(set(args).issuperset([gui_mode])) :
 	    #annotate all nodes
-	    anno2=pointtopost.visu_annotate_note(Pi.femmesh1)
-	    anno2.Label="Ann_all_N_"+"Pi"+str(Pieces.index(Pi))
-	    anno2.ViewObject.hide()
-	    anno2.ViewObject.show()
-	    anno2.ViewObject.hide()
+	    Pi.anno2=pointtopost.visu_annotate_note(Pi.femmesh1)
+	    Pi.anno2.Label="Ann_all_N_"+"Pi"+str(Pieces.index(Pi))
+	    Pi.anno2.ViewObject.hide()
+	    Pi.anno2.ViewObject.show()
+	    Pi.anno2.ViewObject.hide()
 
 	gui_mode=4
 	if(set(args).issuperset([gui_mode])) :
 	    #annotate all mesh boundary edges
-	    anno3=pointtopost.visu_annotate_edge_element(Pi.femmesh1.FemMesh)
-	    anno3.Label="Ann_mb_E_"+"Pi"+str(Pieces.index(Pi))
-	    anno3.ViewObject.hide()
-	    anno3.ViewObject.show()
-	    anno3.ViewObject.hide()
+	    Pi.anno3=pointtopost.visu_annotate_edge_element(Pi.femmesh1.FemMesh)
+	    Pi.anno3.Label="Ann_mb_E_"+"Pi"+str(Pieces.index(Pi))
+	    Pi.anno3.ViewObject.hide()
+	    Pi.anno3.ViewObject.show()
+	    Pi.anno3.ViewObject.hide()
 	    
 	gui_mode=5    
 	if(set(args).issuperset([gui_mode])) :
 	    #annotate double nodes
-	    anno4=pointtopost.visu_annotate_note(Pi.femmesh1,Pi.dnL[0])
-	    anno4.Label="Ann_double_N_"+"Pi"+str(Pieces.index(Pi))
-	    anno4.ViewObject.hide()
-	    anno4.ViewObject.show()
-	    anno4.ViewObject.hide()
+	    Pi.anno4=pointtopost.visu_annotate_note(Pi.femmesh1,Pi.dnL[0])
+	    Pi.anno4.Label="Ann_double_N_"+"Pi"+str(Pieces.index(Pi))
+	    Pi.anno4.ViewObject.hide()
+	    Pi.anno4.ViewObject.show()
+	    Pi.anno4.ViewObject.hide()
 
 	gui_mode=6
 	if(set(args).issuperset([gui_mode])) :
 	    #annotate double edges
-	    anno5=pointtopost.visu_annotate_edge_element(Pi.femmesh1.FemMesh, [i[3] for i in Pi.dnE])
-	    anno5.Label="Ann_double_E_"+"Pi"+str(Pieces.index(Pi))
-	    anno5.ViewObject.hide()
-	    anno5.ViewObject.show()
-	    anno5.ViewObject.hide()
+	    Pi.anno5=pointtopost.visu_annotate_edge_element(Pi.femmesh1.FemMesh, [i[3] for i in Pi.dnE])
+	    Pi.anno5.Label="Ann_double_E_"+"Pi"+str(Pieces.index(Pi))
+	    Pi.anno5.ViewObject.hide()
+	    Pi.anno5.ViewObject.show()
+	    Pi.anno5.ViewObject.hide()
 	    
 	gui_mode=7
 	if(set(args).issuperset([gui_mode])) :
 	    #compound links colored according to bondary group
-	    pointtopost.visu_bnd_tedge(Pi.comp_topo_edges,Pi.bnd_tegdeL,Pi.Bnds)
+	    Pi.anno8=pointtopost.visu_bnd_tedge(Pi.comp_topo_edges,Pi.bnd_tegdeL,Pi.Bnds)
+	    Pi.anno8.Label="Ann_bnd_edges_"+"Pi"+str(Pieces.index(Pi))
+	    Pi.anno8.ViewObject.hide()
+	    Pi.anno8.ViewObject.show()
+	    Pi.anno8.ViewObject.hide()
 	    
 	gui_mode=8
 	if(set(args).issuperset([gui_mode])) :
 	    #viuaalize bodies
-	    visu_bnd_bodies(Pi.compound0,Pi.Bodies)
+	    Pi.anno9=visu_bnd_bodies(Pi.compound0,Pi.Bodies)
+	    Pi.anno9.Label="Ann_Bodies_"+"Pi"+str(Pieces.index(Pi))
+	    Pi.anno9.ViewObject.hide()
+	    Pi.anno9.ViewObject.show()
+	    Pi.anno9.ViewObject.hide()
 	    
 	gui_mode=9
 	if(set(args).issuperset([gui_mode])) :
 	    #annotate boundary neighbor cells
-	    anno5_1=pointtopost.visu_annotate_element(Pi.femmesh2.FemMesh,Pi.egdegroup[1],Pi.bodyflag)
-	    anno5_1.Label="Ann_bnd_neigh_cells_"+"Pi"+str(Pieces.index(Pi))
-	    anno5_1.ViewObject.hide()
-	    anno5_1.ViewObject.show()
-	    anno5_1.ViewObject.hide()	
+	    Pi.anno5_1=pointtopost.visu_annotate_element(Pi.femmesh2.FemMesh,Pi.egdegroup[1],Pi.bodyflag)
+	    Pi.anno5_1.Label="Ann_bnd_neigh_cells_"+"Pi"+str(Pieces.index(Pi))
+	    Pi.anno5_1.ViewObject.hide()
+	    Pi.anno5_1.ViewObject.show()
+	    Pi.anno5_1.ViewObject.hide()	
 
 	gui_mode=10    
 	if(set(args).issuperset([gui_mode])) :
 	    #annotate boundary edges with edgegroup
-	    anno6=pointtopost.visu_annotate_edge_element(Pi.femmesh2.FemMesh,[],Pi.egdegroup[0])
-	    anno6.Label="Ann_bndgroup_E_"+"Pi"+str(Pieces.index(Pi))
-	    anno6.ViewObject.hide()
-	    anno6.ViewObject.show()
-	    anno6.ViewObject.hide()
+	    Pi.anno6=pointtopost.visu_annotate_edge_element(Pi.femmesh2.FemMesh,[],Pi.egdegroup[0])
+	    Pi.anno6.Label="Ann_bndgroup_E_"+"Pi"+str(Pieces.index(Pi))
+	    Pi.anno6.ViewObject.hide()
+	    Pi.anno6.ViewObject.show()
+	    Pi.anno6.ViewObject.hide()
 	gui_mode=11    
 	if(set(args).issuperset([gui_mode])) :
 	    #coloring by Temperaturescale
@@ -919,17 +912,17 @@ class MeshGmsh(QtGui.QWidget):
 	gui_mode=12    
 	if(set(args).issuperset([gui_mode])) :
 	    #annotate T-Results
-	    anno7=pointtopost.visu_annotate_note(Pi.femmesh2,[],["T:"+str(round(float(j),2)) for j in Pi.solutiondata[0][0]])
+	    Pi.anno7=pointtopost.visu_annotate_note(Pi.femmesh2,[],["T:"+str(round(float(j),2)) for j in Pi.solutiondata[0][0]])
 	    import FreeCADGui
-	    FreeCADGui.doCommand('Pi=fem2dheatconductiongui.pointtopost.Piece')
+	    #FreeCADGui.doCommand('Pi=fem2dheatconductiongui.pointtopost.Piece')
 	    #FreeCADGui.doCommand('anno7=pointtopost.visu_annotate_note(Pi.femmesh2,[],["T:"+str(round(float(j),2)) for j in Pi.solutiondata[0][0]])')
-	    #do command how? (T)
+	    #to be implemented: do command how? (T)
 	    print 'anno7=pointtopost.visu_annotate_note(Pi.femmesh2,[],["T:"+str(round(float(j),2)) for j in Pi.solutiondata[0][0]])'
 	    #print to console? how?
-	    anno7.Label="Ann_resultT_N_"+"Pi"+str(Pieces.index(Pi))
-	    anno7.ViewObject.hide()
-	    anno7.ViewObject.show()
-	    anno7.ViewObject.hide()
+	    Pi.anno7.Label="Ann_resultT_N_"+"Pi"+str(Pieces.index(Pi))
+	    Pi.anno7.ViewObject.hide()
+	    Pi.anno7.ViewObject.show()
+	    Pi.anno7.ViewObject.hide()
 
 	gui_mode=13    
 	if(set(args).issuperset([gui_mode])) :
@@ -953,8 +946,28 @@ class MeshGmsh(QtGui.QWidget):
 	gui_mode=16    
 	if(set(args).issuperset([gui_mode])) :	
 	    pointtopost.drop_pic(Pi.femmesh1,Pi.femmesh2,Pi.pngfile) 
-	return
+	
     
+	gui_mode=17    
+	if(set(args).issuperset([gui_mode])) :	
+	    vis_obj=Pi.compound0.Links +Pi.comp_topo_edges.Links
+	    flag=True
+	    print "guimode 17"
+	    for i in vis_obj:
+		i.ViewObject.Visibility=flag
+
+	gui_mode=18    
+	if(set(args).issuperset([gui_mode])) :
+	    all_edgesL=range(len(Pi.comp_topo_edges.Links))
+	    Pi.anno10=pointtopost.visu_bnd_tedge(Pi.comp_topo_edges,[all_edgesL],Pi.Bnds,thicken="no")
+	    Pi.anno10.Label="Ann_bnd_edges_"+"Pi"+str(Pieces.index(Pi))
+	    Pi.anno10.ViewObject.hide()
+	    Pi.anno10.ViewObject.show()
+	    Pi.anno10.ViewObject.hide()
+
+
+	return
+	
 	
 
 

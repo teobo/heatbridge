@@ -107,15 +107,15 @@ class Piece:
     csvfile=""
     stagepointer=""
     stepfile="" #directory for step-zoo
-    anno1=None #object for annotation group
-    anno2=None
-    anno3=None
-    anno4=None
-    anno5=None
+    anno1=None #"Ann_all_Face_"+"Pi"object for annotation group
+    anno2=None #"Ann_all_N_"+"Pi"
+    anno3=None #"Ann_mb_E_"+"Pi"
+    anno4=None #"Ann_double_N_"+"Pi"
+    anno5=None #"Ann_double_E_"+"Pi"
     anno6=None
-    anno7=None
-    anno8=None
-    anno9=None
+    anno7=None #"Ann_resultT_N_"+"Pi"
+    anno8=None #"group_bnd_edge_Anno
+    anno9=None #"Bodies_bnd_Anno."
     anno5_1=None
     anno10=None
     #>>> Pieces.index(Pieces[3])
@@ -320,7 +320,7 @@ def make_topo_edge(compoundpoi2):
 	Part.show(a)
 	edgetL.append(FreeCAD.ActiveDocument.Objects[len(FreeCAD.ActiveDocument.Objects)-1])
 
-    compoundpoi3=FreeCAD.activeDocument().addObject("Part::Compound","Compoundi2")
+    compoundpoi3=FreeCAD.activeDocument().addObject("Part::Compound","Compoundtedg")
     compoundpoi3.Links= edgetL
     FreeCAD.ActiveDocument.recompute()
 
@@ -760,7 +760,7 @@ def get_tedge_bnd_nodesbyselection(femmesh,compountO):
     '''
     return egdeN
 
-def visu_bnd_tedge(compoundO,bnd,PiBnds=None):
+def visu_bnd_tedge(compoundO,bnd,PiBnds=None,thicken="yes"):
     '''
     color topo edges that are boundaries
     '''
@@ -773,10 +773,11 @@ def visu_bnd_tedge(compoundO,bnd,PiBnds=None):
 	l=float((1.0/len(bnd))*float(k))
 	##print str(l)+ " "+str((1/len(bnd)))
 	for j in i:
-	    compoundO.Links[j].ViewObject.LineColor= (l,0.33,0.50)
-	    #print str(i) + ":j,l:" +str(l)+ "k:" +str(k)
-	    compoundO.Links[j].ViewObject.LineWidth = 9.00
-	    compoundO.Links[j].ViewObject.Visibility=1
+	    if thicken=="yes":
+		compoundO.Links[j].ViewObject.LineColor= (l,0.33,0.50)
+		#print str(i) + ":j,l:" +str(l)+ "k:" +str(k)
+		compoundO.Links[j].ViewObject.LineWidth = 9.00
+		compoundO.Links[j].ViewObject.Visibility=1
 	    
 	    anno = FreeCAD.ActiveDocument.addObject("App::AnnotationLabel","surveyLabel")
 	    a.append(FreeCAD.ActiveDocument.Objects[len(FreeCAD.ActiveDocument.Objects)-1])
@@ -786,12 +787,13 @@ def visu_bnd_tedge(compoundO,bnd,PiBnds=None):
 	    #print "index"+str(index)
 	    LabelTexte =" Rs:" + str(PiBnds[k-1].Rs)
 	    LabelTextn =" Name:" +str(PiBnds[k-1].name)
-	    anno.LabelText =LabelTexti+LabelTextg+LabelTexte+LabelTextn
+	    LabelTextedg =" edg:" +str(compoundO.Links[j].Name)
+	    anno.LabelText =LabelTexti+LabelTextg+LabelTexte+LabelTextn+LabelTextedg
 	    anno.ViewObject.BackgroundColor=(l, 0.5, 1.0, 0.0)
     group_m_elem_Anno=FreeCAD.ActiveDocument.addObject("App::DocumentObjectGroup","Group")
     #g=App.ActiveDocument.Objects[len(App.ActiveDocument.Objects)-1]
     group_m_elem_Anno.Group = a
-    group_m_elem_Anno.Label="group_bnd_edge_Anno."
+    #group_m_elem_Anno.Label="group_bnd_edge_Anno."
     FreeCAD.ActiveDocument.recompute()
     #check double nodes end
     return group_m_elem_Anno
@@ -821,7 +823,7 @@ def visu_bnd_bodies(compountO,Bodies):
     group_m_elem_Anno=FreeCAD.ActiveDocument.addObject("App::DocumentObjectGroup","Group")
     #g=App.ActiveDocument.Objects[len(App.ActiveDocument.Objects)-1]
     group_m_elem_Anno.Group = a
-    group_m_elem_Anno.Label="Bodies_bnd_Anno."
+    #group_m_elem_Anno.Label="Bodies_bnd_Anno."
     FreeCAD.ActiveDocument.recompute()
     return group_m_elem_Anno
 
@@ -1538,7 +1540,7 @@ def man_mv_obj_dir(piL,ungroup_flag=0):
 	m_elem.anno1,m_elem.anno2,m_elem.anno3,\
 	m_elem.anno4,m_elem.anno5,m_elem.anno6,\
 	m_elem.anno5_1,\
-	m_elem.anno7,m_elem.anno8]:
+	m_elem.anno7,m_elem.anno8,m_elem.anno9,m_elem.anno10]:
 	    try: 
 		a1.TypeId!=""
 		a.append(a1)
@@ -1561,14 +1563,13 @@ def drop_pic(femmesh1,femmesh2,pngfile):
     (femmesh1,femmesh2,pngfile)
     '''
     #per piece snapshot
-    #hide all
     vis_obj=FreeCAD.ActiveDocument.Objects
     flag=False
     for i in vis_obj:i.ViewObject.Visibility=flag
 
     vis_obj=[femmesh1]
     flag=True
-    # to implemented boundary anno, lowest T on bnd
+    # to be implemented boundary anno, lowest T on bnd
     for i in vis_obj:
 	i.ViewObject.Visibility=flag
 	i.ViewObject.DisplayMode = "Wireframe"
@@ -1579,10 +1580,13 @@ def drop_pic(femmesh1,femmesh2,pngfile):
 	i.ViewObject.Visibility=flag
 	i.ViewObject.DisplayMode = "Faces & Wireframe"
     #import Gui
-    FreeCADGui.Snapper.grid.off()
+    try:
+	FreeCADGui.Snapper.grid.off()
+    except BaseException:
+	pass
+    
     FreeCADGui.SendMsgToActiveView("ViewFit")
 
     FreeCADGui.activeDocument().activeView().saveImage( pngfile, 1000, 1000, 'Current')
     #per piece snapshot end
-
 

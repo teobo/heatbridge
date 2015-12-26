@@ -1148,8 +1148,22 @@ for i in vis_obj:
     i.ViewObject.Visibility=flag
     i.ViewObject.DisplayMode = "Faces & Wireframe"
 
-FreeCADGuia.Snapper.grid.off()
+FreeCADGui.Snapper.grid.off()
 FreeCADGui.SendMsgToActiveView("ViewFit")
 
 FreeCADGui.activeDocument().activeView().saveImage( fem2dheatconductiongui.Pi.pngfile, 1000, 1000, 'Current')
 
+#call from commandline
+fem2dheatconductiongui.MeshGmsh.gui_visu(fem2dheatconductiongui.t,"7,8,11,12,13,15")
+
+
+#call from commandline
+vis_obj=fem2dheatconductiongui.Pi.compound0.Links +fem2dheatconductiongui.Pi.comp_topo_edges.Links
+flag=True
+for i in vis_obj:
+    i.ViewObject.Visibility=flag
+
+fem2dheatconductiongui.MeshGmsh.gui_visu(fem2dheatconductiongui.t,"17".)
+
+#
+Draft.makeWire([i.Point for i in a.Vertexes])

@@ -43,7 +43,9 @@ for i in range(indPI,len(stepfiles)+indPI):
     Pi.compound0.Label=Pi.compound0name+"Pi"+str(Pieces.index(Pi))
 
 FreeCAD.ActiveDocument.recompute()
-print "pifempath  ffffadafs" + Pi.fempath
+
+print "pifempath" + Pi.fempath
+#
 #unittest: the 3 pieces start:
 import time
 t1=time.time()
@@ -55,43 +57,57 @@ print t1-time.time()
 
 i=1;Pi=Pieces[i]
 pointtopost.testinit151024(Pi,Pieces.index(Pi))
-# put cvs file from template
 
+#remove whole dir for testing purpose
 if os.path.exists(Pi.fempath):	
     shutil.rmtree(Pi.fempath)
 
+# put cvs file from template
 if not os.path.exists(fem2dheatconductiongui.Pi.csvfile):
     try:os.makedirs(Pi.fempath)
     except:pass
     dst=Pi.fempath+"spreadsheetfile.csv" #
     src=os.environ["FEM_PROTO_FLUX3_PATH"]+"elmermesh"+str(Pieces.index(Pi))+'/spreadsheetfile.csv'
     shutil.copyfile(src,dst)   
-t.gui_point2post()
-t.gui_visu() #run 11,12,13 controll to be implemented,#scale color
-pointtopost.drop_pic(Pi.femmesh1,Pi.femmesh2,Pi.pngfile) 
+
+t.gui_point2post("11101302")#
+t.gui_visu("7,8,11,12,13,15,16") 
+t.gui_visu("15,17") #prefined for 
+
+#pointtopost.drop_pic(Pi.femmesh1,Pi.femmesh2,Pi.pngfile) # ok
 
 print t1-time.time()
 
 i=2;Pi=Pieces[i]
 pointtopost.testinit151024(Pi,Pieces.index(Pi))
-t.gui_point2post()
-t.gui_visu() #run 11,12,13 controll to be implemented,#scale color
-pointtopost.drop_pic(Pi.femmesh1,Pi.femmesh2,Pi.pngfile) 
+
+# put cvs file from template
+if not os.path.exists(fem2dheatconductiongui.Pi.csvfile):
+    try:os.makedirs(Pi.fempath)
+    except:pass
+    dst=Pi.fempath+"spreadsheetfile.csv" #
+    src=os.environ["FEM_PROTO_FLUX3_PATH"]+"elmermesh"+str(Pieces.index(Pi))+'/spreadsheetfile.csv'
+    shutil.copyfile(src,dst)   
+
+#t.gui_point2post("11101302")#
+#t.gui_visu("7,8,11,12,13,15,16") #run 11,12,13 controll to be implemented,#scale color
+#t.gui_visu("17")
+#pointtopost.drop_pic(Pi.femmesh1,Pi.femmesh2,Pi.pngfile) 
 print t1-time.time()
 
 
 
 #unittest: the 3 pieces end:
 #ok: restarted freecad
-#ok rm -r /tmp/elmermesh1:ok replace csv before ok
+#ok rm -r /tmp/elmermesh1:ok replace csv before: ok
 #
 
 
 #fem2dheatconductiongui.gui_annotate_all()
-t.gui_annotate_all()
-glob_le_opt_pp="11001302" # no effect,?
+#t.gui_annotate_all()
+#glob_le_opt_pp="11001302" # no effect,?
 
-pointtopost.man_mv_obj_dir(Pieces)
+#pointtopost.man_mv_obj_dir(Pieces)
 #group objects
 
 
