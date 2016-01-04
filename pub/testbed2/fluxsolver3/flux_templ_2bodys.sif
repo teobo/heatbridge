@@ -55,8 +55,8 @@ Solver 1
   Variable Dofs = 1
   Linear System Solver = "Iterative"
   Linear System Iterative Method = "BiCGStab"
-  Linear System Max Iterations = 350
-  Linear System Convergence Tolerance = 1.0e-08
+  Linear System Max Iterations = 900
+  Linear System Convergence Tolerance = 1.0e-05
   Linear System Abort Not Converged = True
   Linear System Preconditioning = "ILU0"
   Linear System Residual Output = 10
@@ -97,7 +97,7 @@ Solver 2
 End
 
 Solver 3
-!  Exec Solver = Never
+  Exec Solver = Never
 
   Equation = "ResultOutput"
   Procedure = "ResultOutputSolve" "ResultOutputSolver"
@@ -113,6 +113,17 @@ Solver 3
 
   ElmerPost format = Logical True
   Vtu format = Logical True
+End
+
+Solver 4
+  Exec Solver = After Timestep
+  Equation = SaveScalars
+  Procedure = "SaveData" "SaveScalars"
+  Filename = "forces.dat"
+  Variable 1 = "Temperature Loads"
+  Operator 1 = boundary sum
+  !Variable 2 = Flow Solution Loads 2
+  !Operator 2 = boundary sum
 End
 
 Material 1
@@ -131,6 +142,7 @@ Boundary Condition 1
   Name = "Cold"
   Target Boundaries(1) = 5 
   Temperature = 0
+  Save Scalars = Logical True
 End
 
 Boundary Condition 2

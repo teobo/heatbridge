@@ -19,7 +19,7 @@ if len(set(FreeCAD.listDocuments())&set([Pi.fc_docname]))==0:
 #load sample files
 #assign stepfiles to pieces[i].compound1: tedious
 stepdir=os.environ["FEMProjScripts"]+"testbed2/stepzoo1/"#directory for step-zoo
-stepfiles=os.listdir(stepdir)
+stepfiles=sorted(os.listdir(stepdir))
 #index zero shall be occupied
 print str(len(stepfiles))+" "+str(stepfiles)
 indPI=len(Pieces)
@@ -44,60 +44,88 @@ for i in range(indPI,len(stepfiles)+indPI):
 
 FreeCAD.ActiveDocument.recompute()
 
-print "pifempath" + Pi.fempath
+print "pi.fempath" + Pi.fempath
 #
 #unittest: the 3 pieces start:
 import time
 t1=time.time()
-i=3;Pi=Pieces[i]
-pointtopost.testinit151024(Pi,Pieces.index(Pi))
-#t.gui_point2post()
-#comment out here
-print t1-time.time()
+procflag=0
+if procflag!=0:
+    i=3;Pi=Pieces[i]
+    pointtopost.testinit151024(Pi,Pieces.index(Pi))
+    #t.gui_point2post()
+    #comment out here
+    print t1-time.time()
 
-i=1;Pi=Pieces[i]
-pointtopost.testinit151024(Pi,Pieces.index(Pi))
+procflag=1
+if procflag!=0:
+    i=1;Pi=Pieces[i]
+    pointtopost.testinit151024(Pi,Pieces.index(Pi))
 
-#remove whole dir for testing purpose
-#if os.path.exists(Pi.fempath):	
-#    shutil.rmtree(Pi.fempath)
+    #remove whole dir for testing purpose
+    #if os.path.exists(Pi.fempath):	
+    #    shutil.rmtree(Pi.fempath)
 
-# put cvs file from template
-if not os.path.exists(fem2dheatconductiongui.Pi.csvfile):
-    try:os.makedirs(Pi.fempath)
-    except:pass
-    dst=Pi.fempath+"spreadsheetfile.csv" #
-    src=os.environ["FEM_PROTO_FLUX3_PATH"]+"elmermesh"+str(Pieces.index(Pi))+'/spreadsheetfile.csv'
-    shutil.copyfile(src,dst)   
+    # put cvs file from template
+    if not os.path.exists(fem2dheatconductiongui.Pi.csvfile):
+	try:os.makedirs(Pi.fempath)
+	except:pass
+	dst=Pi.fempath+"spreadsheetfile.csv" #
+	src=os.environ["FEM_PROTO_FLUX3_PATH"]+"elmermesh"+str(Pieces.index(Pi))+'/spreadsheetfile.csv'
+	shutil.copyfile(src,dst)   
 
-t.gui_point2post("11101302")#
+    t.gui_point2post("11101302")#
 
-#visu
-t.gui_visu("7,8,11,12,13,15,16") 
-t.gui_visu("15,17") #prefined for 
-for i in [Pi.femmesh2]+[Pi.anno8]:
-    i.ViewObject.Visibility=True
-
-#pointtopost.drop_pic(Pi.femmesh1,Pi.femmesh2,Pi.pngfile) # ok
-
-print t1-time.time()
-
-i=2;Pi=Pieces[i]
-pointtopost.testinit151024(Pi,Pieces.index(Pi))
-
-# put cvs file from template
-if not os.path.exists(fem2dheatconductiongui.Pi.csvfile):
-    try:os.makedirs(Pi.fempath)
-    except:pass
-    dst=Pi.fempath+"spreadsheetfile.csv" #
-    src=os.environ["FEM_PROTO_FLUX3_PATH"]+"elmermesh"+str(Pieces.index(Pi))+'/spreadsheetfile.csv'
-    shutil.copyfile(src,dst)   
-
-t.gui_point2post("11101302")#
-t.gui_visu("7,8,11,12,13,15,16") #run 11,12,13 controll to be implemented,#scale color
-t.gui_visu("15,17")
+    #visu
+    t.gui_visu("7,8,11,12,13,15,16") 
+    t.gui_visu("15,17") #prefined for 
+    for i in [Pi.femmesh2]+[Pi.anno8]:
+	i.ViewObject.Visibility=True
+    
+    #pointtopost.drop_pic(Pi.femmesh1,Pi.femmesh2,Pi.pngfile) # ok
 
 print t1-time.time()
+procflag=0
+if procflag!=0:
+    i=2;Pi=Pieces[i]
+    pointtopost.testinit151024(Pi,Pieces.index(Pi))
+
+    # put cvs file from template
+    if not os.path.exists(fem2dheatconductiongui.Pi.csvfile):
+	try:os.makedirs(Pi.fempath)
+	except:pass
+	dst=Pi.fempath+"spreadsheetfile.csv" #
+	src=os.environ["FEM_PROTO_FLUX3_PATH"]+"elmermesh"+str(Pieces.index(Pi))+'/spreadsheetfile.csv'
+	shutil.copyfile(src,dst)   
+
+    t.gui_point2post("11101302")#
+    t.gui_visu("7,8,11,12,13,15,16") #run 11,12,13 controll to be implemented,#scale color
+    t.gui_visu("15,17")
+
+print t1-time.time()
+
+
+print t1-time.time()
+procflag=0
+if procflag!=0:
+    i=4;Pi=Pieces[i]
+    pointtopost.testinit151024(Pi,Pieces.index(Pi))
+
+    # put cvs file from template
+    if not os.path.exists(fem2dheatconductiongui.Pi.csvfile):
+	try:os.makedirs(Pi.fempath)
+	except:pass
+	dst=Pi.fempath+"spreadsheetfile.csv" #
+	src=os.environ["FEM_PROTO_FLUX3_PATH"]+"elmermesh"+str(Pieces.index(Pi))+'/spreadsheetfile.csv'
+	shutil.copyfile(src,dst)   
+
+    #t.gui_point2post("11000702")#
+    t.gui_point2post("1110202")#
+    t.gui_point2post("1110707")#
+    t.set_le_cmd_line_opt_mesh("line")
+    #t.gui_visu("7,8,11,12,13,15,16") #run 11,12,13 controll to be implemented,#scale color
+    t.gui_visu("15,17")
+
 
 
 

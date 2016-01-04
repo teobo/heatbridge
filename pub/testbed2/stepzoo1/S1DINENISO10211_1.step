@@ -623,3 +623,6 @@ SHAPE_REPRESENTATION_RELATIONSHIP() );
 #546 = FILL_AREA_STYLE_COLOUR('',#518);
 ENDSEC;
 END-ISO-10303-21;
+Physical Line(27) = {16};
+Physical Line(28) = {3};
+Physical Line(29) = {3};

@@ -2,6 +2,8 @@
 Installation:
 ---------------
 apt-get install gmsh elmer freecad
+#you will probably need the newest versions: selfcompiled if not ppa
+apt-get install python-texttable
 
 
 How do you test?
@@ -53,7 +55,8 @@ Architecture:
 --------------
 pointtopost.py library using fc-python-scripting
     fem2dheatconductiongui.FCMacro code for fc-heatbridge-gui
-	pp_config.py config and scripting interface python
+	pp_config.py #config and scripting interface python
+	    pp_config_script1.py #somescript
 	
 Testing and Bug reports
 ------------------------------

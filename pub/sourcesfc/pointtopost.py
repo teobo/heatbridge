@@ -123,7 +123,14 @@ class Piece:
     currentPi_index=-1
     fc_docname="femcalibr2testdoc"
     group=None #"Ann_bnd_edges_"+"Pi" All
-    
+    gmsh="/usr/bin/gmsh"
+    #elmergrid="/usr/bin/ElmerGrid"
+    elmergrid="/usr/local/bin/ElmerGrid"
+    geofile1="/tmp/tmpNO2c.geo"
+    geofile2="/tmp/tmpNO2c2.geo"
+    geolineL=[]
+    stepfile2="/tmp/tmpNO2c.step"
+    mshfile="/tmp/tmpNO2c.msh"
 
 def dinDINENISO10211_1topoints():
     '''
@@ -1091,10 +1098,12 @@ def write_elemer_boundary_file(femmesh2,egdegroupL,gridpath=""):
 
     return 
 
-def write_elmer_sif_file(siftemplfile,siffile,Bodies,Bnds):
+def write_elmer_sif_file(siftemplfile,siffile,Bodies,Bnds,film=1):
     '''
     #sif manipulation
     sif preparation body, boundary and material blocks generation
+    (siftemplfile,siffile,Bodies,Bnds,film=1)
+    
     '''
     import re
     stdin, stdout = os.popen2('cp %s %s' % (siftemplfile,siffile));a1=stdout.read()
@@ -1207,12 +1216,18 @@ def write_elmer_sif_file(siftemplfile,siffile,Bodies,Bnds):
 	subpassage=it[0]
 	it2= re.sub(subpattern, substitutepattern,subpassage,flags=re.MULTILINE+re.DOTALL)
 
+	
 	#change contents:  Boundary Temperature
 	subpattern='Temperature = [0-9]*\.?[0-9]*'
-	substitutepattern="External Temperature = "+ str(Bnds[i].T)
-	substitutepattern2 = "\n  Heat Transfer Coefficient = "+ str(1/Bnds[i].Rs)
+	if film==1:
+	    substitutepattern="External Temperature = "+ str(Bnds[i].T)
+	    substitutepattern2 = "\n  Heat Transfer Coefficient = "+ str(1/Bnds[i].Rs)
+	    substitutepattern3=substitutepattern+substitutepattern2
+	else:
+	    substitutepattern3="Temperature = "+ str(Bnds[i].T)
+
 	subpassage=it2	
-	it3= re.sub(subpattern, substitutepattern+substitutepattern2,subpassage,flags=re.MULTILINE+re.DOTALL)
+	it3= re.sub(subpattern, substitutepattern3,subpassage,flags=re.MULTILINE+re.DOTALL)
 
 	#change contents:  Boundary Condition 1
 	subpattern='Boundary Condition [0-9]*'
@@ -1225,8 +1240,17 @@ def write_elmer_sif_file(siftemplfile,siffile,Bodies,Bnds):
 	substitutepattern="Name = "+ ' \"'+str(Bnds[i].T) + "_" +  str(Bnds[i].Rs) + "_" + str(i)+ '\"'
 							
 	subpassage=it4	
-	it5= re.sub(subpattern, substitutepattern,subpassage,flags=re.MULTILINE+re.DOTALL)
-
+	it41= re.sub(subpattern, substitutepattern,subpassage,flags=re.MULTILINE+re.DOTALL)
+    
+	#change contents:  "Save Scalars = Logical True": existent only in first boundary
+	if i!=0:
+	    subpattern='Save Scalars = Logical True'
+	    substitutepattern=''
+	    subpassage=it41	
+	    it5= re.sub(subpattern, substitutepattern,subpassage,flags=re.MULTILINE+re.DOTALL)
+	else: 
+	    it5=it41
+	
 	s=s[:ind]+"\n"+it5+s[ind:]
 	#reglue 
 	ind=ind+len(it5)+1
@@ -1244,7 +1268,7 @@ def register_bodies_and_boundaries(bnd_tegdeL,Bodies,Bnds,compound0):
     '''
     #default
     nb_bnd_groups=2
-    bnd_tegdeL=[[1,3],[18]]
+    bnd_tegdeL=[[1,2],[4]]
     bnd_rs=[0.13,0.10]
     TL=[259,292]
     #default bodies: as much as faces
@@ -1439,16 +1463,33 @@ def open_spreadsh_csv(spreadsh,filename,flag):
 	App.ActiveDocument.removeObject(pointtopost.Piece.spreedsheet.Name)
     return spreadsh
 
-def process_elmer_sif_file(siffile,epsourcefile,fempath,debug=1001):
+def process_elmer_sif_file(siffile,epsourcefile,fempath,debug=1001,outlog=""):
     '''
     run Elmer
-    (siffile,epsourcefile,fempath,debug=1001)
+    siffile,epsourcefile,fempath,debug=1001,outlog="")
     '''
+    
+    import subprocess
+    import os
     os.chdir("%s" % fempath)
-    stdin, stdout = os.popen2('echo %s > ELMERSOLVER_STARTINFO ; ElmerSolver;'% os.path.basename(siffile));a=stdout.read() #popen2 wait until finished - hopefully
-    #optionally viewing
-    print a
-    if int(str(debug)[len(str(debug))-1])==1:stdin, stdout = os.popen2('killall ElmerPost; ElmerPost source %s' % epsourcefile)
+    command="echo " + os.path.basename(siffile) +" > ELMERSOLVER_STARTINFO ;" 
+    output = subprocess.check_output([command, '-1'], shell=True, stderr=subprocess.STDOUT,)
+    FreeCAD.Console.PrintMessage(output)
+    
+    command="ElmerSolver " +outlog
+    output = subprocess.check_output([command, '-1'], shell=True, stderr=subprocess.STDOUT,)
+    FreeCAD.Console.PrintMessage(output)
+    
+    command='cp angle/TempDist.ep case.ep; killall ElmerPost;' 
+    try:
+	output = subprocess.check_output([command, '-1'], shell=True, stderr=subprocess.STDOUT,)
+    except BaseException:
+	pass
+    FreeCAD.Console.PrintMessage(output)
+    print command
+
+    if int(str(debug)[len(str(debug))-1])==1:stdin, stdout = os.popen2('killall ElmerPost; ElmerPost source %s' % epsourcefile)    
+    return output
 
 def read_ep_result(epfile):
     '''

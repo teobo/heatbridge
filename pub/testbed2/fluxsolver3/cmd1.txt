@@ -1,14 +1,37 @@
-set MeshStyle     1
-set MeshColor     "Temperature"
-rotate 180 0 0
-background 90 90 70
-set GlobalOptions(VolumeSides) 1
-set DisplayStyle(ColorMesh) 1
+#rotate 180 0 0
 readfile case.ep
+scale 0.75 0.75 0.75
+translate -0.2 0.5 0
+set NormalUpdate 0
+set DisplayStyle(ColorMesh) 1
+set DisplayStyle(ColorScale) 1
+set MeshStyle 2
+set MeshEdgeStyle 0
+set MeshLineStyle 0
 UpdateObject
-#DoReadFile case.ep
 display
-#ReadFileHeader case.ep
-#ReadFile
-#DoReadFile case.ep 
-#mesh_update
+
+#set MeshColor "none"
+### nextline useless
+#set ShowColorScale 1
+
+#screensave mesh1.png
+
+#set MeshStyle     1
+set MeshColor     "Temperature"
+
+#set MeshStyle     1
+#set MeshStyle 1
+background 90 90 70
+#set GlobalOptions(VolumeSides) 1
+#set DisplayStyle(ColorMesh) 1
+#readfile case.ep
+UpdateObject
+##DoReadFile case.ep
+display
+##ReadFileHeader case.ep
+##ReadFile
+##DoReadFile case.ep 
+##mesh_update
+###the following line does not function:
+screensave mesh.png

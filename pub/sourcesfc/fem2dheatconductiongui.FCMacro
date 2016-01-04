@@ -648,6 +648,9 @@ class MeshGmsh(QtGui.QWidget):
 	    #last index 1? use selection
 	    Pi.compound1=pointtopost.addpointstoface(Pi.compound0)
 	    Pi.compound1.Label=Pi.compound1name+"Pi"+str(Pieces.index(Pi))
+	    Pi.comp_topo_edges=pointtopost.make_topo_edge(Pi.compound1)
+	    Pi.comp_topo_edges.Label=Pi.comp_topo_edgesstr+"Pi"+str(Pieces.index(Pi))
+
 
 	stagenr=3
 	if(stagenr>=startstage and stagenr <= endstage) :
@@ -674,8 +677,6 @@ class MeshGmsh(QtGui.QWidget):
 	    #buggy ... 
 	    #Pi.comp_mb_edges.Label=Pi.comp_mb_edgesstr+"Pi"+str(Pieces.index(Pi))
 	    
-	    Pi.comp_topo_edges=pointtopost.make_topo_edge(Pi.compound1)
-	    Pi.comp_topo_edges.Label=Pi.comp_topo_edgesstr+"Pi"+str(Pieces.index(Pi))
 	stagenr=4
 	if(stagenr>=startstage and stagenr <= endstage) :
 	    print "stage4"
@@ -756,7 +757,9 @@ class MeshGmsh(QtGui.QWidget):
 		pointtopost.open_spreadsh_csv(Pi.spreedsheet,Pi.csvfile,"write")
 
 
-	    print "stage7.3"
+	stagenr=9
+	if(stagenr>=startstage and stagenr <= endstage) :
+	    print "stage8"
 		    ### append calculation part
 	    #get nodes of edges
 	    Pi.egdeN=pointtopost.getnodesbycompoundedge(Pi.femmesh2,Pi.comp_topo_edges)
@@ -802,6 +805,19 @@ class MeshGmsh(QtGui.QWidget):
 	    print Pi.epfile
 	    Pi.solutionheader, Pi.solutiondata, Pi.headerline=pointtopost.read_ep_result(Pi.epfile)
 	    print "stage13: void"
+	    
+
+	stagenr=42
+	if(stagenr>=startstage and stagenr <= endstage) :
+	    print "stage42"
+	    try:
+		pass
+		#
+		execfile(os.environ["FEMProjScripts"]+"sourcesfc/pp_config_script1.py")
+	    except OSError:
+		pass
+	    
+	    
 
     def gui_visu(self,arg_line=""):
 	print "gui_visu " + arg_line
@@ -966,6 +982,11 @@ class MeshGmsh(QtGui.QWidget):
 	    Pi.anno10.ViewObject.hide()
 
 
+	return
+
+    def set_le_cmd_line_opt_mesh(self,line="5"):
+	print line
+	self.le_cmd_line_opt_mesh.setText(line)
 	return
 	
 	
