@@ -83,52 +83,102 @@ import sys
 import tempfile
 from FreeCAD import Vector
 
-
+#Beton
 points=[]
 FaceApp1=[]
-points=[Vector (2.3, 0.6, 0.0), Vector (-3.67394039744e-17, 0.6, 0.0), Vector (0.0, 0.0, 0.0), Vector (2.3, -1.61677042525e-27, 0.0)]
-#points=[Vector (50.0, 0.6, 0.0), Vector (-3.67394039744e-17, 0.6, 0.0), Vector (0.0, 0.0, 0.0), Vector (50.0, -1.61677042525e-27, 0.0)]
+points=[Vector (500, 6, 0.0), Vector (0.0, 6, 0.0), Vector (0.0, 0.0, 0.0), Vector (500, 0.0, 0.0)]
 
-#points=[Vector (50.0, -1.61677042525e-27, 0.0),Vector (0.0, 0.0, 0.0),Vector (-3.67394039744e-17, 0.6, 0.0),Vector (1.5, 0.6, 0.0),Vector (50.0, 0.6, 0.0)]
-points=[Vector (round(i.x,6),round(i.y,6),round(i.z,6)) for i in points]
+points=list(reversed([Vector (0.001*round(i.x,6),0.001*round(i.y,6),0.001*round(i.z,6)) for i in points]))
 points
 a1=Draft.makeWire(points,closed=True,face=True,support=None)
 FaceApp1.append(App.ActiveDocument.getObject(a1.Name))
+a1.ViewObject.Lighting= "One side"
 
-#points=[Vector (-6.73555739531e-17, 1.1, 0.0), Vector (1.5, 1.1, 0.0), Vector (1.5, 0.6, 0.0), Vector (-2.05966651973e-29, 0.6, 0.0)]
-#points=[Vector (round(i.x,6),round(i.y,6),round(i.z,6)) for i in points]
-#points
-#a1=Draft.makeWire(points,closed=True,face=True,support=None)
-#FaceApp1.append(App.ActiveDocument.getObject(a1.Name))
-
-#points=[Vector (50.0, 4.6, 0.0), Vector (50.0, 1.1, 0.0), Vector (1.5, 1.1, 0.0), Vector (1.5, 1.25, 0.0), Vector (0.15, 1.25, 0.0), Vector (0.15, 4.6, 0.0)]
-#points=[Vector (round(i.x,6),round(i.y,6),round(i.z,6)) for i in points]
-#points
-#a1=Draft.makeWire(points,closed=True,face=True,support=None)
-#FaceApp1.append(App.ActiveDocument.getObject(a1.Name))
-
-#points=[Vector (-6.73555739531e-17, 1.1, 0.0), Vector (-2.23498040844e-16, 4.75, 0.0), Vector (50.0, 4.75, 0.0), Vector (50.0, 4.6, 0.0), Vector (0.15, 4.6, 0.0), Vector (0.15, 1.25, 0.0), Vector (1.5, 1.25, 0.0), Vector (1.5, 1.1, 0.0)]
-#points=[Vector (round(i.x,6),round(i.y,6),round(i.z,6)) for i in points]
-#points
-#a1=Draft.makeWire(points,closed=True,face=True,support=None)
-#FaceApp1.append(App.ActiveDocument.getObject(a1.Name))
-
-points=[Vector (1.5, 1.1, 0.0), Vector (2.3, 1.1, 0.0), Vector (2.3, 0.6, 0.0), Vector (1.5, 0.6, 0.0)]
-points=[Vector (round(i.x,6),round(i.y,6),round(i.z,6)) for i in points]
-
-#points=[Vector (1.5, 1.1, 0.0), Vector (50.0, 1.1, 0.0), Vector (50.0, 0.6, 0.0), Vector (1.5, 0.6, 0.0)]
-#points=[Vector (round(i.x,6),round(i.y,6),round(i.z,6)) for i in points]
+#Holz
+points=[Vector (-6.73555739531e-17, 1.1, 0.0), Vector (1.5, 1.1, 0.0), Vector (1.5, 0.6, 0.0), Vector (-2.05966651973e-29, 0.6, 0.0)]
+points=[Vector (0.001*10*round(i.x,6),0.001*10*round(i.y,6),0.001*10*round(i.z,6)) for i in points]
 points
 a1=Draft.makeWire(points,closed=True,face=True,support=None)
 FaceApp1.append(App.ActiveDocument.getObject(a1.Name))
+a1.ViewObject.Lighting= "One side"
+
+#Iso
+points=[FreeCAD.Vector(500.0,6.0,0.0),FreeCAD.Vector(500.0,46.0,0.0),FreeCAD.Vector(1.5,46.0,0.0),FreeCAD.Vector(1.5,12.5,0.0),FreeCAD.Vector(15.0,12.5,0.0),FreeCAD.Vector(15.0,6.0,0.0)]
+points=list(reversed([Vector (0.001*round(i.x,6),0.001*round(i.y,6),0.001*round(i.z,6)) for i in points]))
+points
+a1=Draft.makeWire(points,closed=True,face=True,support=None)
+a2=Part.Face(a1.Shape.OuterWire)
+a1.Document.removeObject(a1.Name)
+a2.reverse()
+a3=Part.show(a2)
+a3=FreeCAD.ActiveDocument.Objects[len(FreeCAD.ActiveDocument.Objects)-1]
+FaceApp1.append(App.ActiveDocument.getObject(a3.Name))
+a3.ViewObject.Lighting= "One side"
+
+#Alu
+points=[Vector (-6.73555739531e-17, 1.1, 0.0), Vector (-2.23498040844e-16, 4.75, 0.0), Vector (50.0, 4.75, 0.0), Vector (50.0, 4.6, 0.0), Vector (0.15, 4.6, 0.0), Vector (0.15, 1.25, 0.0), Vector (1.5, 1.25, 0.0), Vector (1.5, 1.1, 0.0)]
+points=[Vector (0.001*10*round(i.x,6),0.001*10*round(i.y,6),0.001*10*round(i.z,6)) for i in points]
+points
+a1=Draft.makeWire(points,closed=True,face=True,support=None)
+FaceApp1.append(App.ActiveDocument.getObject(a1.Name))
+a1.ViewObject.Lighting= "One side"
+
+
 
 compound0=App.activeDocument().addObject("Part::Compound","Compound")
 compound0.Links= FaceApp1
 App.ActiveDocument.recompute()
 
-#!add points to compound 
+#!add points to c#Beton
+points=[]
+FaceApp1=[]
+points=[Vector (500, 6, 0.0), Vector (0.0, 6, 0.0), Vector (0.0, 0.0, 0.0), Vector (500, 0.0, 0.0)]
+
+points=list(reversed([Vector (0.001*round(i.x,6),0.001*round(i.y,6),0.001*round(i.z,6)) for i in points]))
+points
+a1=Draft.makeWire(points,closed=True,face=True,support=None)
+FaceApp1.append(App.ActiveDocument.getObject(a1.Name))
+a1.ViewObject.Lighting= "One side"
+
+#Holz
+points=[Vector (-6.73555739531e-17, 1.1, 0.0), Vector (1.5, 1.1, 0.0), Vector (1.5, 0.6, 0.0), Vector (-2.05966651973e-29, 0.6, 0.0)]
+points=[Vector (0.001*10*round(i.x,6),0.001*10*round(i.y,6),0.001*10*round(i.z,6)) for i in points]
+points
+a1=Draft.makeWire(points,closed=True,face=True,support=None)
+FaceApp1.append(App.ActiveDocument.getObject(a1.Name))
+a1.ViewObject.Lighting= "One side"
+
+#Iso
+points=[FreeCAD.Vector(500.0,6.0,0.0),FreeCAD.Vector(500.0,46.0,0.0),FreeCAD.Vector(1.5,46.0,0.0),FreeCAD.Vector(1.5,12.5,0.0),FreeCAD.Vector(15.0,12.5,0.0),FreeCAD.Vector(15.0,6.0,0.0)]
+points=list(reversed([Vector (0.001*round(i.x,6),0.001*round(i.y,6),0.001*round(i.z,6)) for i in points]))
+points
+a1=Draft.makeWire(points,closed=True,face=True,support=None)
+a2=Part.Face(a1.Shape.OuterWire)
+a1.Document.removeObject(a1.Name)
+a2.reverse()
+a3=Part.show(a2)
+a3=FreeCAD.ActiveDocument.Objects[len(FreeCAD.ActiveDocument.Objects)-1]
+FaceApp1.append(App.ActiveDocument.getObject(a3.Name))
+a3.ViewObject.Lighting= "One side"
+
+#Alu
+points=[Vector (-6.73555739531e-17, 1.1, 0.0), Vector (-2.23498040844e-16, 4.75, 0.0), Vector (50.0, 4.75, 0.0), Vector (50.0, 4.6, 0.0), Vector (0.15, 4.6, 0.0), Vector (0.15, 1.25, 0.0), Vector (1.5, 1.25, 0.0), Vector (1.5, 1.1, 0.0)]
+points=[Vector (0.001*10*round(i.x,6),0.001*10*round(i.y,6),0.001*10*round(i.z,6)) for i in points]
+points
+a1=Draft.makeWire(points,closed=True,face=True,support=None)
+FaceApp1.append(App.ActiveDocument.getObject(a1.Name))
+a1.ViewObject.Lighting= "One side"
+
+
+
+compound0=App.activeDocument().addObject("Part::Compound","Compound")
+compound0.Links= FaceApp1
+App.ActiveDocument.recompute()
+
+ompound 
 FaceApp2=[]
-for sh1 in compound0.Links:
+for sh1 in compound0.Links[1:1]:
+    
     compoundtemp=compound0.Shape#??
     for cutitem in list(set(compound0.Links)-set([sh1])):
 	compoundtemp=compoundtemp.cut(cutitem.Shape)
@@ -1500,5 +1550,229 @@ print tb.draw()
 #timep.append(time.time())
 #timepL.append(timep)
 ##read savescalar:Temperature Load end0
+
+#### point_beam=1
+nodesbyedge=10
+cl1=math.sqrt(Pi.compound0.Shape.Area)/nodesbyedge
+f1NNodesByEdge	= 10
+f2LcMinbylc= 30
+f2DistMin = cl1*0.0
+f2DistMax = cl1*0.15
+
+s=s+"Field[1] = Attractor;\n"
+s=s+"Field[1].NodesList = {"+', '.join([i[0] for i in pointsL])+"};\n"
+
+s=s+"Field[2] = Threshold;\n"
+s=s+"Field[2].IField = 1;\n"
+s=s+"Field[2].LcMin = cl__1 / "+f2LcMinbylc+";\n"
+s=s+"Field[2].LcMax = cl__1;\n"
+s=s+"Field[2].DistMin = "+f2DistMin+";\n"
+s=s+"Field[2].DistMax = "+f2DistMax+";\n"
+
+subpattern="(Point.*? = .*?,.*?,.*?, ).*?};"
+substitutepattern="\\1" +"cl__1};"
+subpassage=s
+s1= re.sub(subpattern,substitutepattern,subpassage,flags=re.MULTILINE+re.DOTALL)
+s1
+
+subpassage=s1
+s2= re.sub('cl__1 = 1e+22;',"cl__1 = " + str(cl1)+";",subpassage,flags=re.MULTILINE+re.DOTALL)
+#### point_beam end
+
+#####
+
+obj2=((1.2,3.2,4.4),(1.2,3.2,5.4),(1.2,3.2,5.4),(1.2,3.2,7.4))
+
+obj2=((1.2,3.2,4.4),(1.2,3.2,5.4),(1.2,3.2,6.4),(1.2,3.2,7.4))
+
+obj3=((1.2,3.2,4.4),(1.2,3.2,5.4),(1.2,3.2,7.4),(1.2,3.2,7.4))
+
+
+obj4=((1.2,3.2,4.4),(1.2,3.2,5.4),(1.2,3.2,6.4),(1.2,3.2,7.4))
+
+
+
+obj4=[(0.0, 0.0, 0.0), (0.0, 0.006, 0.0), (0.5, 0.0, 0.0), (0.5, 0.006, 0.0)]
+
+obj1=[(0.0, 0.006, 0.0), (0.0, 0.011, 0.0), (0.015, 0.006, 0.0), (0.015, 0.011, 0.0)]
+
+obj2=[(0.0015, 0.0125, 0.0), (0.0015, 0.046, 0.0), (0.015, 0.006, 0.0), (0.015, 0.0125, 0.0), (0.5, 0.006, 0.0), (0.5, 0.046, 0.0)]
+
+obj3=[(0.0, 0.011, 0.0), (0.0, 0.0475, 0.0), (0.0015, 0.0125, 0.0), (0.0015, 0.046, 0.0), (0.015, 0.011, 0.0), (0.015, 0.0125, 0.0), (0.5, 0.046, 0.0), (0.5, 0.0475, 0.0)]
+
+objL=(obj2,obj3,obj1,obj4)
+objL1=[tuple(obj2),tuple(obj3),tuple(obj5)]
+
+obj_geo_index=[]    
+objL=[]
+obj=[]
+faceL=[]
+pointsL=[]
+linesL=[]
+
+import re
+s_file = open(geofile3, "r")
+str_s_file=s_file.readlines()
+n_str_s_file=len(str_s_file)
+for line in str_s_file:
+    #check if we found header section
+    if re.search('Line\(',line)!=None:
+	lline=[i for i in re.split('[A-Za-z]|\n|\ |[:;_=(){},]',line) if i]##(22) = {22, 23}
+	linesL.append(lline)
+    if re.search('Point\(',line)!=None:
+	pline=[i for i in re.split('[A-Za-z]|\n|\ |[:;_=(){},]',line) if i]##(22) = {22, 23}
+	pointsL.append(pline)
+    if re.search('Line Loop\(',line)!=None:
+	pline=[i for i in re.split('[A-Za-z]|\n|\ |\-|[:;_=(){},]',line) if i]##(22) = {22, 23}
+	faceL.append(pline)
+
+#tests
+print pointsL
+print linesL
+print faceL
+
+
+for face in faceL:
+    lnr=[i for i in face[1:]]
+    print "lnr" + str(lnr)
+    #Line Loop(2) = {1, 5, -4, -3, 2}; # extracted gives faceL=
+    #[['2', '1', '5', '4', '3', '2'], ['1
+    #lnr= collect indices-geo-lines per loops=Plane surfaces
+    #lnr=['1', '5', '4', '3', '2']
+    #lnr_indexL[0, 4, 3, 2, 1
+    #above indices converted to indices for pythonarray lines_to_points: linesL  
+    lnr_indexL=[[i[0] for i in linesL].index((lnr_i)) for lnr_i in lnr]
+    print "lnr_indexL" + str(lnr_indexL)
+
+    a=[linesL[int(i)][1:] for i in lnr_indexL]
+    print "a" + str(a)
+    #a[['1', '2'], ['2', '5'], ['4', '5'], ['3', '4'], ['3', '1']]
+    #geo-point-index representation of lines of one loop
+    #list(set(sum(a, [])))=
+    #undoubled ['24', '13', '12', '15', '14', '18', '7', '6']
+    pnr_indexL=[[i[0] for i in pointsL].index((pnr_i)) for pnr_i in list(set(sum(a, [])))]
+    #get index in pointtocoor-pythonarray:pnr_indexL
+    #[12, 8, 7, 10, 9, 11, 6, 5]
+    
+    print "pnr_indexL"+ str(pnr_indexL)
+    
+    obj=[[round(float(i),8) for i in pointsL[int(pnr_i)][1:4]] for pnr_i in pnr_indexL]
+    #[[0.5, 0.0475, 0.0], [0.0015, 0.0125, 0.0], [0.015, 0.0125, 0.0], [0.5, 0.046, 0.0], [0.0015, 0.046, 0.0], [0.0, 0.0475, 0.0], [0.0, 0.011, 0.0], [0.015, 0.011, 0.0]]
+    #geo surface in real coordinates
+    
+    objL.append(sorted(obj))
+    print "obj"+ str(obj)
+    obj=[]
+    #objL: above surface in array ordered by occurrence in geo
+    obj_geo_index.append(int(face[0]))
+    #corresponding geo indices for objL 
+
+obj_geo_index
+    
+    
+hash_array_geo_surfaceL=[] #hash array topolines-geo_surfaces
+hash_array_geo_surface=[]
+
+for a in Pi.compound1.Links:
+    #a=Pi.compound0.Links[3]
+    coord_obj_as_tuple=[]
+    coord_obj_as_tuple=[[round(i.Point.x,8),round(i.Point.y,8),round(i.Point.z,8)] for i in a.Shape.Vertexes]
+    coord_obj_as_tuple=sorted(coord_obj_as_tuple)
+    print "coord_obj_as_tuple" +str(coord_obj_as_tuple)
+
+    hash_array_geo_surface=obj_geo_index[objL.index(coord_obj_as_tuple)]
+    coord_obj_as_tuple=[]
+
+    hash_array_geo_surfaceL.append(hash_array_geo_surface) 
+
+hash_array_geo_surfaceL   
+
+
+Pi.comp_topo_edges.Links
+
+
+
+
+l_obj_geo_index=[] #   #corresponding geo indices for objL 
+l_objL=[] # result lines in coordinates ordered by occurence
+l_obj=[]
+for line in linesL:
+    pnr=[i for i in line[1:]]
+    print "pnr" + str(pnr)
+    #pnr['1', '2']
+    #  linesL
+    #[['1', '1', '2'], ['
+    #line 1 consist of point 1 and 2
+    pnr_indexL=[[i[0] for i in pointsL].index((pnr_i)) for pnr_i in pnr]
+    #[11, 12]
+    #these points got array index 11 and 12 
+    l_obj=[[round(float(i),8) for i in pointsL[int(pnr_i)][1:4]] for pnr_i in pnr_indexL]
+    #hier are the coordinates repr of line 1 [[0.0, 0.0475, 0.0], [0.5, 0.0475, 0.0]]
+    
+    l_objL.append(sorted(l_obj))
+    print "obj"+ str(l_obj)
+    l_obj=[]
+    #objL: above surface in array ordered by occurrence in geo
+    l_obj_geo_index.append(int(line[0]))
+    #corresponding geo indices for objL 
+
+l_obj_geo_index
+
+hash_topo_geo_linesL=[]    
+hash_topo_geo_lines=[]
+for a in Pi.comp_topo_edges.Links:
+    #a=Pi.compound0.Links[3]
+    l_coord_obj_as_tuple=[]
+    l_coord_obj_as_tuple=[[round(i.Point.x,8),round(i.Point.y,8),round(i.Point.z,8)] for i in a.Shape.Vertexes]
+    l_coord_obj_as_tuple=sorted(l_coord_obj_as_tuple)
+    print "coord_obj_as_tuple" +str(l_coord_obj_as_tuple)
+
+    hash_topo_geo_lines=l_obj_geo_index[l_objL.index(l_coord_obj_as_tuple)]
+    #coord_obj_as_tuple=[]
+
+    hash_topo_geo_linesL.append(hash_topo_geo_lines)
+
+   
+hash_topo_geo_linesL
+#[1, 2, 5, 3, 4, 6, 9, 7, 4, 9, 11, 3, 12, 15, 13, 14, 17, 6, 24, 11, 23, 12, 14, 13]
+hash_array_geo_surfaceL
+#[2, 1, 3, 4]
+
+runs=1
+###prepare geofile 4 for messhing 
+fh=open(geofile3)
+s=fh.read();fh.close()
+for i in range(len(Pi.Bodies)):
+    #s=s+
+    print "Physical Surface("+str(i+1) +") = {"+str(hash_array_geo_surfaceL[i]) +"};\n"
+
+bias=len(Pi.Bodies)+1
+#project note convention: Boundary enumeration: body 1, 2, 3,| Nullbnd, Pi.Bnd(1), Pi.Bnd(2)
+
+geo_bnd=[]
+geo_bndL=[]
+i1=0
+for i in Pi.bnd_tegdeL:
+    for j in i:
+	i1=i1+1
+	geo_bnd.append(hash_topo_geo_linesL[j])
+    geo_bndL.append(geo_bnd)
+    geo_bnd=[]
+
+print geo_bndL
+
+for i in range(len(geo_bndL)):
+	s=s+"Physical Line("+str(bias+1+i) +") = {"+str(geo_bndL[i]).strip('\]\[') +"};\n"
+    
+
+fh=open(geofile4,"w")
+fh.write(s);fh.close()
+
+#test hash geo functions
+#get testfiles her: /pub/testbed2/fluxsolver3/elmermesh1/
+hash_topo_geo_linesL=get_hash_topoline_from_geo(Pi.comp_topo_edges,geofile3)
+			
+hash_array_geo_surfaceL=  get_hash_topoface_from_geo(Pi.compound1,geofile3)
+
 
 

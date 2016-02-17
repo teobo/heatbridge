@@ -1480,7 +1480,7 @@ def process_elmer_sif_file(siffile,epsourcefile,fempath,debug=1001,outlog=""):
     output = subprocess.check_output([command, '-1'], shell=True, stderr=subprocess.STDOUT,)
     FreeCAD.Console.PrintMessage(output)
     
-    command='cp angle/TempDist.ep case.ep; killall ElmerPost;' 
+    command='cp angle/TempDist.ep case.ep;' 
     try:
 	output = subprocess.check_output([command, '-1'], shell=True, stderr=subprocess.STDOUT,)
     except BaseException:
@@ -1636,3 +1636,170 @@ def drop_pic(femmesh1,femmesh2,pngfile):
     FreeCADGui.activeDocument().activeView().saveImage( pngfile, 1000, 1000, 'Current')
     #per piece snapshot end
 
+def get_hash_topoface_from_geo(compound1,geofile3):
+    '''
+    generates a hash array with assign the faces of a formerly imported topo compound  of face shapes ot the the element surfaces of the geofile 
+    (FreeCAD compound of face shape,s_file = open(geofile3, "r"))
+    '''
+    #
+    obj_geo_index=[]    
+    objL=[]
+    obj=[]
+    faceL=[]
+    pointsL=[]
+    linesL=[]
+
+    import re
+    s_file = open(geofile3, "r")
+    str_s_file=s_file.readlines()
+    n_str_s_file=len(str_s_file)
+    for line in str_s_file:
+	#check if we found header section
+	if re.search('Line\(',line)!=None:
+	    lline=[i for i in re.split('[A-Za-z]|\n|\ |[:;_=(){},]',line) if i]##(22) = {22, 23}
+	    linesL.append(lline)
+	if re.search('Point\(',line)!=None:
+	    pline=[i for i in re.split('[A-Za-z]|\n|\ |[:;_=(){},]',line) if i]##(22) = {22, 23}
+	    pointsL.append(pline)
+	if re.search('Line Loop\(',line)!=None:
+	    pline=[i for i in re.split('[A-Za-z]|\n|\ |\-|[:;_=(){},]',line) if i]##(22) = {22, 23}
+	    faceL.append(pline)
+
+    #tests
+    print pointsL
+    print linesL
+    print faceL
+
+
+    for face in faceL:
+	lnr=[i for i in face[1:]]
+	print "lnr" + str(lnr)
+	#Line Loop(2) = {1, 5, -4, -3, 2}; # extracted gives faceL=
+	#[['2', '1', '5', '4', '3', '2'], ['1
+	#lnr= collect indices-geo-lines per loops=Plane surfaces
+	#lnr=['1', '5', '4', '3', '2']
+	#lnr_indexL[0, 4, 3, 2, 1
+	#above indices converted to indices for pythonarray lines_to_points: linesL  
+	lnr_indexL=[[i[0] for i in linesL].index((lnr_i)) for lnr_i in lnr]
+	print "lnr_indexL" + str(lnr_indexL)
+
+	a=[linesL[int(i)][1:] for i in lnr_indexL]
+	print "a" + str(a)
+	#a[['1', '2'], ['2', '5'], ['4', '5'], ['3', '4'], ['3', '1']]
+	#geo-point-index representation of lines of one loop
+	#list(set(sum(a, [])))=
+	#undoubled ['24', '13', '12', '15', '14', '18', '7', '6']
+	pnr_indexL=[[i[0] for i in pointsL].index((pnr_i)) for pnr_i in list(set(sum(a, [])))]
+	#get index in pointtocoor-pythonarray:pnr_indexL
+	#[12, 8, 7, 10, 9, 11, 6, 5]
+	
+	print "pnr_indexL"+ str(pnr_indexL)
+	
+	obj=[[round(float(i),8) for i in pointsL[int(pnr_i)][1:4]] for pnr_i in pnr_indexL]
+	#[[0.5, 0.0475, 0.0], [0.0015, 0.0125, 0.0], [0.015, 0.0125, 0.0], [0.5, 0.046, 0.0], [0.0015, 0.046, 0.0], [0.0, 0.0475, 0.0], [0.0, 0.011, 0.0], [0.015, 0.011, 0.0]]
+	#geo surface in real coordinates
+	
+	objL.append(sorted(obj))
+	print "obj"+ str(obj)
+	obj=[]
+	#objL: above surface in array ordered by occurrence in geo
+	obj_geo_index.append(int(face[0]))
+	#corresponding geo indices for objL 
+
+    print obj_geo_index
+    hash_array_geo_surfaceL=[] #hash array topolines-geo_surfaces
+    hash_array_geo_surface=[]
+
+    for a in compound1.Links:
+	coord_obj_as_tuple=[]
+	coord_obj_as_tuple=[[round(i.Point.x,8),round(i.Point.y,8),round(i.Point.z,8)] for i in a.Shape.Vertexes]
+	coord_obj_as_tuple=sorted(coord_obj_as_tuple)
+	print "coord_obj_as_tuple" +str(coord_obj_as_tuple)
+
+	hash_array_geo_surface=obj_geo_index[objL.index(coord_obj_as_tuple)]
+	coord_obj_as_tuple=[]
+
+	hash_array_geo_surfaceL.append(hash_array_geo_surface) 
+
+    return [hash_array_geo_surfaceL, pointsL]
+    #[2, 1, 3, 4]
+
+
+def get_hash_topoline_from_geo(comp_topo_edges,geofile3):
+    '''
+    generates a hash array with assign the faces of a formerly imported topo compound  of line shapes ot the the element surfaces of the geofile 
+    (FreeCAD compound of line shape,s_file = open(geofile3, "r"))
+    '''
+    faceL=[]
+    pointsL=[]
+    linesL=[]
+    
+    import re
+    s_file = open(geofile3, "r")
+    str_s_file=s_file.readlines()
+    n_str_s_file=len(str_s_file)
+    for line in str_s_file:
+	#check if we found header section
+	if re.search('Line\(',line)!=None:
+	    lline=[i for i in re.split('[A-Za-z]|\n|\ |[:;_=(){},]',line) if i]##(22) = {22, 23}
+	    linesL.append(lline)
+	if re.search('Point\(',line)!=None:
+	    pline=[i for i in re.split('[A-Za-z]|\n|\ |[:;_=(){},]',line) if i]##(22) = {22, 23}
+	    pointsL.append(pline)
+	if re.search('Line Loop\(',line)!=None:
+	    pline=[i for i in re.split('[A-Za-z]|\n|\ |\-|[:;_=(){},]',line) if i]##(22) = {22, 23}
+	    faceL.append(pline)
+
+    #tests
+    print pointsL
+    print linesL
+    print faceL
+
+
+    print comp_topo_edges.Links
+
+    l_obj_geo_index=[] #   #corresponding geo indices for objL 
+    l_objL=[] # result lines in coordinates ordered by occurence
+    l_obj=[]
+    for line in linesL:
+	pnr=[i for i in line[1:]]
+	print "pnr" + str(pnr)
+	#pnr['1', '2']
+	#  linesL
+	#[['1', '1', '2'], ['
+	#line 1 consist of point 1 and 2
+	pnr_indexL=[[i[0] for i in pointsL].index((pnr_i)) for pnr_i in pnr]
+	#[11, 12]
+	#these points got array index 11 and 12 
+	l_obj=[[round(float(i),8) for i in pointsL[int(pnr_i)][1:4]] for pnr_i in pnr_indexL]
+	#hier are the coordinates repr of line 1 [[0.0, 0.0475, 0.0], [0.5, 0.0475, 0.0]]
+	
+	l_objL.append(sorted(l_obj))
+	print "obj"+ str(l_obj)
+	l_obj=[]
+	#objL: above surface in array ordered by occurrence in geo
+	l_obj_geo_index.append(int(line[0]))
+	#corresponding geo indices for objL 
+
+    print l_obj_geo_index
+
+    hash_topo_geo_linesL=[]    
+    hash_topo_geo_lines=[]
+    for a in comp_topo_edges.Links:
+	#a=compound0.Links[3]
+	l_coord_obj_as_tuple=[]
+	l_coord_obj_as_tuple=[[round(i.Point.x,8),round(i.Point.y,8),round(i.Point.z,8)] for i in a.Shape.Vertexes]
+	l_coord_obj_as_tuple=sorted(l_coord_obj_as_tuple)
+	print "coord_obj_as_tuple" +str(l_coord_obj_as_tuple)
+
+	hash_topo_geo_lines=l_obj_geo_index[l_objL.index(l_coord_obj_as_tuple)]
+	#coord_obj_as_tuple=[]
+
+	hash_topo_geo_linesL.append(hash_topo_geo_lines)
+    return hash_topo_geo_linesL
+    #[1, 2, 5, 3, 4, 6, 9, 7, 4, 9, 11, 3, 12, 15, 13, 14, 17, 6, 24, 11, 23, 12, 14, 13]
+    
+
+    
+    
+ 

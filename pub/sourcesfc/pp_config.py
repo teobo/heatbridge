@@ -74,13 +74,14 @@ if procflag!=0:
 	src=os.environ["FEM_PROTO_FLUX3_PATH"]+"elmermesh"+str(Pieces.index(Pi))+'/spreadsheetfile.csv'
 	shutil.copyfile(src,dst)   
 
-    t.gui_point2post("11101302")#
-
+    #t.gui_point2post("1110202")#
+    #t.gui_point2post("1110303")#
+    t.gui_point2post("11100702")#
     #visu
-    t.gui_visu("7,8,11,12,13,15,16") 
+    #t.gui_visu("7,8,11,12,13,15,16") 
     t.gui_visu("15,17") #prefined for 
-    for i in [Pi.femmesh2]+[Pi.anno8]:
-	i.ViewObject.Visibility=True
+    ##for i in [Pi.femmesh2]+[Pi.anno8]:
+	#i.ViewObject.Visibility=True
     
     #pointtopost.drop_pic(Pi.femmesh1,Pi.femmesh2,Pi.pngfile) # ok
 
@@ -121,6 +122,7 @@ if procflag!=0:
 
     #t.gui_point2post("11000702")#
     t.gui_point2post("1110202")#
+    t.gui_point2post("1110303")#
     t.gui_point2post("1110707")#
     t.set_le_cmd_line_opt_mesh("line")
     #t.gui_visu("7,8,11,12,13,15,16") #run 11,12,13 controll to be implemented,#scale color

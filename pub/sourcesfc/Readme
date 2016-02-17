@@ -1,10 +1,10 @@
 (in construction on 27.11.15)
 Installation:
 ---------------
-apt-get install gmsh elmer freecad
+apt-get install gmsh elmer freecad texlive-latex-base
 #you will probably need the newest versions: selfcompiled if not ppa
 apt-get install python-texttable
-
+...
 
 How do you test?
 ------------------------------
@@ -48,7 +48,10 @@ Features:
 -export 2d mesh to elmer
 -fem solving with elmer
 -freecad pre and post processing
--demo script (60%: ready mesh adaption, result checking, piece batch processing are missing)
+-report generation per piece with tables, pictures, diagramms in latex pdf
+-demo script (60%: ready mesh adaption, result checking, piece batch processing are missing), test unit (planned)
+-startable as freecad macro (as possibly planned)
+-as gmsh one-lab client (as possibly planned)
 -gui (under construction 25% ready)
 
 Architecture:
