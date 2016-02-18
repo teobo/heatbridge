@@ -497,3 +497,5 @@ command= "/usr/bin/pdflatex -file-line-error -halt-on-error "+cumulativetex_file
 output = subprocess.check_output([command, '-1'], shell=True, stderr=subprocess.STDOUT,)
 FreeCAD.Console.PrintMessage(output)
 
+command= "xpdf cumulative1.pdf 2&"
+os.system(command)
