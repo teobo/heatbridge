@@ -62,7 +62,7 @@ runs=1
 reducerate=0.7
 #timepL.append(timep)
 film=1
-header_result_performance=["flux-elmer","gmsh_minsize","gmsh_maxsize","nodes_el_bnd" ]
+header_result_performance=["flux-elmer","gmsh-minsize","gmsh-maxsize","nodes-el-bnd" ]
 ###valitation 1 switches 
 Pi.siftemplfile=os.environ["FEM_PROTO_FLUX3_PATH"]+'flux_templ_2bodys_validatationpiece1.sif'
 result_performance=[]
@@ -345,7 +345,7 @@ report_table=report_table+[["Kelvin Boundary 1-2 ",
 str(Pi.Bnds[0].T) +" - "+str(Pi.Bnds[1].T)], ["Rsi,e  Km²/W",  str(Pi.Bnds[0].Rs) +" - "+str(Pi.Bnds[1].Rs)],["[lambda, material] /body  ", str([[i.k,i.name] for i in Pi.Bodies])]]
 #
 #sample 2 all time measures from array timepL
-report_table=report_table+[[i[2],i[1]] for i in timepL[best_bet_mesh_run]]
+report_table=report_table+[[i[2],i[1]] for i in timepL[best_bet_mesh_run+1]]
 report_table
 
 #test print table

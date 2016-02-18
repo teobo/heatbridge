@@ -64,6 +64,9 @@ pointtopost.py library using fc-python-scripting
 Testing and Bug reports
 ------------------------------
 https://github.com/teobo/heatbridge/issues
+Debugging::/tmp/elmermesh1$ watch "ls -rtl|cut -c25-|tail -19" #have an console open beneath for controlling progress
+
+
 
 Links
 -----
